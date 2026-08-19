@@ -70,9 +70,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${fraunces.variable} ${inter.variable} ${tajawal.variable}`}
     >
-      <body className="bg-cream text-char antialiased min-h-screen flex flex-col selection:bg-maroon selection:text-cream font-sans">
+      <body
+        suppressHydrationWarning
+        className="bg-cream text-char antialiased min-h-screen flex flex-col selection:bg-maroon selection:text-cream font-sans"
+      >
         <LanguageProvider>
           <CartProvider>
             <AnnouncementBar />
