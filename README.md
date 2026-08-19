@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Waraqa (ورقة) — E-commerce Storefront
 
-## Getting Started
+A production-quality, mobile-first, zero-backend e-commerce storefront for **Waraqa (ورقة)**, an Egyptian sketchbook & paper-goods brand.
 
-First, run the development server:
+---
+
+## 🌟 Highlights
+
+- **Static & Serverless**: Built on Next.js App Router with TypeScript & Tailwind CSS v4, statically exported for 100% free hosting (Vercel, Netlify, Cloudflare Pages).
+- **Free Google Sheets Backend**: Reads and writes directly to Google Sheets via Google Apps Script Web App without CORS issues.
+- **WhatsApp Order Confirmation**: Automatically formats complete order summaries and links directly to owner WhatsApp (`+20 106 923 7525`) for Cash on Delivery order handoffs.
+- **Offline & Graceful Fallbacks**: Bundled `products.json` seed ensures the store functions flawlessly even if the backend is unreachable.
+- **Owner Admin Portal (`/admin`)**: Real-time inventory stock editing and order status updates protected by token authentication.
+- **Brand System Fidelity**: Fraunces (display), Inter (UI), and Tajawal (Arabic) typography combined with Maroon (`#4C2224`), Espresso (`#201513`), Cream (`#F4ECE0`), Kraft (`#C0A286`), Sage, and Terracotta design tokens.
+
+---
+
+## 🚀 Quick Start (Local Run)
 
 ```bash
+# 1. Enter store directory
+cd waraqa-store
+
+# 2. Install dependencies
+npm install
+
+# 3. Create .env.local from template
+cp .env.example .env.local
+
+# 4. Start local development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to browse the storefront.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚙️ Environment Variables
 
-## Learn More
+Set the following in `.env.local` or in your static host's dashboard:
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Description | Default |
+|---|---|---|
+| `NEXT_PUBLIC_WEB_APP_URL` | Google Apps Script `/exec` URL | `""` (uses fallback JSON) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Owner WhatsApp number (international format, Egypt `20...`) | `201069237525` |
+| `NEXT_PUBLIC_SHIPPING_FLAT` | Flat shipping rate across Egypt (EGP) | `50` |
+| `NEXT_PUBLIC_FREE_SHIP_OVER` | Free shipping order threshold (EGP) | `800` |
+| `NEXT_PUBLIC_CURRENCY` | Currency display text | `EGP` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📦 Deployment to Vercel / Netlify / Cloudflare
 
-## Deploy on Vercel
+### Static Export Build
+```bash
+npm run build
+```
+This generates a static `out/` folder containing pure HTML, CSS, and client-side JavaScript.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deploying to Vercel:
+1. Connect your repository on [Vercel](https://vercel.com).
+2. Framework Preset: **Next.js**.
+3. Build Command: `npm run build`.
+4. Output Directory: `out` (or leave default with Next.js).
+5. Add your `NEXT_PUBLIC_*` environment variables.
+6. Deploy!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🗄️ Google Sheets & Apps Script Setup
+
+See [`GOOGLE_SHEETS_APPS_SCRIPT_GUIDE.md`](../GOOGLE_SHEETS_APPS_SCRIPT_GUIDE.md) for full instructions:
+1. Upload `Waraqa-Orders-Database.xlsx` to Google Drive.
+2. In the Google Sheet, open **Extensions ▸ Apps Script**.
+3. Paste `waraqa-apps-script.gs` and update `SHEET_ID` and `ADMIN_TOKEN`.
+4. Deploy as Web App with Access: **Anyone**.
+5. Paste the `/exec` URL into `NEXT_PUBLIC_WEB_APP_URL`.
+
+---
+
+## 🔐 Admin Management (`/admin`)
+
+Access `/admin` on your website:
+- Enter the secret token defined in `ADMIN_TOKEN` in your Apps Script.
+- Update product stock levels or toggle availability (Active / Out of stock / Hidden).
+- Advance order statuses (Pending ➔ Confirmed ➔ Packed ➔ Shipped ➔ Delivered).
