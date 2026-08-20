@@ -180,6 +180,8 @@ export const translations = {
       confirmAndBuy: 'Place Order',
       disclaimer:
         'When you place your order, we’ll email you a receipt right away and get in touch to confirm the details.',
+      submitError:
+        'We couldn’t place your order just now. Please check your connection and try again.',
       errors: {
         name: 'Please tell us your name',
         phone: 'Please enter your mobile phone number',
@@ -446,6 +448,8 @@ export const translations = {
       confirmAndBuy: 'اطلب دلوقتي',
       disclaimer:
         'أول ما تعمل الطلب هنبعتلك إيصال على الإيميل على طول، وهنتواصل معاك عشان نأكد التفاصيل.',
+      submitError:
+        'معلش، مقدرناش نسجّل طلبك دلوقتي. تأكد من الاتصال بالنت وحاول تاني.',
       errors: {
         name: 'من فضلك اكتب اسمك',
         phone: 'من فضلك اكتب رقم تليفونك',

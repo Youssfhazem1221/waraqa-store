@@ -110,50 +110,38 @@ export default function CheckoutPage() {
     try {
       const res = await createOrder(payload);
 
-      const generatedOrderId = res.orderId || `WRQ-${Math.floor(1000 + Math.random() * 9000)}`;
-      const isSuccess = res.ok;
+      // The order is only real once the backend confirms it (writes to the
+      // sheet + sends the emails). If it failed, keep the customer on the page
+      // with their cart intact so they can retry — never fake a success.
+      if (!res.ok || !res.orderId) {
+        console.error('Order was not logged:', res.error);
+        setSubmitError(t.checkout.submitError);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
 
       // Store in session for the confirmation page
       sessionStorage.setItem(
         'waraqa-last-order',
         JSON.stringify({
-          orderId: generatedOrderId,
+          orderId: res.orderId,
           customer,
           items,
           subtotal,
           shipping,
           total,
           notes,
-          isLoggedToSheet: isSuccess,
+          isLoggedToSheet: true,
         })
       );
 
-      // Clear the cart
+      // Clear the cart and go to confirmation
       clearCart();
-
-      // Navigate to confirmation
-      router.push(`/confirmation?orderId=${generatedOrderId}`);
+      router.push(`/confirmation?orderId=${res.orderId}`);
     } catch (err) {
       console.error('Order submission error:', err);
-      // Fallback: still record the order locally and show confirmation.
-      const fallbackOrderId = `WRQ-MANUAL-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      sessionStorage.setItem(
-        'waraqa-last-order',
-        JSON.stringify({
-          orderId: fallbackOrderId,
-          customer,
-          items,
-          subtotal,
-          shipping,
-          total,
-          notes,
-          isLoggedToSheet: false,
-        })
-      );
-
-      clearCart();
-      router.push(`/confirmation?orderId=${fallbackOrderId}&fallback=true`);
+      setSubmitError(t.checkout.submitError);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
     }
