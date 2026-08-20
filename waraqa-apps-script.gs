@@ -25,7 +25,21 @@ const SUPPORT_WA  = '201069237525';               // support WhatsApp, internati
 const SLA_HOURS   = 24;                            // we promise to confirm within this many hours
 
 function ss(){ return SpreadsheetApp.openById(SHEET_ID); }
-function sheet(name){ return ss().getSheetByName(name); }
+
+/* Resolve a tab by name, tolerating emoji/number prefixes, spaces, case and
+   underscores (so "② Products", "products", "Order Items" all still match). */
+function sheet(name){
+  var book = ss();
+  var direct = book.getSheetByName(name);
+  if (direct) return direct;
+  var norm = function(s){ return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); };
+  var target = norm(name);
+  var all = book.getSheets();
+  for (var i = 0; i < all.length; i++){
+    if (norm(all[i].getName()) === target) return all[i];
+  }
+  return null;
+}
 function json(obj){ return ContentService.createTextOutput(JSON.stringify(obj))
                       .setMimeType(ContentService.MimeType.JSON); }
 
@@ -255,6 +269,34 @@ function sendCustomerReceipt(o){
     subject: subject,
     htmlBody: html
   });
+}
+
+/* ------------------------- DIAGNOSTICS -------------------------
+   Run this once from the editor (select "diagnose" ▸ Run) to:
+     1) trigger the authorization prompt (grant the email permission), and
+     2) print, in the Execution log, whether the sheet + tabs are wired up.
+   Paste the log back if anything is red. */
+function diagnose(){
+  var out = [];
+  try {
+    var book = ss();
+    out.push('Spreadsheet: ' + book.getName());
+    out.push('Owner/exec account: ' + Session.getEffectiveUser().getEmail());
+    var tabs = book.getSheets().map(function(s){ return s.getName(); });
+    out.push('Tabs found: ' + JSON.stringify(tabs));
+    ['Products','Orders','Order_Items','Customers'].forEach(function(name){
+      var s = book.getSheetByName(name);
+      out.push(' - "' + name + '": ' + (s ? ('OK, lastRow=' + s.getLastRow()) : 'MISSING ❌'));
+    });
+    try { out.push('Products readable: ' + readProducts().length + ' rows'); }
+    catch(e){ out.push('readProducts ERROR: ' + e); }
+    try { out.push('Mail quota left today: ' + MailApp.getRemainingDailyQuota()); }
+    catch(e){ out.push('Mail scope ERROR (authorize needed): ' + e); }
+  } catch(e){
+    out.push('FATAL: ' + e);
+  }
+  Logger.log(out.join('\n'));
+  return out.join('\n');
 }
 
 /* Helper: read a tab as array of {header:value} */
