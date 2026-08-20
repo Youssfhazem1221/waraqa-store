@@ -1,0 +1,218 @@
+<title>Waraqa — Copywriting Audit &amp; Positioning Council</title>
+<style>
+  :root {
+    --bg: #f3eee2; --surface: #fbf8f1; --surface-2: #ece4d3;
+    --ink: #221d17; --ink-muted: #5c5344; --ink-faint: #8a7f6c;
+    --accent: #3c5866; --accent-strong: #294048; --accent-soft: #dde6e8;
+    --good: #6d7f3a; --good-bg: #e7ecd7;
+    --warn: #b8863b; --warn-bg: #f2e8cf;
+    --rule: #d9cfb9; --shadow: 0 1px 2px rgba(34,29,23,0.06); --spiral: #c9bd9f;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1712; --surface: #241f18; --surface-2: #2c261d;
+    --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+    --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #2b3c40;
+    --good: #a9c06a; --good-bg: #2e3320;
+    --warn: #d9c07a; --warn-bg: #3a331e;
+    --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.3); --spiral: #46402f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1b1712; --surface: #241f18; --surface-2: #2c261d;
+      --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+      --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #2b3c40;
+      --good: #a9c06a; --good-bg: #2e3320;
+      --warn: #d9c07a; --warn-bg: #3a331e;
+      --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.3); --spiral: #46402f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+  header.masthead { border-bottom: 1px solid var(--rule); padding-bottom: 1.75rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 0.6rem;
+  }
+  .eyebrow .dots { display: inline-flex; gap: 3px; }
+  .eyebrow .dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--spiral); display: inline-block; }
+  h1 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: clamp(1.7rem, 3.4vw, 2.35rem); line-height: 1.18;
+    letter-spacing: -0.01em; margin: 0.6rem 0 0.5rem; text-wrap: balance;
+  }
+  .subtitle { color: var(--ink-muted); font-size: 1.02rem; max-width: 62ch; }
+  .meta-row {
+    margin-top: 1.1rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;
+    font-family: ui-monospace, monospace; font-size: 0.8rem; color: var(--ink-faint);
+  }
+  nav.toc { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin: 1.5rem 0 0; font-family: ui-monospace, monospace; font-size: 0.78rem; }
+  nav.toc a { color: var(--accent-strong); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+
+  .domain { margin-top: 3.5rem; }
+  .domain > h2 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: 1.65rem; margin: 0 0 0.3rem; text-wrap: balance;
+  }
+  .domain .domain-sub { color: var(--ink-muted); font-size: 0.95rem; margin-bottom: 1.4rem; }
+  h3 { font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif; font-size: 1.1rem; font-weight: 600; margin: 1.6rem 0 0.5rem; }
+  p { margin: 0.75rem 0; }
+  code { font-family: ui-monospace, monospace; background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.85em; }
+  em.ar { direction: rtl; unicode-bidi: embed; font-style: normal; }
+
+  .finding { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--rule); border-radius: 4px; padding: 1rem 1.2rem; margin: 1rem 0; box-shadow: var(--shadow); }
+  .finding.good { border-left-color: var(--good); }
+  .finding.warn { border-left-color: var(--warn); }
+  .finding-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+  .finding-head h3 { margin: 0; }
+  .badge { font-family: ui-monospace, monospace; font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 700; }
+  .badge.good { background: var(--good-bg); color: var(--good); }
+  .badge.warn { background: var(--warn-bg); color: var(--warn); }
+  .finding p { margin: 0.5rem 0; font-size: 0.94rem; color: var(--ink-muted); }
+  .finding .fix strong { color: var(--accent-strong); }
+
+  .callout.simulation {
+    background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--ink-faint);
+    border-radius: 4px; padding: 0.9rem 1.1rem; margin: 1rem 0 2rem;
+  }
+  .callout.simulation p { margin: 0; font-style: italic; color: var(--ink-muted); font-size: 0.92rem; }
+
+  .stake {
+    background: var(--accent-soft); border-radius: 5px; padding: 0.9rem 1.1rem; margin: 1rem 0 1.6rem; font-size: 0.95rem;
+  }
+
+  .advisor { margin: 1.6rem 0; padding: 1.1rem 1.3rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; box-shadow: var(--shadow); }
+  .advisor .name-row { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .advisor .name { font-family: "Iowan Old Style", "Sitka Text", Georgia, serif; font-weight: 700; font-size: 1.05rem; color: var(--ink); }
+  .advisor .lens { color: var(--ink-faint); font-size: 0.85rem; font-style: italic; }
+  .advisor.dissent { border-left: 3px solid var(--warn); }
+  .advisor p { font-size: 0.95rem; }
+  .advisor .bl { margin-top: 0.7rem; font-weight: 600; font-size: 0.92rem; color: var(--accent-strong); }
+
+  .conflict { margin: 1rem 0; padding-left: 1rem; border-left: 2px solid var(--rule); }
+  .conflict .num { font-family: ui-monospace, monospace; color: var(--accent); font-weight: 700; }
+
+  .plan { counter-reset: step; list-style: none; padding-left: 0; }
+  .plan li { counter-increment: step; position: relative; padding-left: 2.2rem; margin: 0.7rem 0; }
+  .plan li::before {
+    content: counter(step); position: absolute; left: 0; top: 0;
+    width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--accent-soft);
+    color: var(--accent-strong); font-family: ui-monospace, monospace; font-size: 0.75rem;
+    font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  footer.doc-footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 0.85rem; }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow"><span class="dots"><span></span><span></span><span></span></span> Waraqa (ورقة) &middot; Marketing deliverable</div>
+    <h1>Copywriting Audit &amp; Positioning Council</h1>
+    <p class="subtitle">A line-by-line review of existing site copy, plus a simulated 5-advisor session pressure-testing the niche-vs-reach positioning bet behind the comparison content.</p>
+    <div class="meta-row"><span>Prepared 2026&#8209;08&#8209;20</span></div>
+    <nav class="toc"><a href="#copy">→ Copywriting Audit</a><a href="#council">→ Positioning Council</a></nav>
+  </header>
+
+  <section class="domain" id="copy">
+    <h2>Copywriting Audit</h2>
+    <p class="domain-sub">Most of the existing copy is already good — this audit protects what works and flags four narrow, real issues.</p>
+
+    <div class="finding good">
+      <div class="finding-head"><span class="badge good">Working well</span><h3>Product descriptions name the exact media each paper handles</h3></div>
+      <p><em>"perfect for watercolour, gouache, ink, and markers"</em> (A5 Mixed Media) &middot; <em>"ideal for pencil, charcoal, and pastel work"</em> (A5 Kraft). Benefit stated alongside the spec, not instead of it.</p>
+    </div>
+    <div class="finding good">
+      <div class="finding-head"><span class="badge good">Working well</span><h3>Checkout errors explain the fix, not just the failure</h3></div>
+      <p><code>"Please enter a valid Egyptian mobile number (010, 011, 012, 015)"</code> — exactly the standard to hold every other error message to.</p>
+    </div>
+    <div class="finding good">
+      <div class="finding-head"><span class="badge good">Working well</span><h3>Arabic copy is written, not translated</h3></div>
+      <p><em class="ar">"خلّصت الكمية"</em> and <em class="ar">"هنكلمك عليه واتساب عشان نرتب ميعاد وصول المندوب"</em> — real spoken Egyptian, not formal MSA. Rare for the category, and currently a wasted asset per the SEO audit's crawlability finding.</p>
+    </div>
+
+    <div class="finding warn">
+      <div class="finding-head"><span class="badge warn">Fix</span><h3>Hero CTA is vaguer than the featured-section CTA</h3></div>
+      <p><code>hero.shopCta: 'Explore Sketchbooks'</code> vs. <code>featured.viewAll: 'See all 8 sketchbooks'</code> — the second names a concrete number and is the stronger CTA by the skill's own formula.</p>
+      <p class="fix"><strong>Fix:</strong> change the hero CTA to <em>"Shop All 8 Sketchbooks."</em></p>
+    </div>
+    <div class="finding warn">
+      <div class="finding-head"><span class="badge warn">Fix</span><h3>"Why We Started Waraqa" doesn't tell a story</h3></div>
+      <p>The heading promises an origin narrative; the body underneath restates brand values already covered elsewhere on the page. No founder, no founding moment.</p>
+      <p class="fix"><strong>Fix:</strong> write the real story, or rename the section — and treat this as the seed for the content-strategy doc's "Behind the Paper" pillar.</p>
+    </div>
+    <div class="finding warn">
+      <div class="finding-head"><span class="badge warn">Minor</span><h3>Unused "Special Price" string signals an unshipped feature</h3></div>
+      <p><code>common.sale: 'Special Price'</code> exists in both languages but every SKU has <code>compareAt: 0</code> — never rendered. Not user-facing, but worth flagging alongside the pricing doc's bundle recommendation.</p>
+    </div>
+    <div class="finding warn">
+      <div class="finding-head"><span class="badge warn">Fix</span><h3>The gsm explanation exists but isn't at the decision point</h3></div>
+      <p><code>trust.ecoDesc</code> already explains paper weight well — but only on the homepage trust row, not the shop grid or PDP where the buying decision actually happens. A placement gap, not a writing gap (cross-ref: pricing doc §1).</p>
+    </div>
+  </section>
+
+  <section class="domain" id="council">
+    <h2>Positioning Council</h2>
+    <div class="callout simulation"><p>Simulated council — each take is built from the advisor's published frameworks and positions, not their actual review of Waraqa.</p></div>
+
+    <h3 style="margin-top:0;">The question before the council</h3>
+    <p>Should Waraqa position narrowly around the "serious sketcher burned by cheap paper bleeding through" — the framing the comparison content already assumes — or pursue broader mass-availability marketing? How much should the handmade/price story carry the positioning versus reach and recall?</p>
+    <div class="stake"><strong>At stake:</strong> Waraqa is pre-launch — zero sales/traffic data exists. Whatever's chosen now shapes ad copy and content before it can be tested against real behavior.</div>
+    <p style="color:var(--ink-faint);font-size:0.88rem;"><strong>Seated:</strong> April Dunford, Byron Sharp (dissenter), Eugene Schwartz, Rory Sutherland, Seth Godin</p>
+
+    <div class="advisor">
+      <div class="name-row"><span class="name">April Dunford</span><span class="lens">positioning against real alternatives</span></div>
+      <p>The honest competitive alternative isn't another premium sketchbook brand — it's grabbing whatever's at the corner stationery counter, or adding a Jumia listing without checking gsm. That's indecision and inertia, which the comparison content already targets correctly rather than inventing a boutique rival.</p>
+      <p>The unique attribute (stated gsm + acid-free on every SKU) is concrete and provable against inconsistent marketplace listings; the value it enables is confidence, not homework. Reframe the market category from "sketchbooks" to "reliable heavyweight paper for wet media in Egypt" so the gsm guarantee becomes the obvious comparison point.</p>
+      <p class="bl">Bottom line: position narrow even if the audience reached ends up broader.</p>
+    </div>
+
+    <div class="advisor dissent">
+      <div class="name-row"><span class="name">Byron Sharp</span><span class="lens">distinctiveness &amp; penetration (dissenter)</span></div>
+      <p>Is "the serious ink/marker artist" a real, separable segment, or the same buyer as the casual one on a different day? The duplication-of-purchase law predicts heavy overlap — narrowing messaging risks excluding a much larger pool who'd still buy Waraqa if it simply came to mind at the right moment.</p>
+      <p>Also worth asking independent of the positioning debate: with 8 SKUs sharing a similar kraft-and-spiral look, would anyone recognize a Waraqa book with the logo removed? Distinctive assets may matter more long-term than any differentiation claim.</p>
+      <p class="bl">Bottom line: don't mistake a content angle for a market segment — build broad mental availability.</p>
+    </div>
+
+    <div class="advisor">
+      <div class="name-row"><span class="name">Eugene Schwartz</span><span class="lens">awareness stage &amp; mass desire</span></div>
+      <p>Most Egyptian sketchbook buyers are Problem-Aware at best — annoyed by a smear, not yet Product-Aware that Waraqa exists or that gsm is the variable at fault. The comparison page's spec-led TL;DR is right for a reader who's already arrived there — but anything reaching people earlier (ads, social) should open with the felt frustration, not the spec.</p>
+      <p class="bl">Bottom line: keep the comparison page spec-forward; write separate problem-first copy for top-of-funnel.</p>
+    </div>
+
+    <div class="advisor">
+      <div class="name-row"><span class="name">Rory Sutherland</span><span class="lens">price &amp; friction as signals</span></div>
+      <p>A price above the marketplace floor is a costly signal that makes the "handmade, inspect before you pay" story credible — matching Jumia's floor would undercut the story itself. The manual WhatsApp/COD confirmation step may look like inefficiency an optimizer would remove, but it's plausibly doing unmeasured work as proof of "checked by hand."</p>
+      <p>On the free-shipping threshold: try reframing what the fee signals (e.g. "Courier &amp; Inspection Fee") alongside lowering the number, not instead of it.</p>
+      <p class="bl">Bottom line: the premium and the friction are working as signals — don't optimize either on efficiency logic alone.</p>
+    </div>
+
+    <div class="advisor">
+      <div class="name-row"><span class="name">Seth Godin</span><span class="lens">smallest viable audience</span></div>
+      <p>Is anything about Waraqa remarkable enough to be talked about without ad spend behind it? Probably yes — handmade-in-Cairo, inspect-before-you-pay is a genuinely different story than an anonymous marketplace SKU. Find the smallest group who's been burned by bleed-through, delight them completely, let them become the distribution mechanism before chasing reach.</p>
+      <p class="bl">Bottom line: earn a tribe's advocacy first; broad reach is the next phase, not this one.</p>
+    </div>
+
+    <h3>Where the council disagrees</h3>
+    <div class="conflict"><span class="num">1.</span> <strong>Sharp vs. Dunford/Godin</strong> — is the "ink/marker artist" a real segment or a content angle mistaken for one? Settled only by real purchase data: do self-identified serious buyers actually behave differently, or is it Sharp's predicted overlapping pool?</div>
+    <div class="conflict"><span class="num">2.</span> <strong>Schwartz vs. current draft copy</strong> — problem-first or spec-first? Settled by A/B testing a problem-led headline against the current spec-led opening on top-of-funnel channels.</div>
+    <div class="conflict"><span class="num">3.</span> <strong>Sutherland vs. the pricing doc</strong> — change the shipping fee's number, or its meaning? Settled by testing a reframed label against a lowered threshold, and against doing both.</div>
+
+    <h3>Chair's synthesis</h3>
+    <p>With zero real customer data yet, sequence rather than choose once: position narrow for now (Dunford, Godin) since that's the only version testable with content already built, while treating Sharp's reach argument as the next phase, not a rejection of this one.</p>
+    <ol class="plan">
+      <li>Ship the comparison pages as drafted — correctly positioned for a comparison-stage reader.</li>
+      <li>Write a separate problem-first version for top-of-funnel/ad copy (Schwartz).</li>
+      <li>Test Sutherland's fee-reframe alongside the pricing doc's threshold change, not instead of it.</li>
+      <li>Hold off broadening messaging to "anyone who buys a notebook" until a tribe exists to broaden from.</li>
+      <li><strong>Tripwire:</strong> once order data exists, check it against Sharp's overlap prediction — if confirmed, retire the niche-only framing and shift toward broad mental availability.</li>
+    </ol>
+  </section>
+
+  <footer class="doc-footer">
+    Waraqa (ورقة) &middot; Copywriting audit &amp; positioning council &middot; companion to the competitor, SEO, pricing, and content-strategy docs in <code>marketing/</code>
+  </footer>
+</div>

@@ -1,0 +1,646 @@
+<title>Waraqa — Egyptian Sketchbook Market Deep-Dive</title>
+<style>
+  :root {
+    --bg: #f3eee2; --surface: #fbf8f1; --surface-2: #ece4d3; --surface-3: #e2d8c2;
+    --ink: #221d17; --ink-muted: #5c5344; --ink-faint: #8a7f6c;
+    --accent: #3c5866; --accent-strong: #294048; --accent-soft: #dde6e8;
+    --good: #4c7a4f; --good-bg: #e2ecd9; --good-strong: #2f5a32;
+    --bad: #a1442f; --bad-bg: #f4ddd6; --bad-strong: #7c2f1e;
+    --warn: #b8863b; --warn-bg: #f2e8cf;
+    --rule: #d9cfb9; --shadow: 0 1px 2px rgba(34,29,23,0.07), 0 4px 14px rgba(34,29,23,0.04);
+    --spiral: #c9bd9f;
+  }
+  :root[data-theme="dark"] {
+    --bg: #17140f; --surface: #211c15; --surface-2: #2a241b; --surface-3: #332c20;
+    --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+    --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #263539;
+    --good: #93c08f; --good-bg: #26301f; --good-strong: #b3d8ae;
+    --bad: #dd8a71; --bad-bg: #3a2721; --bad-strong: #f0ab96;
+    --warn: #d9c07a; --warn-bg: #362f1c;
+    --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.4); --spiral: #46402f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17140f; --surface: #211c15; --surface-2: #2a241b; --surface-3: #332c20;
+      --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+      --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #263539;
+      --good: #93c08f; --good-bg: #26301f; --good-strong: #b3d8ae;
+      --bad: #dd8a71; --bad-bg: #3a2721; --bad-strong: #f0ab96;
+      --warn: #d9c07a; --warn-bg: #362f1c;
+      --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.4); --spiral: #46402f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15.5px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-strong); }
+  code { font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace; background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.85em; }
+  strong { font-weight: 700; }
+
+  /* ---- shell ---- */
+  .shell { display: grid; grid-template-columns: 260px 1fr; max-width: 1280px; margin: 0 auto; }
+  @media (max-width: 900px) { .shell { grid-template-columns: 1fr; } }
+
+  .sidebar {
+    position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+    padding: 1.8rem 1.2rem; border-right: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) {
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--rule); padding: 1.2rem 1.2rem 0.8rem; }
+    .sidebar nav { display: flex; overflow-x: auto; gap: 0.3rem; padding-bottom: 0.6rem; }
+    .sidebar nav a { white-space: nowrap; }
+  }
+  .brand { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.4rem; }
+  .brand .dots { display: inline-flex; gap: 3px; }
+  .brand .dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--spiral); display: inline-block; }
+  .brand-name { font-family: "Iowan Old Style", "Sitka Text", Georgia, serif; font-weight: 700; font-size: 1.05rem; }
+  .brand-sub { font-family: ui-monospace, monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .fx-toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 0.5rem 0.7rem; margin-bottom: 1.4rem; font-size: 0.78rem;
+  }
+  .fx-toggle button {
+    font-family: ui-monospace, monospace; font-size: 0.72rem; font-weight: 700;
+    border: 1px solid var(--rule); background: var(--surface-2); color: var(--ink-muted);
+    border-radius: 4px; padding: 0.25rem 0.55rem; cursor: pointer;
+  }
+  .fx-toggle button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .sidebar nav { display: flex; flex-direction: column; gap: 0.15rem; }
+  .sidebar nav a {
+    text-decoration: none; color: var(--ink-muted); font-size: 0.86rem; padding: 0.4rem 0.6rem;
+    border-radius: 5px; border-left: 2px solid transparent;
+  }
+  .sidebar nav a:hover { background: var(--surface); color: var(--ink); }
+  .sidebar nav a.active { background: var(--accent-soft); color: var(--accent-strong); border-left-color: var(--accent); font-weight: 600; }
+  .sidebar nav .num { font-family: ui-monospace, monospace; opacity: 0.6; margin-right: 0.4rem; }
+
+  main { padding: 3rem 2.2rem 6rem; min-width: 0; }
+  @media (max-width: 900px) { main { padding: 2rem 1.2rem 5rem; } }
+
+  header.masthead { border-bottom: 1px solid var(--rule); padding-bottom: 1.75rem; margin-bottom: 1rem; }
+  .eyebrow { font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  h1 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: clamp(1.8rem, 3.2vw, 2.5rem); line-height: 1.15;
+    letter-spacing: -0.01em; margin: 0.5rem 0 0.5rem; text-wrap: balance;
+  }
+  .subtitle { color: var(--ink-muted); font-size: 1.02rem; max-width: 66ch; }
+  .meta-row { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--ink-faint); }
+
+  section.card { scroll-margin-top: 1.5rem; margin-top: 3.2rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); }
+  section.card:first-of-type { border-top: none; }
+  section.card h2 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: 1.5rem; margin: 0 0 0.35rem; text-wrap: balance;
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  section.card h2 .n { font-family: ui-monospace, monospace; color: var(--accent); font-size: 1rem; }
+  section.card > .dek { color: var(--ink-muted); font-size: 0.93rem; margin-bottom: 1.2rem; max-width: 68ch; }
+  h3 { font-family: "Iowan Old Style", "Sitka Text", Georgia, serif; font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+  p { margin: 0.75rem 0; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: 0.35rem 0; }
+
+  .table-wrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.87rem; }
+  thead th {
+    text-align: left; font-family: ui-monospace, monospace; font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--ink-faint); background: var(--surface-2); padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); color: var(--ink-muted); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  td, th { font-variant-numeric: tabular-nums; }
+  tr.total td { font-weight: 700; color: var(--ink); background: var(--accent-soft); }
+  tr.hl td:first-child { color: var(--accent-strong); }
+  .pos { color: var(--good-strong); font-weight: 700; }
+  .neg { color: var(--bad-strong); font-weight: 700; }
+
+  .egp::after { content: " EGP"; font-size: 0.85em; color: var(--ink-faint); }
+  .usd-view .egp::after { content: none; }
+  .usd-view .egp::before { content: "$"; }
+
+  .callout { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 5px; padding: 1rem 1.2rem; margin: 1.1rem 0; box-shadow: var(--shadow); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.headline { border-left-color: var(--bad); background: var(--bad-bg); }
+  .callout p { margin: 0.4rem 0; font-size: 0.93rem; color: var(--ink-muted); }
+  .callout.headline p { color: var(--bad-strong); font-weight: 600; }
+  .callout p:first-child { margin-top: 0; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0 1.2rem; }
+  .chip {
+    font-family: ui-monospace, monospace; font-size: 0.72rem; padding: 0.3rem 0.7rem; border-radius: 20px;
+    background: var(--surface-2); border: 1px solid var(--rule); color: var(--ink-muted); cursor: pointer;
+  }
+  .chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+
+  .stock-row { display: grid; grid-template-columns: 170px 1fr 90px; gap: 0.8rem; align-items: center; margin: 0.55rem 0; font-size: 0.85rem; }
+  .stock-track { height: 10px; background: var(--surface-2); border-radius: 5px; overflow: hidden; border: 1px solid var(--rule); }
+  .stock-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-strong)); border-radius: 5px 0 0 5px; }
+  .stock-fill.scarce { background: linear-gradient(90deg, var(--bad), var(--bad-strong)); }
+  .stock-num { text-align: right; font-family: ui-monospace, monospace; color: var(--ink-muted); }
+
+  .cal-week { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--accent-strong); font-weight: 700; }
+
+  .updates-box { background: var(--warn-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.2rem; margin: 1.2rem 0 2rem; }
+  .updates-box li { color: var(--ink); font-size: 0.92rem; }
+
+  footer.doc-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 0.85rem; }
+</style>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="dots"><span></span><span></span><span></span></span>
+      <div>
+        <div class="brand-name">Waraqa (ورقة)</div>
+        <div class="brand-sub">Market Deep-Dive</div>
+      </div>
+    </div>
+    <div class="fx-toggle">
+      <span>Currency</span>
+      <span>
+        <button id="btn-egp" class="active" onclick="setCurrency('egp')">EGP</button>
+        <button id="btn-usd" onclick="setCurrency('usd')">USD</button>
+      </span>
+    </div>
+    <nav id="toc">
+      <a href="#s0"><span class="num">0</span>What changed</a>
+      <a href="#s1"><span class="num">1</span>Market sizing</a>
+      <a href="#s2"><span class="num">2</span>Growth &amp; demand</a>
+      <a href="#s3"><span class="num">3</span>Social landscape</a>
+      <a href="#s4"><span class="num">4</span>Target customer</a>
+      <a href="#s5"><span class="num">5</span>Competitors</a>
+      <a href="#s6"><span class="num">6</span>Pricing matrix</a>
+      <a href="#s7"><span class="num">7</span>Sourcing &amp; FX risk</a>
+      <a href="#s8"><span class="num">8</span>Channels &amp; logistics</a>
+      <a href="#s9"><span class="num">9</span>Marketing &amp; CAC</a>
+      <a href="#s10"><span class="num">10</span>Current stock</a>
+      <a href="#s11"><span class="num">11</span>Financial strategy</a>
+      <a href="#s12"><span class="num">12</span>Sales strategy</a>
+      <a href="#s13"><span class="num">13</span>IG / TikTok / FB plan</a>
+      <a href="#s14"><span class="num">14</span>Bottom line</a>
+    </nav>
+  </aside>
+
+  <main id="main">
+    <header class="masthead">
+      <div class="eyebrow">Waraqa (ورقة) &middot; Market due-diligence synthesis</div>
+      <h1>Egyptian Sketchbook Market Deep-Dive</h1>
+      <p class="subtitle">Gemini-sourced market research, reconciled line-by-line against Waraqa's real stock, pricing, and prior marketing audits — plus new sales, financial, and social-content strategy built on top of it.</p>
+      <div class="meta-row"><span>Prepared 2026&#8209;08&#8209;20</span><span>FX reference: 48.5 EGP/USD</span><span>Toggle currency in the sidebar</span></div>
+    </header>
+
+    <section class="card" id="s0">
+      <h2><span class="n">0</span>What this changes from prior work</h2>
+      <p class="dek">Three findings here update the earlier competitor, pricing, and SEO audits already in <code>marketing/</code>.</p>
+      <div class="callout headline">
+        <p>1. Waraqa is priced <em>below</em> the market's own validated sweet spot (240–340 EGP) — only the A4 Mixed Media (250 EGP) reaches it.</p>
+        <p>2. Bozoor (بذور), not Jumia, is the real direct competitor — an indie D2C brand at 125–350 EGP with chronic stockouts on its core SKUs (a validated unmet-demand signal).</p>
+        <p>3. Waraqa's flat 50 EGP shipping charge is likely below real courier cost (85–150 EGP per the report) — see §11 for what this does to unit economics.</p>
+      </div>
+    </section>
+
+    <section class="card" id="s1">
+      <h2><span class="n">1</span>Market sizing</h2>
+      <p class="dek">Egypt's stationery market is USD 240–310M/yr; art supplies are an estimated 8–11% slice (~USD 22–30M/yr). Sketchbooks aren't broken out in trade data, so this is a bottom-up demographic build.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cohort</th><th>Population</th><th>Units/yr</th><th>Avg price</th><th>Annual value</th></tr></thead>
+          <tbody>
+            <tr><td>Higher-ed art &amp; design students</td><td>55,000</td><td>5.0</td><td class="egp" data-egp="275">275</td><td class="egp" data-egp="75625000">75,625,000</td></tr>
+            <tr><td>Practicing creative professionals</td><td>35,000</td><td>4.0</td><td class="egp" data-egp="360">360</td><td class="egp" data-egp="50400000">50,400,000</td></tr>
+            <tr><td>Active urban hobbyists &amp; journalers</td><td>140,000</td><td>1.5</td><td class="egp" data-egp="240">240</td><td class="egp" data-egp="50400000">50,400,000</td></tr>
+            <tr><td>K-12 private/intl. art students</td><td>60,000</td><td>2.0</td><td class="egp" data-egp="190">190</td><td class="egp" data-egp="22800000">22,800,000</td></tr>
+            <tr class="total"><td>Total (TAM)</td><td>290,000</td><td>—</td><td>—</td><td class="egp" data-egp="199225000">199,225,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>TAM:</strong> <span class="egp" data-egp="160000000">160,000,000</span>–<span class="egp" data-egp="230000000">230,000,000</span> &middot; <strong>SAM for Waraqa</strong> (urban Cairo/Alex DTC-reachable): <span class="egp" data-egp="55000000">55,000,000</span>–<span class="egp" data-egp="85000000">85,000,000</span>.</p>
+      <div class="callout">
+        <p>Reality check: current stock (§10) has a retail value of <span class="egp" data-egp="16520">16,520</span> — roughly 0.02–0.03% of the SAM. Enormous headroom, but plan for the batch you have, not the market you're addressing eventually.</p>
+      </div>
+    </section>
+
+    <section class="card" id="s2">
+      <h2><span class="n">2</span>Growth &amp; demand signals</h2>
+      <ul>
+        <li>Egypt e-commerce GMV: <span class="egp-usd-native">USD 9.91B (2025) → USD 11.49B (2026E)</span>, 10.0–11.89% CAGR through 2031.</li>
+        <li><strong>Mobile = 72.5–75%</strong> of transactions. <strong>Social commerce ≈ 40%</strong> of online retail — not a minor channel.</li>
+        <li>Search split: <strong>"دفتر رسم" 72%</strong>, "sketchbook" 23%, "art journal" 5% nationwide — but near parity between Arabic and English in affluent Cairo/Alex zones, raising the stakes on the bilingual-crawlability gap already flagged in the SEO audit.</li>
+        <li><strong>Bimodal seasonality:</strong> Peak 1 Sept–Oct (back-to-school), Peak 2 May–June (graduation portfolios). Today is Aug 20 — <strong>Peak 1 is 2–6 weeks out.</strong></li>
+        <li>Diwan Bookstore is actively expanding stationery/journal shelf space into 6th of October City and El Gouna — premium paper goods have room in physical retail too, not just online.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="s3">
+      <h2><span class="n">3</span>Social media landscape</h2>
+      <p class="dek">Instagram = discovery, TikTok = technique proof, Facebook = peer troubleshooting communities.</p>
+      <h3>Creators shaping buying preferences</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Creator</th><th>Focus</th><th>Relevance</th></tr></thead>
+          <tbody>
+            <tr><td>Amr Shaalan</td><td>Graphite/dry-media portraiture</td><td>Heavy-blending, tooth/gsm sensitive audience</td></tr>
+            <tr><td>Noura Farouk</td><td>Watercolor, gouache</td><td>Tests Waraqa's wet-media claim directly</td></tr>
+            <tr><td>Kareem Gouda</td><td>Architectural ink sketching</td><td>Portable, ink-bleed-sensitive audience</td></tr>
+            <tr><td>Passant Khodeir</td><td>Mixed-media, art journaling</td><td>Direct match for Waraqa's Mixed Media line</td></tr>
+            <tr><td>Aya Tarek</td><td>Muralist, contemporary art</td><td>High cultural influence — aspirational, not a seeding target</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>High-intent Facebook groups</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Group</th><th>Size</th><th>Character</th></tr></thead>
+          <tbody>
+            <tr><td>Egyptian Artists Network</td><td>~180,000</td><td>General creative exchange</td></tr>
+            <tr class="hl"><td>Students of Fine &amp; Applied Arts</td><td>~95,000</td><td><strong>Highest intent</strong> — budget-conscious sourcing, alternatives to imports</td></tr>
+            <tr class="hl"><td>Cairo Sketchers / Urban Sketchers Cairo</td><td>~14,000</td><td>Plein-air crawls — ideal for portable formats</td></tr>
+            <tr><td>Egyptian Illustrators &amp; Concept Artists</td><td>~8,500</td><td>Technical GSM/binding focus</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chip-row">
+        <span class="chip">#فن_مصري</span><span class="chip">#رسامين_مصر</span><span class="chip">#فنون_جميلة</span>
+        <span class="chip">#فنون_تطبيقية</span><span class="chip">#رسم_بالرصاص</span><span class="chip">#سكتش_بوك</span>
+      </div>
+    </section>
+
+    <section class="card" id="s4">
+      <h2><span class="n">4</span>Target customer &amp; buying journey</h2>
+      <p>Age 18–32, Greater Cairo (48% of national e-commerce) + Alexandria (14%), B/A/upper-middle income. Discovery via Reels/TikTok → evaluate on GSM, texture, lay-flat binding → buy via DM/social commerce or COD checkout.</p>
+      <h3>Recurring pain points</h3>
+      <ol>
+        <li><strong>Media bleeding &amp; cockling</strong> — sub-140gsm paper marketed as "mixed media." Waraqa's floor is 150gsm on every SKU — already clear of this failure line.</li>
+        <li><strong>Fragile binding</strong> — perfect-bound spines crack; spiral notebooks deform in bags.</li>
+        <li><strong>Import inflation</strong> — Canson/Fabriano/Moleskine priced out of reach after EGP devaluation.</li>
+      </ol>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Use case</th><th>Price band</th></tr></thead>
+          <tbody>
+            <tr><td>Daily rough sketch pads</td><td class="egp" data-egp="120">120</td>–<td class="egp" data-egp="180">180</td></tr>
+            <tr><td>Finished mixed-media/illustration</td><td class="egp" data-egp="220">220</td>–<td class="egp" data-egp="350">350</td></tr>
+            <tr><td>Specialized 300gsm watercolor journals</td><td class="egp" data-egp="400">400</td>–<td class="egp" data-egp="650">650</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Waraqa's 320gsm SKUs (220–250 EGP) sit at the bottom of the "finished mixed-media" band and haven't yet reached the specialized-watercolor tier despite comparable paper weight — real headroom, not a typo.</p>
+    </section>
+
+    <section class="card" id="s5">
+      <h2><span class="n">5</span>Competitor landscape</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Competitor</th><th>Segment</th><th>Specs</th><th>Price (EGP)</th><th>Weakness</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>Bozoor (بذور)</td><td>D2C indie</td><td>145–240gsm</td><td>125–350</td><td>Chronic stockouts on core SKUs</td></tr>
+            <tr><td>Mofkera</td><td>Mass-lifestyle/gift</td><td>100–140gsm</td><td>135–320</td><td>Not optimized for wet/heavy ink</td></tr>
+            <tr><td>Alwan (private label)</td><td>Academic/professional</td><td>150–300gsm</td><td>220–385</td><td>Weak D2C/community branding</td></tr>
+            <tr><td>Canson (import)</td><td>Fine-art standard</td><td>96–300gsm</td><td>367–1,440</td><td>Highly FX-exposed pricing</td></tr>
+            <tr><td>Moleskine (import)</td><td>Luxury</td><td>70–165gsm</td><td>1,150–2,410</td><td>Priced out of student use</td></tr>
+            <tr><td>El Fagala wholesalers</td><td>Budget mass-market</td><td>60–100gsm</td><td>25–75</td><td>Ink feathering, fragile binding</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <p><strong>Research hygiene note:</strong> "Canva" isn't a sketchbook brand — search-aggregator noise from canvas panels on Noon. "Kairos" is a lifestyle planner (AUC alumni discounts), not a fine-art competitor. Skip both.</p>
+      </div>
+      <p><strong>Recommended addition:</strong> a "Waraqa vs. Bozoor" comparison page in <code>marketing/competitors/</code> — more relevant than the marketplace-generic comparison, since Bozoor's own customers are actively stuck without stock right now.</p>
+    </section>
+
+    <section class="card" id="s6">
+      <h2><span class="n">6</span>Pricing matrix</h2>
+      <p class="dek">Filter by tier. Waraqa's own SKUs are marked with a dot.</p>
+      <div class="chip-row" id="tier-filters">
+        <span class="chip active" data-tier="all">All</span>
+        <span class="chip" data-tier="Budget Commodity">Budget Commodity</span>
+        <span class="chip" data-tier="Mid-Market">Mid-Market</span>
+        <span class="chip" data-tier="Premium Imported">Premium Imported</span>
+        <span class="chip" data-tier="Luxury Imported">Luxury Imported</span>
+      </div>
+      <div class="table-wrap">
+        <table id="pricing-matrix">
+          <thead><tr><th>Item</th><th>GSM</th><th>Price</th><th>Tier</th></tr></thead>
+          <tbody>
+            <tr data-tier="Budget Commodity"><td>El Fagala Generic Pad</td><td>70–80</td><td class="egp" data-egp="35">35</td><td>Budget Commodity</td></tr>
+            <tr data-tier="Budget Commodity"><td>Mofkera Kids Sketchbook</td><td>100</td><td class="egp" data-egp="75">75</td><td>Budget Commodity</td></tr>
+            <tr data-tier="Mid-Market"><td>Bozoor Mini Circle</td><td>240</td><td class="egp" data-egp="125">125</td><td>Mid-Market Entry</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa Mini Sketchbook</td><td>200</td><td class="egp" data-egp="120">120</td><td>Mid-Market Entry</td></tr>
+            <tr data-tier="Mid-Market"><td>Bozoor Light Grain</td><td>145</td><td class="egp" data-egp="185">185</td><td>Mid-Market Value</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa A5 Kraft</td><td>180</td><td class="egp" data-egp="180">180</td><td>Mid-Market Value</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa A5 Drawing</td><td>150</td><td class="egp" data-egp="160">160</td><td>Mid-Market Value</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa Large 25×35</td><td>150</td><td class="egp" data-egp="180">180</td><td>Mid-Market Value</td></tr>
+            <tr data-tier="Mid-Market"><td>Bozoor Black Pocket</td><td>240</td><td class="egp" data-egp="220">220</td><td>Mid-Market Core</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa Square 25×25</td><td>250</td><td class="egp" data-egp="190">190</td><td>Mid-Market Core</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa A5 Sketchbook</td><td>250</td><td class="egp" data-egp="200">200</td><td>Mid-Market Core</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa A5 Mixed Media</td><td>320</td><td class="egp" data-egp="220">220</td><td>Mid-Market Core</td></tr>
+            <tr data-tier="Mid-Market"><td>Bozoor Heavy Grain Square</td><td>200+</td><td class="egp" data-egp="350">350</td><td>Mid-Market Premium</td></tr>
+            <tr data-tier="Mid-Market"><td>Canson Drawing Pad B4</td><td>150</td><td class="egp" data-egp="367">367</td><td>Mid-Market Premium</td></tr>
+            <tr data-tier="Mid-Market"><td>Alwan Fine Paper Sketch</td><td>300</td><td class="egp" data-egp="385">385</td><td>Mid-Market Premium</td></tr>
+            <tr data-tier="Mid-Market" class="hl"><td>● Waraqa A4 Mixed Media</td><td>320</td><td class="egp" data-egp="250">250</td><td>Mid-Market Premium (edge)</td></tr>
+            <tr data-tier="Premium Imported"><td>Canson Mi-Teintes Pad</td><td>160</td><td class="egp" data-egp="1125">1,125</td><td>Premium Imported</td></tr>
+            <tr data-tier="Premium Imported"><td>Canson ArtBook Field</td><td>96</td><td class="egp" data-egp="1340">1,340</td><td>Premium Imported</td></tr>
+            <tr data-tier="Luxury Imported"><td>Moleskine Art Sketchbook</td><td>165</td><td class="egp" data-egp="1825">1,825</td><td>Luxury Imported</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <p><strong>Sweet spot: 240–340 EGP.</strong> Only Waraqa's A4 Mixed Media (250 EGP) reaches it — every 250–320gsm SKU below that has room to move up without approaching import territory.</p>
+      </div>
+    </section>
+
+    <section class="card" id="s7">
+      <h2><span class="n">7</span>Sourcing &amp; currency risk</h2>
+      <ul>
+        <li>Hybrid model: import fine-art paper (140–300gsm, acid-free/cotton-blend from Europe/East Asia) + domestic converting/binding.</li>
+        <li>Domestic mills (Rakta, Misr Edfu, Qena) only produce low-gsm newsprint/carton — fine-art stock must be imported.</li>
+        <li>Converter MOQ: <strong>500kg–1 metric ton per grade</strong> — directly explains why small-batch costs more per unit than the report's at-scale benchmark.</li>
+        <li>Real lay-flat needs Smyth-sewn hardcover or Wire-O double-spiral — not standard perfect binding.</li>
+        <li><strong>65–75% of COGS is FX-exposed.</strong> A 10% EGP depreciation → ~6.5–7.5% COGS increase.</li>
+      </ul>
+      <div class="callout">
+        <p><strong>Report benchmark</strong> (at-scale, 280 EGP retail): COGS ≈ <span class="egp" data-egp="90">90</span>–<span class="egp" data-egp="110">110</span> (35–40% of retail) → 60–65% gross margin. <strong>This is unlikely to apply directly to Waraqa's small batch</strong> — see §11 for an adjusted scenario.</p>
+      </div>
+    </section>
+
+    <section class="card" id="s8">
+      <h2><span class="n">8</span>Channels &amp; logistics</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Channel</th><th>Margin profile</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>D2C + social commerce</td><td>Highest</td><td>Full retail capture, direct relationship</td></tr>
+            <tr><td>Specialty bookstores (Diwan, Alwan)</td><td>Wholesale</td><td>Physical touch — assess paper before buying</td></tr>
+            <tr><td>University pop-ups/bazaars</td><td>Direct, seasonal</td><td>Helwan, AUC, Cairo Design Week — feasible, Cairo-based</td></tr>
+            <tr><td>Marketplaces (Jumia/Noon/Amazon.eg)</td><td>−15–22% referral fee</td><td>Reach, but eats unconfirmed margin</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>COD = 45–60% of online buyers' preferred method</strong> — validates Waraqa's COD-only checkout.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Courier</th><th>Zone</th><th>Time</th><th>Fee</th></tr></thead>
+          <tbody>
+            <tr><td>Bosta</td><td>Cairo &amp; Giza</td><td>1–3d</td><td class="egp" data-egp="90">90</td>–<td class="egp" data-egp="100">100</td></tr>
+            <tr><td>Bosta</td><td>Alexandria &amp; Delta</td><td>2–4d</td><td class="egp" data-egp="100">100</td>–<td class="egp" data-egp="120">120</td></tr>
+            <tr><td>Bosta</td><td>Upper Egypt/Red Sea</td><td>3–5d</td><td class="egp" data-egp="120">120</td>–<td class="egp" data-egp="145">145</td></tr>
+            <tr><td>Mylerz</td><td>Cairo &amp; Alexandria</td><td>1–2d</td><td class="egp" data-egp="85">85</td>–<td class="egp" data-egp="110">110</td></tr>
+            <tr><td>Aramex Egypt</td><td>Nationwide</td><td>1–3d</td><td class="egp" data-egp="110">110</td>–<td class="egp" data-egp="150">150</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout headline">
+        <p>Waraqa charges a flat <span class="egp" data-egp="50">50</span> shipping fee — below every benchmark rate above. This needs direct confirmation; see §11 for what the gap does to unit economics.</p>
+      </div>
+    </section>
+
+    <section class="card" id="s9">
+      <h2><span class="n">9</span>Marketing &amp; CAC benchmarks</h2>
+      <ul>
+        <li><strong>Best formats:</strong> stress-testing demos (ink/marker/watercolor on camera), flip-throughs, tactile ASMR unboxings.</li>
+        <li><strong>Blended CAC:</strong> <span class="egp" data-egp="45">45</span>–<span class="egp" data-egp="80">80</span> via targeted Meta/TikTok.</li>
+        <li><strong>Celebrity influencers underperform</strong> — seeding ~50 free books to fine arts seniors/TAs beats paid celebrity placement on organic reach.</li>
+        <li><strong>Campaign timing:</strong> Sept–Oct intake, Apr–May graduation.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="s10">
+      <h2><span class="n">10</span>Waraqa's current stock</h2>
+      <p class="dek">97 units, <span class="egp" data-egp="16520">16,520</span> total retail value. Bars show stock depth — red marks the two scarcest SKUs.</p>
+      <div id="stock-chart"></div>
+      <div class="table-wrap" style="margin-top:1.2rem;">
+        <table>
+          <thead><tr><th>SKU</th><th>Price</th><th>Stock</th><th>Value</th></tr></thead>
+          <tbody id="stock-table"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="s11">
+      <h2><span class="n">11</span>Financial strategy</h2>
+      <div class="callout headline">
+        <p>A single-item order acquired through paid ads is likely unprofitable. Bundle/higher-AOV orders are dramatically better — even under generous assumptions.</p>
+      </div>
+      <h3>Two COGS scenarios (real cost data doesn't exist yet)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Scenario</th><th>COGS % of retail</th><th>Gross margin</th><th>Basis</th></tr></thead>
+          <tbody>
+            <tr><td>Report benchmark</td><td>35–40%</td><td>60–65%</td><td>At-scale, 500kg–1MT paper MOQ</td></tr>
+            <tr class="hl"><td>Small-batch adjusted</td><td>50–55% (illustrative)</td><td>45–50%</td><td>Worse per-kg cost + unamortized setup — <strong>placeholder</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Applied to current inventory (<span class="egp" data-egp="16520">16,520</span>, 97 units): gross profit ranges from <span class="egp" data-egp="7430">7,430</span> (small-batch, low end) to <span class="egp" data-egp="10740">10,740</span> (benchmark, high end) — <strong>before shipping subsidy and CAC.</strong></p>
+
+      <h3>Per-order economics — why AOV is the whole game</h3>
+      <p class="dek">Illustrative: 37.5% COGS, 95 EGP courier (Cairo/Giza), 62.5 EGP CAC, Waraqa's real 50 EGP shipping charge. Replace with real numbers once known.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order profile</th><th>Revenue</th><th>Est. COGS</th><th>Courier</th><th>CAC</th><th>Net contribution</th></tr></thead>
+          <tbody>
+            <tr><td>Single Mini (120 EGP)</td><td class="egp" data-egp="170">170</td><td class="egp" data-egp="45">45</td><td class="egp" data-egp="95">95</td><td class="egp" data-egp="63">63</td><td class="neg egp" data-egp="-33">−33</td></tr>
+            <tr><td>Single mid-tier (200 EGP)</td><td class="egp" data-egp="250">250</td><td class="egp" data-egp="75">75</td><td class="egp" data-egp="95">95</td><td class="egp" data-egp="63">63</td><td class="pos egp" data-egp="18">+18</td></tr>
+            <tr><td>3-book starter bundle (~522 EGP)</td><td class="egp" data-egp="572">572</td><td class="egp" data-egp="196">196</td><td class="egp" data-egp="95">95</td><td class="egp" data-egp="63">63</td><td class="pos egp" data-egp="219">+219</td></tr>
+            <tr><td>Free-shipping order (~800 EGP)</td><td class="egp" data-egp="800">800</td><td class="egp" data-egp="300">300</td><td class="egp" data-egp="120">120</td><td class="egp" data-egp="63">63</td><td class="pos egp" data-egp="318">+318</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A 3-book bundle order is roughly <strong>7x more profitable per order</strong> than a single cheap item — because fixed costs (courier, CAC) spread across more revenue, not because of a discount. This is the numeric backbone for the bundle recommendation already in the pricing doc.</p>
+
+      <h3>Recommendations</h3>
+      <ol>
+        <li>Get real COGS from your supplier — everything above is a structured guess until then.</li>
+        <li>Confirm the actual courier rate paid vs. the 50 EGP charged.</li>
+        <li>Don't run paid ads against single-item cheap SKUs (especially the Mini) until a bundle exists.</li>
+        <li>Hold off on marketplace listings until margin is confirmed.</li>
+        <li>Build a small FX buffer into the next production run's pricing.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="s12">
+      <h2><span class="n">12</span>Sales strategy</h2>
+      <h3>Zero-cost first (start now)</h3>
+      <ul>
+        <li>Reactivate Instagram — 3,000 dormant followers, zero CAC to re-engage.</li>
+        <li>Launch TikTok — no presence today, best-validated format for this audience.</li>
+        <li>Join and genuinely participate in <strong>Students of Fine &amp; Applied Arts (~95k)</strong> and <strong>Cairo Sketchers (~14k)</strong>. Skip building a new Facebook Page.</li>
+      </ul>
+      <h3>Low-cost, inventory-aware seeding (next 2–3 weeks)</h3>
+      <ul>
+        <li>Seed <strong>6–10 units</strong> (not the report's 50 — that's over half of current stock) to students/creators, drawn from abundant SKUs (Mini, Kraft), not the scarce A5-150/A4-320.</li>
+      </ul>
+      <h3>Hold until real numbers exist</h3>
+      <ul>
+        <li>Paid Meta/TikTok acquisition — likely loss-making on single-item orders today (§11).</li>
+        <li>Marketplace listings — referral fees eat an unconfirmed margin.</li>
+      </ul>
+      <h3>Pricing sequencing</h3>
+      <ol>
+        <li>Don't reprice current live stock — trust cost outweighs the margin gain.</li>
+        <li>Price the <strong>next production run inside 240–340 EGP</strong>, especially 250–320gsm SKUs.</li>
+        <li>Test one new SKU at the 400–650 EGP specialized-watercolor tier — a test, not a lineup replacement.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="s13">
+      <h2><span class="n">13</span>Instagram, TikTok &amp; Facebook plan</h2>
+      <p><strong>Priority order:</strong> TikTok (launch now) → Instagram (reactivate) → Facebook (participate in existing groups, don't build a new Page).</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pillar</th><th>Format</th><th>Why it works here</th></tr></thead>
+          <tbody>
+            <tr><td>Stress-testing</td><td>Ink/marker/watercolor on camera</td><td>Answers the #1 market complaint: bleeding</td></tr>
+            <tr><td>Flip-throughs</td><td>Full finished books</td><td>Aspirational; great reposted UGC</td></tr>
+            <tr><td>ASMR unboxings</td><td>Texture, grain, lay-flat</td><td>Sensory proof, native Reels/TikTok format</td></tr>
+            <tr><td>Behind-the-paper</td><td>Workshop/process story</td><td>Fills the trust gap already flagged in the content-strategy doc</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chip-row">
+        <span class="chip">#فن_مصري</span><span class="chip">#رسامين_مصر</span><span class="chip">#فنون_جميلة</span>
+        <span class="chip">#فنون_تطبيقية</span><span class="chip">#رسم_بالرصاص</span><span class="chip">#سكتش_بوك</span>
+      </div>
+      <h3>6-week calendar into the Sept–Oct peak</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Week</th><th>Focus</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td><span class="cal-week">1 · Aug 20–26</span></td><td>Reactivate</td><td>IG behind-the-paper + flip-through. Launch TikTok, first stress-test video.</td></tr>
+            <tr><td><span class="cal-week">2 · Aug 27–Sep 2</span></td><td>Prove the claim</td><td>2–3 stress-tests (one per gsm). Join &amp; post genuinely in priority FB groups.</td></tr>
+            <tr><td><span class="cal-week">3 · Sep 3–9</span></td><td>Seed</td><td>Send seeding units (Mini/Kraft) to 6–10 students/creators. Post ASMR unboxing.</td></tr>
+            <tr><td><span class="cal-week">4 · Sep 10–16</span></td><td>Amplify</td><td>Repost seeded creators' content. First back-to-school framed post.</td></tr>
+            <tr><td><span class="cal-week">5 · Sep 17–23</span></td><td>Peak push</td><td>Daily cadence through intake window. Feature scarce SKUs as limited, not discounted.</td></tr>
+            <tr><td><span class="cal-week">6 · Sep 24–30</span></td><td>Sustain</td><td>Continue cadence; begin deeper Behind-the-Paper content for the post-peak lull.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="s14">
+      <h2><span class="n">14</span>Bottom line</h2>
+      <p>Three structural tailwinds converge right now:</p>
+      <ol>
+        <li><strong>Import cost dislocation</strong> pushed Canson/Moleskine to 800–2,400+ EGP — Waraqa's 150–320gsm range sits inside the gap they vacated.</li>
+        <li><strong>Bozoor's stockouts are a validated demand signal</strong>, not a hypothesis — the closest competitor can't supply its own core SKUs.</li>
+        <li><strong>Waraqa is underpriced relative to its own specs</strong> — a low-risk opportunity that needs no new product, only correct pricing on the next batch.</li>
+      </ol>
+      <div class="updates-box">
+        <p style="margin-top:0;"><strong>Resolve these two internal unknowns before spending on paid acquisition:</strong></p>
+        <ul style="margin-bottom:0;">
+          <li>Real COGS per SKU</li>
+          <li>Actual courier cost vs. the 50 EGP charged</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      Waraqa (ورقة) &middot; Market deep-dive &middot; companion to the competitor, SEO, pricing, content-strategy, and copywriting docs in <code>marketing/</code>
+    </footer>
+  </main>
+</div>
+
+<script>
+  var RATE = 48.5;
+  var currency = 'egp';
+
+  function setCurrency(c) {
+    currency = c;
+    document.getElementById('btn-egp').classList.toggle('active', c === 'egp');
+    document.getElementById('btn-usd').classList.toggle('active', c === 'usd');
+    document.body.classList.toggle('usd-view', c === 'usd');
+    renderMoney();
+  }
+
+  function fmt(n) {
+    var neg = n < 0;
+    n = Math.abs(n);
+    var s = (currency === 'usd') ? (n / RATE).toFixed(n / RATE < 10 ? 2 : 0) : Math.round(n).toString();
+    s = s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + s;
+  }
+
+  function renderMoney() {
+    var nodes = document.querySelectorAll('.egp[data-egp]');
+    nodes.forEach(function (el) {
+      var v = parseFloat(el.getAttribute('data-egp'));
+      el.textContent = fmt(v);
+    });
+  }
+
+  // stock chart + table
+  var stock = [
+    { sku: 'A5 Mixed Media 320gsm', price: 220, units: 9 },
+    { sku: 'A5 Kraft 180gsm', price: 180, units: 19 },
+    { sku: 'A5 Drawing 150gsm', price: 160, units: 5 },
+    { sku: 'A5 Sketchbook 250gsm', price: 200, units: 8 },
+    { sku: 'Mini 200gsm', price: 120, units: 30 },
+    { sku: 'Large 25×35 150gsm', price: 180, units: 12 },
+    { sku: 'Square 25×25 250gsm', price: 190, units: 9 },
+    { sku: 'A4 Mixed Media 320gsm', price: 250, units: 5 },
+  ];
+  var maxUnits = Math.max.apply(null, stock.map(function (s) { return s.units; }));
+
+  function renderStock() {
+    var chart = document.getElementById('stock-chart');
+    var tbody = document.getElementById('stock-table');
+    var chartHtml = '';
+    var rowsHtml = '';
+    stock.forEach(function (s) {
+      var pct = Math.round((s.units / maxUnits) * 100);
+      var scarce = s.units <= 5;
+      chartHtml += '<div class="stock-row">' +
+        '<span>' + s.sku + '</span>' +
+        '<span class="stock-track"><span class="stock-fill' + (scarce ? ' scarce' : '') + '" style="width:' + pct + '%"></span></span>' +
+        '<span class="stock-num">' + s.units + ' left</span>' +
+        '</div>';
+      rowsHtml += '<tr' + (scarce ? ' class="hl"' : '') + '><td>' + s.sku + '</td>' +
+        '<td class="egp" data-egp="' + s.price + '">' + s.price + '</td>' +
+        '<td>' + s.units + '</td>' +
+        '<td class="egp" data-egp="' + (s.price * s.units) + '">' + (s.price * s.units) + '</td></tr>';
+    });
+    var total = stock.reduce(function (a, s) { return a + s.price * s.units; }, 0);
+    rowsHtml += '<tr class="total"><td>Total</td><td></td><td>' + stock.reduce(function (a, s) { return a + s.units; }, 0) + '</td>' +
+      '<td class="egp" data-egp="' + total + '">' + total + '</td></tr>';
+    chart.innerHTML = chartHtml;
+    tbody.innerHTML = rowsHtml;
+    renderMoney();
+  }
+  renderStock();
+
+  // pricing matrix tier filter
+  document.getElementById('tier-filters').addEventListener('click', function (e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#tier-filters .chip').forEach(function (c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    var tier = chip.getAttribute('data-tier');
+    document.querySelectorAll('#pricing-matrix tbody tr').forEach(function (row) {
+      row.style.display = (tier === 'all' || row.getAttribute('data-tier') === tier) ? '' : 'none';
+    });
+  });
+
+  // sidebar active-section highlight
+  var sections = document.querySelectorAll('section.card');
+  var links = document.querySelectorAll('#toc a');
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var link = document.querySelector('#toc a[href="#' + entry.target.id + '"]');
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(function (l) { l.classList.remove('active'); });
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px' });
+  sections.forEach(function (s) { observer.observe(s); });
+</script>

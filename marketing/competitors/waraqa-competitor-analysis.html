@@ -1,0 +1,508 @@
+<title>Waraqa — Competitor Comparison Content Package</title>
+<style>
+  :root {
+    --bg: #f3eee2;
+    --surface: #fbf8f1;
+    --surface-2: #ece4d3;
+    --ink: #221d17;
+    --ink-muted: #5c5344;
+    --ink-faint: #8a7f6c;
+    --accent: #3c5866;
+    --accent-strong: #294048;
+    --accent-soft: #dde6e8;
+    --verified: #6d7f3a;
+    --verified-bg: #e7ecd7;
+    --unverified: #a1522f;
+    --unverified-bg: #f2ddd0;
+    --rule: #d9cfb9;
+    --shadow: 0 1px 2px rgba(34, 29, 23, 0.06);
+    --spiral: #c9bd9f;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1b1712;
+    --surface: #241f18;
+    --surface-2: #2c261d;
+    --ink: #ece4d4;
+    --ink-muted: #b7ab93;
+    --ink-faint: #857a63;
+    --accent: #8fb3c0;
+    --accent-strong: #b8d3dc;
+    --accent-soft: #2b3c40;
+    --verified: #a9c06a;
+    --verified-bg: #2e3320;
+    --unverified: #d99468;
+    --unverified-bg: #3a2a20;
+    --rule: #3a3226;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --spiral: #46402f;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1b1712;
+      --surface: #241f18;
+      --surface-2: #2c261d;
+      --ink: #ece4d4;
+      --ink-muted: #b7ab93;
+      --ink-faint: #857a63;
+      --accent: #8fb3c0;
+      --accent-strong: #b8d3dc;
+      --accent-soft: #2b3c40;
+      --verified: #a9c06a;
+      --verified-bg: #2e3320;
+      --unverified: #d99468;
+      --unverified-bg: #3a2a20;
+      --rule: #3a3226;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --spiral: #46402f;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  header.masthead {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .eyebrow .dots {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .eyebrow .dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--spiral);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 3.4vw, 2.35rem);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    margin: 0.6rem 0 0.5rem;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    color: var(--ink-muted);
+    font-size: 1.02rem;
+    max-width: 56ch;
+  }
+
+  .meta-row {
+    margin-top: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+  }
+
+  h2 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin: 3rem 0 0.4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+  section:first-of-type h2:first-child { border-top: none; padding-top: 0; }
+
+  .section-num {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    color: var(--accent);
+    font-weight: 500;
+    margin-right: 0.5rem;
+  }
+
+  h3 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 1.8rem 0 0.6rem;
+  }
+
+  p { margin: 0.8rem 0; color: var(--ink); }
+  p.lead { color: var(--ink-muted); }
+
+  a { color: var(--accent-strong); text-decoration-color: var(--rule); text-underline-offset: 2px; }
+  a:hover { text-decoration-color: var(--accent-strong); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  ul, ol { padding-left: 1.3rem; color: var(--ink); }
+  li { margin: 0.35rem 0; }
+
+  strong { color: var(--ink); font-weight: 700; }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    box-shadow: var(--shadow);
+  }
+  .callout p { margin: 0.4rem 0; font-size: 0.95rem; color: var(--ink-muted); }
+  .callout p:first-child { margin-top: 0; }
+
+  .callout.simulation { border-left-color: var(--ink-faint); }
+  .callout.simulation p { font-style: italic; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .badge.verified { background: var(--verified-bg); color: var(--verified); }
+  .badge.unverified { background: var(--unverified-bg); color: var(--unverified); }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.1rem 0;
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    background: var(--surface);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.9rem; }
+  thead th {
+    text-align: left;
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface-2);
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-muted);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  td, th { font-variant-numeric: tabular-nums; }
+  tbody tr.highlight td:first-child { color: var(--accent-strong); }
+  tbody tr.highlight { background: var(--accent-soft); }
+
+  .page-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.6rem 1.8rem 1.9rem;
+    margin: 1.4rem 0 2rem;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .page-card::before {
+    content: "";
+    position: absolute;
+    left: -1px; top: 14px; bottom: 14px;
+    width: 6px;
+    background-image: radial-gradient(circle, var(--spiral) 1.6px, transparent 1.7px);
+    background-size: 6px 14px;
+    border-radius: 3px 0 0 3px;
+    opacity: 0.9;
+  }
+  .page-card .kicker {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .page-card h3.page-title {
+    font-size: 1.3rem;
+    margin: 0 0 0.9rem;
+  }
+  .seo-meta {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.8rem;
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    margin: 0.9rem 0 1.3rem;
+    color: var(--ink-muted);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .seo-meta strong { font-family: inherit; color: var(--ink); }
+
+  .tldr {
+    font-size: 1rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--accent-soft);
+    border-radius: 5px;
+    margin: 1rem 0 1.4rem;
+    color: var(--ink);
+  }
+  .tldr strong { color: var(--accent-strong); }
+
+  .cta-line {
+    margin-top: 1.4rem;
+    font-weight: 600;
+  }
+  .cta-line a {
+    color: var(--accent-strong);
+  }
+
+  .advisor {
+    margin: 1.1rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--rule);
+  }
+  .advisor .name {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .advisor .lens {
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  footer.doc-footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 560px) {
+    .page-card { padding: 1.3rem 1.1rem 1.5rem; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow"><span class="dots"><span></span><span></span><span></span></span> Waraqa (ورقة) &middot; Marketing deliverable</div>
+    <h1>Competitor Comparison Content Package</h1>
+    <p class="subtitle lead">Comparison &amp; alternatives content for Waraqa's sketchbooks, built for search intent that already exists in Egypt — with SEO, objection-handling, and positioning notes folded in.</p>
+    <div class="meta-row">
+      <span>Prepared 2026&#8209;08&#8209;20</span>
+      <span>Scope: competitor/alternative content</span>
+      <span>Companion file: waraqa&#8209;competitor&#8209;analysis.md</span>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="section-num">0</span>Methodology &amp; data honesty</h2>
+    <p>Waraqa has no direct named competitor — no other Egyptian brand sells "artisan, small-batch, heavyweight sketchbooks" as a category. The real competition is <strong>wherever a sketch artist in Egypt already buys paper today.</strong></p>
+    <div class="callout">
+      <p><span class="badge verified">Live&#8209;verified</span> &nbsp;Jumia Egypt's sketchbook category was fetched directly on 2026&#8209;08&#8209;20. The brand names, SKUs, and EGP prices below (Keep Smiling, Smart, Yassin) are accurate as of that fetch.</p>
+      <p><span class="badge unverified">Directional</span> &nbsp;Web search was rate-limited this session, so imported-brand and local-bookshop figures are described qualitatively from general market structure — confirm before quoting specific numbers publicly.</p>
+      <p><span class="badge verified">Verified</span> &nbsp;All Waraqa product, pricing, and brand-copy facts are pulled directly from this repo's <code>src/data/products.json</code> and <code>src/lib/translations.ts</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-num">1</span>Competitive landscape snapshot</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Dimension</th><th>Waraqa</th><th>Marketplace generic</th><th>Imported premium</th><th>Local bookshop</th></tr>
+        </thead>
+        <tbody>
+          <tr class="highlight"><td>Price range</td><td>120&ndash;250 EGP</td><td>68&ndash;320 EGP <span class="badge verified">verified</span></td><td>~300&ndash;800+ EGP <span class="badge unverified">est.</span></td><td>&lt;100 EGP <span class="badge unverified">est.</span></td></tr>
+          <tr><td>Paper weight</td><td>150&ndash;320 gsm, acid&#8209;free</td><td>Mostly 100&ndash;190 gsm</td><td>Usually heavy, acid&#8209;free</td><td>Usually light, unstated</td></tr>
+          <tr><td>Made / sourced</td><td>Handmade, small&#8209;batch, Cairo</td><td>Mass&#8209;manufactured</td><td>Imported, distributor markup</td><td>Mixed, often unbranded</td></tr>
+          <tr><td>Arabic site &amp; support</td><td>Full bilingual, Egyptian dialect, RTL</td><td>Marketplace UI only</td><td>Rare</td><td>In&#8209;person only</td></tr>
+          <tr><td>Checkout</td><td>COD, WhatsApp, all 27 governorates</td><td>Platform checkout</td><td>Often prepay/import only</td><td>Cash, in&#8209;store</td></tr>
+          <tr><td>Best for</td><td>Ink/marker/mixed&#8209;media artists</td><td>Budget, pencil&#8209;only buyers</td><td>Brand loyalists</td><td>Immediate, in&#8209;person need</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>The honest gap Waraqa fills:</strong> the only option combining heavyweight, acid-free paper with local, Arabic-first, cash-on-delivery buying at a mid-range price. Marketplace wins on rock-bottom price; imported brands win on name recognition; nothing else combines quality + local + affordable.</p>
+  </section>
+
+  <section>
+    <h2><span class="section-num">2</span>Page A &mdash; "You vs. Competitor"</h2>
+
+    <div class="page-card">
+      <div class="kicker">Ready-to-publish page copy</div>
+      <h3 class="page-title">Waraqa vs. Marketplace Sketchbooks (Jumia, Noon &amp; Generic Brands)</h3>
+      <div class="seo-meta">
+        <div><strong>URL:</strong> /vs/marketplace-sketchbooks</div>
+        <div><strong>Keywords:</strong> sketchbook Egypt, sketchbook vs Jumia, best sketchbook Egypt, دفتر رسم مصر, سكتش بوك اونلاين مصر</div>
+        <div><strong>Title tag:</strong> Waraqa vs. Marketplace Sketchbooks — Which Is Worth It?</div>
+        <div><strong>Meta description:</strong> Comparing Waraqa's handmade, heavyweight sketchbooks to generic marketplace options on Jumia and Noon. See paper quality, pricing, and who each is really for.</div>
+      </div>
+
+      <div class="tldr"><strong>TL;DR&mdash;</strong> Marketplace sketchbooks are cheaper at the floor and fine for casual doodling. Waraqa costs a bit more on average but uses genuinely heavier, acid-free paper (150&ndash;320gsm vs. mostly 100&ndash;190gsm), is handmade in small batches in Cairo, and ships nationwide with cash on delivery &mdash; no card, no import wait.</p></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Waraqa</th><th>Marketplace generic</th></tr></thead>
+          <tbody>
+            <tr><td>Price</td><td>120&ndash;250 EGP</td><td>68&ndash;320 EGP</td></tr>
+            <tr><td>Paper weight</td><td>150&ndash;320 gsm, every SKU</td><td>Mostly 100&ndash;190 gsm, inconsistent</td></tr>
+            <tr><td>Acid-free claim</td><td>Stated on every product</td><td>Not stated on listings found</td></tr>
+            <tr><td>Buying experience</td><td>Dedicated bilingual store, WhatsApp confirmation, COD</td><td>One of 136+ competing listings</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Paper quality, in plain terms.</strong> Most marketplace sketchbooks are priced by sheet count, not weight &mdash; a 96&#8209;sheet pad at 258 EGP sounds like a deal until you notice it's 120gsm, thin enough for markers and wet media to bleed through. Waraqa's lightest paper is 150gsm; the mixed-media and dry-media lines run 250&ndash;320gsm, and every SKU is labeled acid&#8209;free. If you work in ink, marker, or anything wetter than pencil, gsm is the number that matters &mdash; not sheet count.</p>
+
+      <p><strong>Price, honestly.</strong> At the very bottom, marketplace wins &mdash; a 68 EGP spiral pad from Yassin beats anything Waraqa sells on price alone. But match on paper weight (150gsm+) and the gap mostly closes: Waraqa's 150gsm A5 is 160 EGP; Smart's comparable 150gsm B4 is 155 EGP. The real difference isn't price &mdash; it's that Waraqa guarantees the weight and acid-free claim on every product, while marketplace listings vary brand to brand.</p>
+
+      <p><strong>Buying experience.</strong> Jumia and Noon are built for browsing 136 competing SKUs at once &mdash; efficient if you know exactly what you want, overwhelming if you don't. Waraqa is a single-purpose bilingual store (Egyptian Arabic, not formal MSA) with 8 curated sketchbooks, WhatsApp order confirmation, and cash-on-delivery across all 27 governorates.</p>
+
+      <p><strong>Marketplace is best for:</strong> casual buyers who want the cheapest pad for pencil sketching or school use and don't mind comparing dozens of near-identical listings.<br>
+      <strong>Waraqa is best for:</strong> artists in ink, marker, or mixed media who need guaranteed paper weight, a curated selection, and a local, Arabic-first, cash-on-delivery experience.</p>
+
+      <p class="cta-line">CTA &mdash; <a href="#">Shop Waraqa sketchbooks &rarr;</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-num">3</span>Page B &mdash; "Alternatives" roundup</h2>
+
+    <div class="page-card">
+      <div class="kicker">Ready-to-publish page copy</div>
+      <h3 class="page-title">Best Sketchbooks in Egypt: A Buyer's Guide (2026)</h3>
+      <div class="seo-meta">
+        <div><strong>URL:</strong> /best-sketchbooks-egypt</div>
+        <div><strong>Keywords:</strong> best sketchbook Egypt, sketchbook Egypt buy online, where to buy sketchbook Cairo, أفضل دفتر رسم في مصر</div>
+        <div><strong>Title tag:</strong> Best Sketchbooks in Egypt (2026): A Buyer's Guide</div>
+        <div><strong>Meta description:</strong> Where to actually buy a good sketchbook in Egypt — heavyweight local options, marketplace picks, imported brands, and what to check before you buy.</div>
+      </div>
+
+      <p>There's no dedicated art-supply chain in Egypt the way there is in the US or UK. Sketchbooks are scattered across general marketplaces, a handful of imported-brand importers, and stationery counters &mdash; and almost none of them state paper weight up front, which is the one spec that decides whether your pens bleed through.</p>
+
+      <h3>What to check before you buy</h3>
+      <ul>
+        <li><strong>GSM (paper weight)</strong> &mdash; under 120gsm bleeds with markers/ink; 150gsm+ is safe for most media; 250gsm+ for wet media.</li>
+        <li><strong>Acid-free / archival claim</strong> &mdash; matters if you're keeping the work long-term.</li>
+        <li><strong>Binding</strong> &mdash; spiral lies flat for scanning; hardcover/kraft-bound travels better.</li>
+        <li><strong>Actual delivery to your city</strong> &mdash; some importers ship Cairo/Alex only.</li>
+        <li><strong>Return-before-you-pay</strong> &mdash; COD lets you check paper quality before committing.</li>
+      </ul>
+
+      <h3>The options, ranked by what they're actually good for</h3>
+      <p><strong>1. Waraqa</strong> &mdash; best for heavyweight paper at a local price. 120&ndash;250 EGP &middot; 150&ndash;320gsm across all 8 SKUs &middot; handmade small-batch in Cairo &middot; bilingual EN/AR &middot; COD nationwide.</p>
+      <p><strong>2. Jumia / Noon marketplace brands</strong> (Keep Smiling, Smart, Yassin) &mdash; best for rock-bottom price. 68&ndash;320 EGP, weight varies widely by listing.</p>
+      <p><strong>3. Imported brands</strong> (Moleskine, Faber-Castell, Strathmore) &mdash; best for a known global brand. <span class="badge unverified">Directional pricing</span> highest band once import markup applies; sold through a handful of specialty stores, not nationwide delivery.</p>
+      <p><strong>4. Local stationery counters / bookshops</strong> &mdash; best for "I need a pad right now." <span class="badge unverified">Directional</span> cheapest, thinnest, unbranded, in-person only.</p>
+
+      <p class="cta-line">CTA &mdash; <a href="#">See all 8 Waraqa sketchbooks &rarr;</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-num">4</span>On-page SEO implementation notes</h2>
+    <ul>
+      <li><strong>Metadata gap found in this repo:</strong> only <code>src/app/layout.tsx</code> exports <code>metadata</code> — no page currently overrides title/description. Give both new pages their own explicit <code>export const metadata</code>.</li>
+      <li><strong>Headings:</strong> one H1 per page, H2 per comparison section, as drafted above.</li>
+      <li><strong>Internal linking:</strong> link both pages to <code>/shop</code> and to each other; link from the homepage or footer so neither is orphaned.</li>
+      <li><strong>FAQ schema candidate:</strong> "Is Waraqa cheaper than Jumia sketchbooks?" &middot; "What gsm should I buy for ink or marker?" &middot; "Does Waraqa ship outside Cairo?"</li>
+      <li><strong>Bilingual:</strong> translate Page B fully into Egyptian Arabic (not just navigation) for <code>/ar</code> &mdash; boilerplate-only translation risks duplicate-content treatment.</li>
+      <li><strong>Images:</strong> real product photos with descriptive alt text (e.g. <em>"Waraqa A5 kraft sketchbook, 180gsm, spiral-bound"</em>) rather than generic alt text &mdash; also helps AI-answer extraction of the gsm/price facts.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="section-num">5</span>Objection-handling quick reference</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Objection</th><th>Response</th><th>Proof point</th></tr></thead>
+        <tbody>
+          <tr><td>"Jumia has sketchbooks for half the price."</td><td>True at the floor &mdash; but match on 150gsm+ and prices are close.</td><td>Waraqa 150gsm A5 = 160 EGP vs. Smart 150gsm B4 = 155 EGP</td></tr>
+          <tr><td>"How do I know it's good quality without seeing it first?"</td><td>You inspect it before you pay &mdash; nothing charged until it's in hand.</td><td>Cash-on-delivery nationwide</td></tr>
+          <tr><td>"Delivery outside Cairo?"</td><td>Yes &mdash; all 27 governorates, 2&ndash;4 business days.</td><td>Shipping config confirms nationwide coverage</td></tr>
+          <tr><td>"Why not an imported brand I already trust?"</td><td>If you need that brand, get it. For the same paper quality without import markup or wait, this is built for that.</td><td>Local production, no import wait</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-num">6</span>Positioning stress-test</h2>
+    <div class="callout simulation">
+      <p>Simulated council &mdash; built from each advisor's published frameworks, not their actual review of Waraqa.</p>
+    </div>
+    <div class="advisor">
+      <span class="name">April Dunford</span> &mdash; <span class="lens">positioning against real alternatives.</span>
+      <p>The comparison table is the right instinct: name what customers would do without you, don't invent a rival that doesn't exist. Pick the alternative with the most search volume (likely marketplace) as the primary page; use the buyer's guide as the secondary net-caster.</p>
+    </div>
+    <div class="advisor">
+      <span class="name">Rory Sutherland</span> &mdash; <span class="lens">price as a quality signal.</span>
+      <p>A price above the cheapest marketplace pad isn't a weakness &mdash; "handmade in Cairo, inspect before you pay" justifies a price a generic pad can't claim. Lead with the story; let price-matching be the reassurance, not the headline.</p>
+    </div>
+    <div class="advisor">
+      <span class="name">Seth Godin</span> &mdash; <span class="lens">smallest viable audience.</span>
+      <p>Write for the ink/marker/mixed-media artist who's personally felt bleed-through on cheap paper &mdash; narrow, findable, and already served by the copy above. Resist broadening to "anyone who sketches."</p>
+    </div>
+    <p><strong>Where they'd disagree:</strong> Dunford would prioritize the marketplace comparison (bigger search term); Godin would prioritize whichever page serves the narrowest real pain, regardless of volume. Resolved by shipping both &mdash; they serve different funnel stages.</p>
+  </section>
+
+  <section>
+    <h2><span class="section-num">7</span>Next steps</h2>
+    <ol>
+      <li>Confirm the two directional price bands (imported, local bookshop) before publishing externally.</li>
+      <li>Build Page A and Page B as real Next.js routes, each with its own <code>metadata</code> export.</li>
+      <li>Add FAQ JSON-LD schema to at least Page A.</li>
+      <li>Fully translate Page B into Egyptian Arabic for <code>/ar</code>.</li>
+      <li>Link both pages from <code>/shop</code> and the footer.</li>
+      <li>Re-run competitor research once web search is available to name real specialty art-supply competitors in Cairo/Alex.</li>
+    </ol>
+  </section>
+
+  <footer class="doc-footer">
+    Waraqa (ورقة) &middot; Competitor comparison content package &middot; companion markdown: <code>marketing/competitors/waraqa-competitor-analysis.md</code>
+  </footer>
+
+</div>

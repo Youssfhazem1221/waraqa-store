@@ -1,0 +1,308 @@
+<title>Waraqa — SEO, Pricing &amp; Content Strategy</title>
+<style>
+  :root {
+    --bg: #f3eee2;
+    --surface: #fbf8f1;
+    --surface-2: #ece4d3;
+    --ink: #221d17;
+    --ink-muted: #5c5344;
+    --ink-faint: #8a7f6c;
+    --accent: #3c5866;
+    --accent-strong: #294048;
+    --accent-soft: #dde6e8;
+    --critical: #a1522f;
+    --critical-bg: #f2ddd0;
+    --high: #b8863b;
+    --high-bg: #f2e8cf;
+    --good: #6d7f3a;
+    --good-bg: #e7ecd7;
+    --rule: #d9cfb9;
+    --shadow: 0 1px 2px rgba(34, 29, 23, 0.06);
+    --spiral: #c9bd9f;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1712; --surface: #241f18; --surface-2: #2c261d;
+    --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+    --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #2b3c40;
+    --critical: #d99468; --critical-bg: #3a2a20;
+    --high: #d9c07a; --high-bg: #3a331e;
+    --good: #a9c06a; --good-bg: #2e3320;
+    --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.3); --spiral: #46402f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1b1712; --surface: #241f18; --surface-2: #2c261d;
+      --ink: #ece4d4; --ink-muted: #b7ab93; --ink-faint: #857a63;
+      --accent: #8fb3c0; --accent-strong: #b8d3dc; --accent-soft: #2b3c40;
+      --critical: #d99468; --critical-bg: #3a2a20;
+      --high: #d9c07a; --high-bg: #3a331e;
+      --good: #a9c06a; --good-bg: #2e3320;
+      --rule: #3a3226; --shadow: 0 1px 2px rgba(0,0,0,0.3); --spiral: #46402f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+  header.masthead { border-bottom: 1px solid var(--rule); padding-bottom: 1.75rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 0.6rem;
+  }
+  .eyebrow .dots { display: inline-flex; gap: 3px; }
+  .eyebrow .dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--spiral); display: inline-block; }
+  h1 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: clamp(1.7rem, 3.4vw, 2.35rem); line-height: 1.18;
+    letter-spacing: -0.01em; margin: 0.6rem 0 0.5rem; text-wrap: balance;
+  }
+  .subtitle { color: var(--ink-muted); font-size: 1.02rem; max-width: 60ch; }
+  .meta-row {
+    margin-top: 1.1rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.8rem; color: var(--ink-faint);
+  }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin: 1.5rem 0 0;
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.78rem;
+  }
+  nav.toc a { color: var(--accent-strong); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  nav.toc a:hover { border-bottom-color: var(--accent-strong); }
+
+  .domain { margin-top: 3.5rem; }
+  .domain > h2 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-weight: 600; font-size: 1.65rem; margin: 0 0 0.3rem; text-wrap: balance;
+  }
+  .domain .domain-sub { color: var(--ink-muted); font-size: 0.95rem; margin-bottom: 1.4rem; }
+
+  h3 {
+    font-family: "Iowan Old Style", "Sitka Text", Georgia, "Noto Serif", serif;
+    font-size: 1.08rem; font-weight: 600; margin: 1.6rem 0 0.5rem;
+  }
+  p { margin: 0.75rem 0; }
+  p.lead { color: var(--ink-muted); }
+  a { color: var(--accent-strong); }
+  code {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.85em;
+  }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: 0.35rem 0; }
+  strong { font-weight: 700; }
+
+  .finding {
+    background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--rule);
+    border-radius: 4px; padding: 1rem 1.2rem; margin: 1rem 0; box-shadow: var(--shadow);
+  }
+  .finding.critical { border-left-color: var(--critical); }
+  .finding.high { border-left-color: var(--high); }
+  .finding.good { border-left-color: var(--good); }
+  .finding-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+  .finding-head h3 { margin: 0; }
+  .badge {
+    font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 700;
+  }
+  .badge.critical { background: var(--critical-bg); color: var(--critical); }
+  .badge.high { background: var(--high-bg); color: var(--high); }
+  .badge.good { background: var(--good-bg); color: var(--good); }
+  .finding p { margin: 0.5rem 0; font-size: 0.94rem; color: var(--ink-muted); }
+  .finding .fix { color: var(--ink); }
+  .finding .fix strong { color: var(--accent-strong); }
+
+  .table-wrap { overflow-x: auto; margin: 1.1rem 0; border: 1px solid var(--rule); border-radius: 5px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 0.88rem; }
+  thead th {
+    text-align: left; font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint);
+    background: var(--surface-2); padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); color: var(--ink-muted); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  td, th { font-variant-numeric: tabular-nums; }
+
+  .plan { counter-reset: step; list-style: none; padding-left: 0; }
+  .plan li {
+    counter-increment: step; position: relative; padding-left: 2.2rem; margin: 0.7rem 0;
+  }
+  .plan li::before {
+    content: counter(step); position: absolute; left: 0; top: 0;
+    width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--accent-soft);
+    color: var(--accent-strong); font-family: ui-monospace, monospace; font-size: 0.75rem;
+    font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+
+  footer.doc-footer {
+    margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
+    color: var(--ink-faint); font-size: 0.85rem;
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow"><span class="dots"><span></span><span></span><span></span></span> Waraqa (ورقة) &middot; Marketing deliverable</div>
+    <h1>SEO Readiness, Pricing &amp; Content Strategy</h1>
+    <p class="subtitle lead">Three companion audits to the competitor comparison package — grounded in the actual codebase and catalog, not assumptions.</p>
+    <div class="meta-row">
+      <span>Prepared 2026&#8209;08&#8209;20</span>
+      <span>Companion files in <code>marketing/seo/</code>, <code>marketing/pricing/</code>, <code>marketing/content-strategy/</code></span>
+    </div>
+    <nav class="toc">
+      <a href="#seo">→ SEO Audit</a>
+      <a href="#pricing">→ Pricing Strategy</a>
+      <a href="#content">→ Content Strategy</a>
+    </nav>
+  </header>
+
+  <section class="domain" id="seo">
+    <h2>SEO Readiness Audit</h2>
+    <p class="domain-sub">Pre-launch, code-based audit — no live domain exists yet, so Core Web Vitals and real indexation can't be tested. Re-run live once deployed.</p>
+
+    <div class="finding critical">
+      <div class="finding-head"><span class="badge critical">Critical</span><h3>Bilingual content has no crawlable URL</h3></div>
+      <p><code>LanguageContext.tsx</code> always initializes locale to <code>en</code>, then flips client-side after mount via <code>localStorage</code>/<code>navigator.language</code>. There's no <code>/ar</code> URL, no i18n routing config — one URL serves both languages via client state only.</p>
+      <p>Root metadata already targets Arabic terms (<code>دفتر رسم</code>, <code>سكتش بوك</code>) and full Arabic copy exists in <code>translations.ts</code> — none of it is reachable by a URL Google can index as Arabic.</p>
+      <p class="fix"><strong>Fix:</strong> move to URL-based locale routing (<code>/ar/...</code>, <code>/en/...</code>) so each language is its own indexable, hreflang-linked page. Architecture change, not a metadata tweak.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-head"><span class="badge high">High</span><h3>No sitemap or robots file</h3></div>
+      <p>No <code>src/app/sitemap.ts</code>, <code>src/app/robots.ts</code>, or <code>public/robots.txt</code> found anywhere in the repo.</p>
+      <p class="fix"><strong>Fix:</strong> add both as App Router route handlers; list <code>/</code>, <code>/shop</code>, <code>/about</code>, and every <code>/product/[slug]</code> (already enumerated via <code>generateStaticParams</code>).</p>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-head"><span class="badge high">High</span><h3>/shop and /about have no page-specific metadata</h3></div>
+      <p>Both are <code>'use client'</code> components — Next.js can't export <code>metadata</code> from a client component, and neither has a server wrapper supplying one. Only <code>/product/[slug]</code> correctly uses <code>generateMetadata</code>.</p>
+      <p class="fix"><strong>Fix:</strong> wrap each in a thin server component that exports <code>metadata</code>, keeping the interactive parts client-side.</p>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head"><span class="badge high" style="background:var(--surface-2);color:var(--ink-muted);">Medium</span><h3>Domain mismatch in metadata</h3></div>
+      <p><code>metadataBase</code> falls back to <code>waraqa-store.vercel.app</code>; <code>openGraph.url</code> is hardcoded to <code>waraqa.store</code>. These need to agree once a production domain is set.</p>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head"><span class="badge high" style="background:var(--surface-2);color:var(--ink-muted);">Medium</span><h3>No Product/Offer structured data</h3></div>
+      <p>Product pages have price, images, and description available server-side but emit no JSON-LD. Low effort to add given the data already exists in <code>products.json</code>.</p>
+    </div>
+
+    <div class="finding good">
+      <div class="finding-head"><span class="badge good">Working well</span><h3>What's already solid</h3></div>
+      <p>Per-product <code>generateMetadata</code>, bilingual keywords in root metadata, breadcrumb navigation, and fully static product URLs via <code>generateStaticParams</code> — sitemap generation will be trivial once added.</p>
+    </div>
+
+    <h3>Prioritized action plan</h3>
+    <ol class="plan">
+      <li>Decide and implement URL-based EN/AR locale routing before investing further in Arabic content.</li>
+      <li>Add <code>app/sitemap.ts</code> and <code>app/robots.ts</code>.</li>
+      <li>Give <code>/shop</code> and <code>/about</code> real per-page metadata.</li>
+      <li>Fix the domain mismatch once production URL is final.</li>
+      <li>Add Product/Offer JSON-LD to product pages.</li>
+      <li>Re-run this audit live once deployed — Search Console, Core Web Vitals, real indexation.</li>
+    </ol>
+  </section>
+
+  <section class="domain" id="pricing">
+    <h2>Pricing Strategy</h2>
+    <p class="domain-sub">No sales data exists yet — these are structural hypotheses from the current catalog and stated brand values, to validate once orders flow.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>GSM</th><th>Sheets</th><th>Price (EGP)</th></tr></thead>
+        <tbody>
+          <tr><td>Mini Sketchbook 10.5×15cm</td><td>200</td><td>40</td><td>120</td></tr>
+          <tr><td>A5 Drawing Sketchbook</td><td>150</td><td>50</td><td>160</td></tr>
+          <tr><td>A5 Kraft Sketchbook</td><td>180</td><td>40</td><td>180</td></tr>
+          <tr><td>Large Sketchbook 25×35cm</td><td>150</td><td>20</td><td>180</td></tr>
+          <tr><td>Square Sketchbook 25×25cm</td><td>250</td><td>20</td><td>190</td></tr>
+          <tr><td>A5 Sketchbook</td><td>250</td><td>35</td><td>200</td></tr>
+          <tr><td>A5 Mixed Media Sketchbook</td><td>320</td><td>25</td><td>220</td></tr>
+          <tr><td>A4 Mixed Media Sketchbook</td><td>320</td><td>20</td><td>250</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="finding high">
+      <div class="finding-head"><span class="badge high">Highest leverage</span><h3>Free-shipping threshold (800 EGP) is too high</h3></div>
+      <p>Every SKU is 120&ndash;250 EGP, so a single-item order needs 3&ndash;4+ books to hit free shipping. The 50 EGP flat fee is a <strong>+42%</strong> effective price increase on the cheapest item.</p>
+      <p class="fix"><strong>Fix:</strong> lower the threshold to ~350&ndash;400 EGP, or launch a bundle priced just under it so "add one more for free shipping" is actually reachable.</p>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head"><h3>No bundling despite a catalog that begs for a starter set</h3></div>
+      <p>A "Try All Three Weights" bundle (150 / 250 / 320gsm, ~10% off, ≈522 EGP) solves the "which weight do I need" indecision <em>and</em> the shipping-threshold gap in one product.</p>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head"><h3>GSM is the value metric, but it's invisible on the shop grid</h3></div>
+      <p>Price scales sensibly with paper weight, but only a buyer who already knows what gsm means can see that logic.</p>
+      <p class="fix"><strong>Fix:</strong> add a plain-language weight-tier badge ("150gsm — everyday sketching" / "250&ndash;320gsm — ink &amp; wet media") on shop cards and PDP.</p>
+    </div>
+
+    <div class="finding good">
+      <div class="finding-head"><span class="badge good">Keep as-is</span><h3>Round-number pricing fits the brand</h3></div>
+      <p>Charm pricing (179 vs. 180) usually lifts conversion slightly, but Waraqa's stated value is explicitly "Fair Pricing" as part of an honest, anti-corporate story. Round numbers read as an honest flat price here — don't chase the tactic against the brand's own positioning.</p>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head"><h3>Large Sketchbook's price looks unexplained next to its neighbors</h3></div>
+      <p>Priced the same as the A5 Kraft (180 EGP) despite lower gsm and fewer sheets — the real driver is sheet <em>area</em> (~5&times; an A5 sheet), which isn't stated anywhere.</p>
+      <p class="fix"><strong>Fix:</strong> add one line to the description calling out sheet size as the value driver.</p>
+    </div>
+
+    <h3>Prioritized actions</h3>
+    <ol class="plan">
+      <li>Lower the free-shipping threshold or launch a starter bundle.</li>
+      <li>Add gsm/weight-tier badges to shop grid + PDP.</li>
+      <li>Add the sheet-size explainer to the Large Sketchbook.</li>
+      <li>Keep round-number pricing — don't charm-price.</li>
+      <li>Validate with real A/B tests once order volume exists.</li>
+    </ol>
+  </section>
+
+  <section class="domain" id="content">
+    <h2>Content Strategy</h2>
+    <p class="domain-sub">No keyword-volume or analytics data exists — topics are prioritized by customer-impact and content-market fit, not verified search volume. Replace the TBD scores with real data once available.</p>
+
+    <h3>Content pillars</h3>
+    <p><strong>1. Paper Science for Artists</strong> (searchable) &mdash; gsm education, acid-free explainers, why cheap paper bleeds. Extends the buyer's-guide content already drafted.</p>
+    <p><strong>2. Buying &amp; Comparison Guides</strong> (searchable, high intent) &mdash; hub is the two comparison pages already written; spokes cover sizes, beginner picks, binding types.</p>
+    <p><strong>3. Egyptian Sketching Life</strong> (shareable) &mdash; local creative-community content; no social presence exists yet in the codebase, so this is also the brand-awareness starting point.</p>
+    <p><strong>4. Behind the Paper</strong> (trust-building) &mdash; fills a real gap: no testimonials, founder bio, or production photos exist anywhere in the repo today.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Topic</th><th>Pillar</th><th>Stage</th><th>Customer impact</th><th>Search potential</th></tr></thead>
+        <tbody>
+          <tr><td>Best sketchbook for beginners in Egypt</td><td>2</td><td>Awareness/Consideration</td><td>High</td><td>TBD</td></tr>
+          <tr><td>What does GSM mean for sketchbooks?</td><td>1</td><td>Awareness</td><td>High</td><td>TBD</td></tr>
+          <tr><td>Sketchbook sizes explained</td><td>2</td><td>Consideration</td><td>Medium&#8209;High</td><td>TBD</td></tr>
+          <tr><td>How Waraqa sketchbooks are made</td><td>4</td><td>Trust/Decision</td><td>Medium</td><td>Low (branded)</td></tr>
+          <tr><td>Where to sketch outdoors in Cairo</td><td>3</td><td>Awareness (shareable)</td><td>Medium</td><td>TBD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Recommended sequence</h3>
+    <ol class="plan">
+      <li>Ship the two comparison pages already drafted.</li>
+      <li>Write "What does GSM mean for sketchbooks?" &mdash; reuse as both a post and on-page shop/PDP copy.</li>
+      <li>Write "Best sketchbook for beginners in Egypt."</li>
+      <li>Produce one "Behind the Paper" piece to start closing the trust-asset gap.</li>
+      <li>Re-prioritize everything else once real keyword/traffic data exists.</li>
+    </ol>
+  </section>
+
+  <footer class="doc-footer">
+    Waraqa (ورقة) &middot; SEO, pricing &amp; content strategy &middot; companion to <code>marketing/competitors/waraqa-competitor-analysis.md</code>
+  </footer>
+</div>
