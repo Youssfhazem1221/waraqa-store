@@ -18,8 +18,8 @@ export default function BrandStory() {
             {/* Large flat-lay image (spans full width on first row) */}
             <div className="col-span-2 relative aspect-video rounded-3xl overflow-hidden border border-line shadow-sm">
               <Image
-                src="/lifestyle/hero-bg.jpg"
-                alt="Waraqa sketchbook workspace flat lay"
+                src="/lifestyle/lifestyle-3.jpeg"
+                alt="Waraqa sketchbook creative artwork"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center"
