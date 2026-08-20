@@ -95,7 +95,6 @@ export default function AdminPage() {
         })
         .catch((err) => console.error('Failed to load products in admin:', err));
 
-      setLoadingOrders(true);
       fetchOrders(token)
         .then((liveOrders) => {
           if (mounted) setOrders(liveOrders);
