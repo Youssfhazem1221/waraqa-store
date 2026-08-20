@@ -13,8 +13,18 @@ export default function BrandStory() {
     <section className="py-16 sm:py-24 border-b border-line bg-[#FAF5EE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Photo Gallery */}
+          {/* Photo Gallery — uses the generated flat-lay + lifestyle shots */}
           <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+            {/* Large flat-lay image (spans full width on first row) */}
+            <div className="col-span-2 relative aspect-video rounded-3xl overflow-hidden border border-line shadow-sm">
+              <Image
+                src="/lifestyle/hero-bg.jpg"
+                alt="Waraqa sketchbook workspace flat lay"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-center"
+              />
+            </div>
             <div className="relative aspect-4/5 rounded-3xl overflow-hidden border border-line shadow-sm">
               <Image
                 src="/lifestyle/lifestyle-1.jpeg"
@@ -24,7 +34,7 @@ export default function BrandStory() {
                 className="object-cover object-center"
               />
             </div>
-            <div className="relative aspect-4/5 rounded-3xl overflow-hidden border border-line shadow-sm mt-8">
+            <div className="relative aspect-4/5 rounded-3xl overflow-hidden border border-line shadow-sm">
               <Image
                 src="/lifestyle/lifestyle-2.jpeg"
                 alt="Artist holding open sketchbook"
