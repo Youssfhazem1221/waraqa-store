@@ -34,7 +34,6 @@ export const translations = {
       about: 'Our Story',
       bag: 'Bag',
       search: 'Search',
-      admin: 'Admin',
       allSketchbooks: 'All Sketchbooks',
       ourStory: 'The Craft & Story',
       shoppingBag: 'Shopping Bag',
@@ -242,7 +241,6 @@ export const translations = {
       rights: 'All rights reserved.',
       madeWith: 'Handcrafted in Cairo, Egypt 🇪🇬',
       version: 'Waraqa v1.0 · Paper Goods',
-      adminLink: 'Store Admin (/admin)',
     },
     admin: {
       portal: 'Owner Dashboard',
@@ -303,7 +301,6 @@ export const translations = {
       about: 'حكايتنا',
       bag: 'السلة',
       search: 'دور في المنتجات',
-      admin: 'لوحة التحكم',
       allSketchbooks: 'كل المقاسات',
       ourStory: 'حكاية ورقة',
       shoppingBag: 'سلة المشتريات',
@@ -510,7 +507,6 @@ export const translations = {
       rights: 'جميع الحقوق محفوظة لـ ورقة.',
       madeWith: 'صُنع بحب في القاهرة، مصر 🇪🇬',
       version: 'سكتشات ورقة · الإصدار 1.0',
-      adminLink: 'لوحة إدارة المتجر (/admin)',
     },
     admin: {
       portal: 'بوابة الورشة',

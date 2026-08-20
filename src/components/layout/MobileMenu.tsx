@@ -87,15 +87,6 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
                 {itemCount}
               </span>
             </Link>
-
-            <Link
-              href="/admin"
-              onClick={onClose}
-              className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-mono text-muted hover:text-maroon hover:bg-maroon/5 mt-4"
-            >
-              <span>{t.nav.admin}</span>
-              <span>/admin</span>
-            </Link>
           </nav>
         </div>
 

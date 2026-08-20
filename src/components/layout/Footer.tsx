@@ -62,11 +62,6 @@ export default function Footer() {
                   {t.nav.shoppingBag}
                 </Link>
               </li>
-              <li>
-                <Link href="/admin" className="hover:text-cream transition-colors text-xs font-mono opacity-60 hover:opacity-100">
-                  {t.footer.adminLink}
-                </Link>
-              </li>
             </ul>
           </div>
 
