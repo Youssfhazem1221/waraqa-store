@@ -64,7 +64,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`transition-colors relative py-1 ${
+                  className={`transition-colors relative py-2.5 ${
                     isActive
                       ? 'text-maroon font-semibold'
                       : 'text-char/80 hover:text-maroon'
@@ -72,7 +72,7 @@ export default function Navbar() {
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-maroon rounded-full" />
+                    <span className="absolute bottom-2.5 left-0 w-full h-0.5 bg-maroon rounded-full" />
                   )}
                 </Link>
               );

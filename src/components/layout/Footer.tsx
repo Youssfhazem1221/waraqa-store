@@ -41,24 +41,24 @@ export default function Footer() {
             <h3 className="font-serif text-white font-semibold text-base tracking-wide">
               {t.footer.navigation}
             </h3>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="text-sm -my-1">
               <li>
-                <Link href="/" className="hover:text-cream transition-colors">
+                <Link href="/" className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.home}
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-cream transition-colors">
+                <Link href="/shop" className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.footer.navigation === 'Navigation' ? 'All Sketchbooks' : 'جميع دفاتر الرسم'}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-cream transition-colors">
+                <Link href="/about" className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.ourStory}
                 </Link>
               </li>
               <li>
-                <Link href="/cart" className="hover:text-cream transition-colors">
+                <Link href="/cart" className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.shoppingBag}
                 </Link>
               </li>

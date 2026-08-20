@@ -15,7 +15,7 @@ export default function LanguageToggle({ className = '' }: { className?: string 
       <button
         type="button"
         onClick={() => setLocale('en')}
-        className={`px-2.5 py-1 rounded-lg transition-all duration-150 cursor-pointer ${
+        className={`px-2.5 py-2 rounded-lg transition-all duration-150 cursor-pointer ${
           locale === 'en'
             ? 'bg-maroon text-cream font-bold shadow-xs'
             : 'text-char/70 hover:text-maroon'
@@ -27,7 +27,7 @@ export default function LanguageToggle({ className = '' }: { className?: string 
       <button
         type="button"
         onClick={() => setLocale('ar')}
-        className={`px-2.5 py-1 rounded-lg transition-all duration-150 font-arabic cursor-pointer ${
+        className={`px-2.5 py-2 rounded-lg transition-all duration-150 font-arabic cursor-pointer ${
           locale === 'ar'
             ? 'bg-maroon text-cream font-bold shadow-xs'
             : 'text-char/70 hover:text-maroon'
