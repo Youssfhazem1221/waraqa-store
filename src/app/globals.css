@@ -87,7 +87,7 @@ html[dir="rtl"] .font-serif {
   background: #4C2224;
 }
 
-/* Input Styles */
+/* Input & Select Styles */
 input, textarea, select {
   font-family: inherit;
 }

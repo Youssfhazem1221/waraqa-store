@@ -28,27 +28,26 @@ function ConfirmationContent() {
   const isFallbackParam = searchParams.get('fallback') === 'true';
   const { t, isRTL } = useLanguage();
 
-  const [order, setOrder] = useState<StoredOrder | null>(null);
+  const [order] = useState<StoredOrder | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = sessionStorage.getItem('waraqa-last-order');
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // Ignore
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem('waraqa-last-order');
-      if (raw) {
-        const parsed: StoredOrder = JSON.parse(raw);
-        setOrder(parsed);
-
-        // Auto-open WhatsApp on desktop after a brief delay
-        if (parsed.waUrl && window.innerWidth >= 768) {
-          const timer = setTimeout(() => {
-            window.open(parsed.waUrl, '_blank', 'noopener,noreferrer');
-          }, 800);
-          return () => clearTimeout(timer);
-        }
-      }
-    } catch {
-      // Ignore
+    if (order?.waUrl && typeof window !== 'undefined' && window.innerWidth >= 768) {
+      const timer = setTimeout(() => {
+        window.open(order.waUrl, '_blank', 'noopener,noreferrer');
+      }, 800);
+      return () => clearTimeout(timer);
     }
-  }, []);
+  }, [order?.waUrl]);
 
   const orderId = order?.orderId || orderIdParam || 'WRQ-NEW';
   const waUrl =

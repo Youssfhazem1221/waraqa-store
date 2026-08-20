@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Product, Order } from '@/types';
 import { PRODUCT_STATUSES, ORDER_STATUSES } from '@/types';
 import { fetchProducts, fetchOrders, updateStock, updateOrderStatus } from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import Badge from '@/components/ui/Badge';
 import Icon from '@/components/ui/Icon';
 import Spinner from '@/components/ui/Spinner';
 import fallbackProducts from '@/data/products.json';
@@ -24,8 +23,28 @@ import { CURRENCY } from '@/lib/constants';
  */
 
 export default function AdminPage() {
-  const [token, setToken] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return sessionStorage.getItem('waraqa-admin-token') || '';
+      } catch {
+        return '';
+      }
+    }
+    return '';
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return Boolean(sessionStorage.getItem('waraqa-admin-token'));
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
   const [authError, setAuthError] = useState('');
 
   const [activeTab, setActiveTab] = useState<'inventory' | 'orders'>('inventory');
@@ -41,25 +60,62 @@ export default function AdminPage() {
   const [savingOrderId, setSavingOrderId] = useState<string | null>(null);
   const [ordersMsg, setOrdersMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  // Check sessionStorage for existing token
-  useEffect(() => {
+  const loadProducts = useCallback(async () => {
     try {
-      const savedToken = sessionStorage.getItem('waraqa-admin-token');
-      if (savedToken) {
-        setToken(savedToken);
-        setIsAuthenticated(true);
-      }
-    } catch {
-      // Ignore
+      const live = await fetchProducts();
+      setProducts(live);
+    } catch (err) {
+      console.error('Failed to load products in admin:', err);
     }
   }, []);
 
+  const loadOrders = useCallback(async () => {
+    setLoadingOrders(true);
+    try {
+      const liveOrders = await fetchOrders(token);
+      setOrders(liveOrders);
+    } catch (err) {
+      console.warn('Orders fetch error (check ADMIN_TOKEN match in Apps Script):', err);
+      setOrdersMsg({
+        text: 'Could not fetch orders from Google Sheet. Verify that ADMIN_TOKEN in waraqa-apps-script.gs matches your password.',
+        type: 'error',
+      });
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, [token]);
+
   // Load products & orders once authenticated
   useEffect(() => {
+    let mounted = true;
     if (isAuthenticated && token) {
-      loadProducts();
-      loadOrders();
+      fetchProducts()
+        .then((live) => {
+          if (mounted) setProducts(live);
+        })
+        .catch((err) => console.error('Failed to load products in admin:', err));
+
+      setLoadingOrders(true);
+      fetchOrders(token)
+        .then((liveOrders) => {
+          if (mounted) setOrders(liveOrders);
+        })
+        .catch((err) => {
+          console.warn('Orders fetch error (check ADMIN_TOKEN match in Apps Script):', err);
+          if (mounted) {
+            setOrdersMsg({
+              text: 'Could not fetch orders from Google Sheet. Verify that ADMIN_TOKEN in waraqa-apps-script.gs matches your password.',
+              type: 'error',
+            });
+          }
+        })
+        .finally(() => {
+          if (mounted) setLoadingOrders(false);
+        });
     }
+    return () => {
+      mounted = false;
+    };
   }, [isAuthenticated, token]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -84,32 +140,7 @@ export default function AdminPage() {
     setToken('');
   };
 
-  const loadProducts = async () => {
-    try {
-      const live = await fetchProducts();
-      setProducts(live);
-    } catch (err) {
-      console.error('Failed to load products in admin:', err);
-    }
-  };
-
-  const loadOrders = async () => {
-    setLoadingOrders(true);
-    try {
-      const liveOrders = await fetchOrders(token);
-      setOrders(liveOrders);
-    } catch (err) {
-      console.warn('Orders fetch error (check ADMIN_TOKEN match in Apps Script):', err);
-      setOrdersMsg({
-        text: 'Could not fetch orders from Google Sheet. Verify that ADMIN_TOKEN in waraqa-apps-script.gs matches your password.',
-        type: 'error',
-      });
-    } finally {
-      setLoadingOrders(false);
-    }
-  };
-
-  const handleProductChange = (sku: string, field: 'stock' | 'status', value: any) => {
+  const handleProductChange = (sku: string, field: 'stock' | 'status', value: number | string) => {
     setProducts((prev) =>
       prev.map((p) => (p.sku === sku ? { ...p, [field]: value } : p))
     );
@@ -135,7 +166,7 @@ export default function AdminPage() {
           type: 'error',
         });
       }
-    } catch (err) {
+    } catch {
       setInventoryMsg({ text: 'Error saving product.', type: 'error' });
     } finally {
       setSavingSku(null);

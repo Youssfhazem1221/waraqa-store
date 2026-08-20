@@ -9,7 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 export default function Footer() {
-  const { t, isRTL } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-esp text-cream/80 border-t border-white/10 mt-auto">

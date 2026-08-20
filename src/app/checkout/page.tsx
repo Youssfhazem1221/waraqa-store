@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { CustomerInfo, OrderPayload } from '@/types';
@@ -18,30 +18,28 @@ export default function CheckoutPage() {
   const { items, subtotal, shipping, total, isHydrated, clearCart } = useCart();
   const { t, isRTL } = useLanguage();
 
-  const [customer, setCustomer] = useState<CustomerInfo>({
-    name: '',
-    phone: '',
-    email: '',
-    governorate: '',
-    city: '',
-    address: '',
+  const [customer, setCustomer] = useState<CustomerInfo>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('waraqa-customer');
+        if (saved) return JSON.parse(saved);
+      } catch {
+        // Ignore parse error
+      }
+    }
+    return {
+      name: '',
+      phone: '',
+      email: '',
+      governorate: '',
+      city: '',
+      address: '',
+    };
   });
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Partial<Record<keyof CustomerInfo, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string>();
-
-  // Preload saved customer info if available
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('waraqa-customer');
-      if (saved) {
-        setCustomer(JSON.parse(saved));
-      }
-    } catch {
-      // Ignore parse error
-    }
-  }, []);
 
   const handleCustomerChange = (field: keyof CustomerInfo, value: string) => {
     setCustomer((prev) => ({ ...prev, [field]: value }));

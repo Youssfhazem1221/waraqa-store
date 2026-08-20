@@ -13,7 +13,7 @@ import MobileMenu from './MobileMenu';
 export default function Navbar() {
   const pathname = usePathname();
   const { itemCount } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -36,7 +36,7 @@ export default function Navbar() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-200 ${
           scrolled
-            ? 'bg-cream/95 backdrop-blur-md shadow-sm border-b border-line/80 py-3.5'
+            ? 'bg-cream/95 backdrop-blur-md shadow-xs border-b border-line/80 py-3.5'
             : 'bg-cream border-b border-line py-4'
         }`}
       >
@@ -94,7 +94,7 @@ export default function Navbar() {
 
             <Link
               href="/cart"
-              className="relative inline-flex items-center gap-2 bg-maroon text-cream px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl font-medium text-sm transition-transform hover:bg-esp active:scale-95 shadow-sm shadow-maroon/10"
+              className="relative inline-flex items-center gap-2 bg-maroon text-cream px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl font-medium text-sm transition-transform hover:bg-esp active:scale-95 shadow-xs shadow-maroon/10"
               aria-label={`${t.nav.bag} with ${itemCount} items`}
             >
               <Icon name="bag" size={18} />
