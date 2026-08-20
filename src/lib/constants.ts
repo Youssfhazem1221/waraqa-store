@@ -2,8 +2,10 @@
 // Waraqa Store — Constants & Configuration
 // ============================================================
 
-/** Apps Script Web App URL — reads from env at runtime */
-export const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || '';
+/** Google Apps Script Web App URL for dynamic data & order placement */
+export const WEB_APP_URL =
+  process.env.NEXT_PUBLIC_WEB_APP_URL ||
+  'https://script.google.com/macros/s/AKfycbynYVPM62OXO7dkeh5on3uSRgbZOAJOqJtWac0EXt9tbCK-rpfLOw1F8zmsY0rZeogE/exec';
 
 /** Owner's WhatsApp number in international format (Egypt +20) */
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
