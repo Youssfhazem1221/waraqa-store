@@ -8,7 +8,7 @@ import Icon from '@/components/ui/Icon';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
-import MobileMenu from './MobileMenu';
+import MobileMenu from '@/components/layout/MobileMenu';
 
 export default function Navbar() {
   const pathname = usePathname();
