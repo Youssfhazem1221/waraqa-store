@@ -20,8 +20,8 @@ export default function AboutPage() {
         <h1 className="font-serif text-4xl sm:text-6xl font-bold text-maroon">
           {t.about.title}
         </h1>
-        <p className={`text-2xl text-char/80 pt-1 ${isRTL ? 'font-serif' : 'font-arabic'}`}>
-          {t.about.subtitleAr}
+        <p className={`text-xl sm:text-2xl text-char/80 pt-1 ${isRTL ? 'font-serif font-arabic' : 'font-sans'}`}>
+          {t.about.subtitle}
         </p>
       </div>
 

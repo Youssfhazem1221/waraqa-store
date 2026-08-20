@@ -23,7 +23,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const isLowStock = product.stock > 0 && product.stock <= 5;
 
   const displayName = isRTL ? (product.nameAr || product.name) : product.name;
-  const secondaryName = isRTL ? product.name : product.nameAr;
+  const subtitle = isRTL
+    ? `${product.paperType} · ${product.gsm} جرام · ${product.sheets} ورقة`
+    : `${product.paperType} · ${product.gsm} GSM · ${product.sheets} Sheets`;
 
   const handleAddToCart = () => {
     if (!isOutOfStock) {
@@ -59,8 +61,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-char">
           {displayName}
         </h1>
-        <p className="text-lg sm:text-xl text-muted mt-1 font-medium">
-          {secondaryName}
+        <p className="text-sm sm:text-base text-muted mt-1 font-medium">
+          {subtitle}
         </p>
       </div>
 

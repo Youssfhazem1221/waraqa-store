@@ -9,7 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   return (
     <footer className="bg-esp text-cream/80 border-t border-white/10 mt-auto">
@@ -49,7 +49,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/shop" className="inline-block py-2.5 hover:text-cream transition-colors">
-                  {t.footer.navigation === 'Navigation' ? 'All Sketchbooks' : 'جميع دفاتر الرسم'}
+                  {t.nav.allSketchbooks || t.nav.shop}
                 </Link>
               </li>
               <li>
@@ -90,7 +90,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-12 mt-12 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/60">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} {t.common.brandName} ({t.common.brandNameAr}). {t.footer.rights}</span>
+            <span>© {new Date().getFullYear()} {isRTL ? `${t.common.brandNameAr} (${t.common.brandName})` : t.common.brandName}. {t.footer.rights}</span>
           </div>
           <div className="flex items-center gap-6">
             <span>{t.footer.madeWith}</span>

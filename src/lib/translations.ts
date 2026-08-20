@@ -46,7 +46,7 @@ export const translations = {
       badge: 'Handmade in Cairo · Egypt 🇪🇬',
       titleLine1: 'Fill the',
       titleLine2: 'blank page.',
-      subtitleAr: 'ورقة — سكتش بوك حقيقي معمول بإيد مصرية',
+      subtitle: 'Tactile sketchbooks crafted for artists & thinkers',
       description:
         'Warm, tactile sketchbooks built for everyday doodles, heavy ink, and deep creative work. Heavyweight acid-free paper bound inside textured kraft covers.',
       shopCta: 'Explore Sketchbooks',
@@ -169,7 +169,7 @@ export const translations = {
       paymentStep: '2',
       paymentTitle: 'Payment Method',
       paymentSubtitle: 'Safe & hassle-free cash on delivery',
-      codTitle: 'Cash on Delivery (الدفع عند الاستلام)',
+      codTitle: 'Cash on Delivery (COD)',
       codBadge: 'CASH',
       codDesc:
         'Pay in Egyptian Pounds directly to the courier after you receive and inspect your package.',
@@ -209,7 +209,7 @@ export const translations = {
     about: {
       badge: 'The Waraqa Workshop',
       title: 'Paper made for ideas, sketches, and real hands.',
-      subtitleAr: 'ورقة — اتعملت عشان تشجعك تبدأ وترسم من غير تردد',
+      subtitle: 'Created to inspire you to create, draw, and experiment without hesitation.',
       sec1Num: '01',
       sec1Title: 'Why We Started Waraqa',
       sec2Num: '02',
@@ -313,7 +313,7 @@ export const translations = {
       badge: 'صُنع بحب وإتقان في مصر 🇪🇬',
       titleLine1: 'املأ الصفحة',
       titleLine2: 'البيضاء.',
-      subtitleAr: 'Waraqa — سكتش بوك معمول مخصوص عشان يبسطك',
+      subtitle: 'سكتش بوك حقيقي معمول بإيد مصرية',
       description:
         'دفاتر رسم معمولة من ورق تقيل خالي من الأحماض، بيستحمل الرصاص والحبر والألوان المائية من غير ما يشف ولا يبهوق. غلاف كرافت طبيعي وسلك لولبي متين يفتح معاك ١٨٠ درجة.',
       shopCta: 'شوف المقاسات والأسعار',
@@ -475,7 +475,7 @@ export const translations = {
     about: {
       badge: 'ورشة ورقة',
       title: 'ورق معمول للأفكار والشخبطة وإيد الفنانين.',
-      subtitleAr: 'Waraqa — سكتش معمول عشان يبسطك وما تخافش تبدأ',
+      subtitle: 'سكتش معمول عشان يبسطك وما تخافش تبدأ',
       sec1Num: '٠١',
       sec1Title: 'إحنا مين وليه بدأنا ورقة؟',
       sec2Num: '٠٢',

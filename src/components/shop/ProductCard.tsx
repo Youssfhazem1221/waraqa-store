@@ -20,7 +20,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const isOutOfStock = product.stock <= 0 || product.status === 'Out of stock';
 
   const displayName = isRTL ? (product.nameAr || product.name) : product.name;
-  const secondaryName = isRTL ? product.name : product.nameAr;
+  const specSummary = isRTL
+    ? `${product.sheets} ورقة · ${product.gsm} جرام`
+    : `${product.sheets} sheets · ${product.gsm} GSM`;
 
   return (
     <div className="group relative bg-white border border-line rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
@@ -65,10 +67,10 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
       {/* Product Details Body */}
       <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between gap-4">
         <div>
-          {/* Size & Secondary Title */}
+          {/* Size & Spec Summary */}
           <div className="flex items-center justify-between text-xs text-muted mb-1 font-medium">
             <span>{product.size}</span>
-            <span className="text-[11px] opacity-75 truncate max-w-[140px]">{secondaryName}</span>
+            <span className="text-[11px] opacity-75">{specSummary}</span>
           </div>
 
           {/* Product Title */}

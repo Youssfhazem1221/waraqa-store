@@ -42,8 +42,8 @@ export default function HeroSection() {
               {t.hero.titleLine1} <br className="hidden sm:block" />
               {t.hero.titleLine2}
             </h1>
-            <p className={`text-lg sm:text-2xl text-cream/90 font-medium ${isRTL ? 'font-serif' : 'font-arabic'}`}>
-              {t.hero.subtitleAr}
+            <p className={`text-lg sm:text-2xl text-cream/90 font-medium ${isRTL ? 'font-serif font-arabic' : 'font-sans'}`}>
+              {t.hero.subtitle}
             </p>
           </div>
 

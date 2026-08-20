@@ -343,3 +343,83 @@ The report's own conclusion holds up against Waraqa's actual numbers: the opport
 3. **Waraqa is underpriced relative to its own specs**, which is a rare, low-risk kind of opportunity — it doesn't require new product development, only pricing the *next* batch correctly.
 
 The two real risks are internal, not market-driven: **unknown COGS** (Section 11) and **an unconfirmed gap between charged and actual shipping cost** (Section 8/11). Resolve those two numbers before spending anything on paid acquisition — everything else in this document is sequenced to work with near-zero cash outlay in the meantime.
+
+---
+
+## 15. Team, roles & profit-sharing (operational addendum)
+
+**Prepared for a 3-person team:** Abdelfattah (co-founder, entering military service), you (co-founder, running day-to-day), and Nermin (joining as sales/marketing/digital lead). This is a starting proposal, not a legal document — treat the percentages as defaults to adjust together, and see the open question flagged at the end before finalizing anything.
+
+### Titles
+
+| Person | Title(s) | Status |
+|---|---|---|
+| **Abdelfattah** | Co-Founder & Head of Brand and Manufacturing Partnerships | **Reserve/Advisory** during military service — minimal expected hours |
+| **You** | Co-Founder & Managing Director — Operations, Product &amp; Technology | Active, full-time |
+| **Nermin** | Head of Sales, Marketing &amp; Digital Channels | Active |
+
+### Responsibilities
+
+**Abdelfattah — Co-Founder & Head of Brand and Manufacturing Partnerships**
+- Original brand identity and creative direction (already delivered — this is the foundation everything else builds on)
+- Manufacturer/supplier relationships — initial setup; advisory input when reachable during service
+- Initial UGC creator outreach — handed off to Nermin as the active owner going forward
+- Founder-level input on major decisions only (pricing tier changes, new production runs, brand pivots) — async, low-bandwidth by design
+
+**You — Co-Founder & Managing Director (Operations, Product & Technology)**
+- Website/e-commerce platform ownership (built and maintains the store)
+- Inventory and stock management
+- Financial oversight — COGS tracking once known, pricing decisions, reinvestment planning (ties directly to §11)
+- Order fulfillment — the operational endpoint of what Nermin reports in
+- Brand identity refinement, ongoing (building on Abdelfattah's foundation)
+- Manufacturer relationship continuity while Abdelfattah is unavailable
+- Day-to-day final decision authority; strategic marketing/pricing calls (this whole document)
+
+**Nermin — Head of Sales, Marketing & Digital Channels**
+- Instagram/TikTok/Facebook execution (§13's content calendar and ongoing cadence)
+- Customer-facing sales — DMs, social commerce, WhatsApp order conversations
+- UGC creator relationship management (inherited from Abdelfattah)
+- Order intake — reports incoming orders to you for fulfillment
+- Community participation in the priority Facebook groups (§3, §12)
+
+### Profit-sharing framework
+
+**Two separate things are being split, and conflating them is the most common way these arrangements go wrong:**
+
+1. **Equity (ownership)** — permanent, doesn't change based on who's actively working this month. Reflects who founded the business and built its foundational assets.
+2. **Active operator compensation** — variable, paid only to whoever is actively doing the work that period. This is what lets Abdelfattah's share stay fair *without* paying him the same as someone doing the daily work, and without cutting him out for a circumstance (conscription) that isn't a choice.
+
+**Step 0 — before anything gets split:** hold back a reinvestment reserve (recommend **25–30% of net profit**, consistent with §11's recommendation to fund the next, better-priced production batch) and, if anyone personally fronted cash for the current 97-unit batch, return that capital to them first. **Open question I can't answer for you: who funded the current inventory?** If it was one person, they should get that specific amount back off the top before "profit" is calculated at all — otherwise you're distributing revenue that hasn't paid for itself yet.
+
+**Recommended default equity split:**
+
+| Person | Equity | Rationale |
+|---|---|---|
+| Abdelfattah | 35% | Co-founded the idea, created the brand identity, established manufacturer relationships — permanent, doesn't shrink because he's away |
+| You | 45% | Co-founder; carries the largest ongoing operational and strategic load, including sole continuity during Abdelfattah's absence |
+| Nermin | 20% | Not a co-founder from day one, but taking on a full, exclusive operating function (sales/marketing/digital) — a real stake, not just a salary, reflects that this is a family operation built on trust |
+
+**Recommended active-operator pool split** (only among whoever is actively working that period):
+
+| Person | Active pool share | While |
+|---|---|---|
+| Abdelfattah | 0% | In service — reassess and give him a share again once he resumes active work, even part-time |
+| You | 60% | Broader scope: ops, tech, finance, fulfillment, strategy |
+| Nermin | 40% | Sales, marketing, digital, customer-facing |
+
+**How a profit cycle actually splits:** distributable profit (after Step 0) is divided into two pools — a **Founder Equity Dividend pool (40% of distributable profit)**, split by the equity table above regardless of who's actively working, and an **Active Operator pool (60% of distributable profit)**, split only among active workers by the table above. This is what lets Abdelfattah keep earning something real from equity while contributing zero hours, without diluting the two of you doing all the work.
+
+**Worked example** — suppose a cycle nets **10,000 EGP** in distributable profit (after COGS, shipping, CAC, and the reinvestment reserve — see §11 for how to build toward a real number):
+
+| Person | Equity dividend (40% pool) | Active pool (60% pool) | Total | % of profit |
+|---|---|---|---|---|
+| Abdelfattah | 1,400 | 0 | **1,400 EGP** | 14% |
+| You | 1,800 | 3,600 | **5,400 EGP** | 54% |
+| Nermin | 800 | 2,400 | **3,200 EGP** | 32% |
+
+Abdelfattah earns a real, non-trivial share purely from what he already built, while the two of you doing 100% of the active work take home 86% of the profit between you — weighted toward you given the broader scope.
+
+**Practical notes:**
+- Revisit the active-pool split (not the equity split) whenever workload actually shifts — e.g., if Nermin ends up doing more than sales/marketing, or if Abdelfattah returns part-time during leave.
+- Since Abdelfattah will be largely unreachable, put day-to-day and even most major decisions in your hands explicitly now, in writing, rather than needing his sign-off later when he can't easily give it.
+- Even a one-page written agreement between the three of you (equity %, this pool structure, what happens if someone leaves) is worth doing before real money is flowing — it's far easier to agree on this now than to renegotiate later once profit exists to argue about.
