@@ -17,6 +17,18 @@
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-arabic: var(--font-tajawal), "Tajawal", system-ui, sans-serif;
+
+  /* Clean, natural aesthetic — squared corners, not modern-SaaS rounded.
+     All rounded-* utilities collapse to 0. rounded-full is intentionally
+     left alone so genuine circles/dots (badges, spinners, radios) survive. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
 }
 
 :root {
@@ -81,7 +93,7 @@ html[dir="rtl"] .font-serif {
 }
 ::-webkit-scrollbar-thumb {
   background: #C0A286;
-  border-radius: 4px;
+  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #4C2224;

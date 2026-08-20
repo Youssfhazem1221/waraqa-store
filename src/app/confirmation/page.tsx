@@ -8,7 +8,6 @@ import { useLanguage } from '@/context/LanguageContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Spinner from '@/components/ui/Spinner';
-import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 interface StoredOrder {
   orderId: string;
@@ -18,45 +17,30 @@ interface StoredOrder {
   shipping: number;
   total: number;
   notes?: string;
-  waUrl: string;
   isLoggedToSheet: boolean;
 }
 
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderIdParam = searchParams.get('orderId');
-  const isFallbackParam = searchParams.get('fallback') === 'true';
   const { t, isRTL } = useLanguage();
 
-  const [order] = useState<StoredOrder | null>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const raw = sessionStorage.getItem('waraqa-last-order');
-        if (raw) return JSON.parse(raw);
-      } catch {
-        // Ignore
-      }
-    }
-    return null;
-  });
+  // Read the stored order AFTER mount so the first client render matches the
+  // server-rendered HTML (reading sessionStorage during render causes a
+  // hydration mismatch).
+  const [order, setOrder] = useState<StoredOrder | null>(null);
 
   useEffect(() => {
-    if (order?.waUrl && typeof window !== 'undefined' && window.innerWidth >= 768) {
-      const timer = setTimeout(() => {
-        window.open(order.waUrl, '_blank', 'noopener,noreferrer');
-      }, 800);
-      return () => clearTimeout(timer);
+    try {
+      const raw = sessionStorage.getItem('waraqa-last-order');
+      if (raw) setOrder(JSON.parse(raw));
+    } catch {
+      // Ignore
     }
-  }, [order?.waUrl]);
+  }, []);
 
   const orderId = order?.orderId || orderIdParam || 'WRQ-NEW';
-  const waUrl =
-    order?.waUrl ||
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      isRTL
-        ? `أهلاً ورقة، أنا عملت أوردر رقم ${orderId} من على المتجر وحابب أأكده معاكم.`
-        : `Hello Waraqa, I placed order ${orderId} on the store.`
-    )}`;
+  const customerEmail = order?.customer?.email?.trim();
 
   return (
     <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-8">
@@ -73,44 +57,33 @@ function ConfirmationContent() {
         <h1 className="font-serif text-3xl sm:text-5xl font-bold text-char">
           {t.confirmation.title}
         </h1>
-        <div className="inline-flex items-center gap-2 bg-cream border border-line px-4 py-1.5 rounded-full mt-2 font-mono text-sm font-bold text-maroon">
+        <div className="inline-flex items-center gap-2 bg-cream border border-line px-4 py-1.5 rounded-none mt-2 font-mono text-sm font-bold text-maroon">
           <span>{t.confirmation.orderNum} {orderId}</span>
         </div>
       </div>
 
-      {/* WhatsApp Call to Action Notice */}
-      <div className="bg-[#FAF5EE] border-2 border-maroon/20 rounded-2xl p-6 text-start space-y-4">
+      {/* What happens next — receipt emailed + confirmation to follow */}
+      <div className="bg-[#FAF5EE] border-2 border-maroon/20 rounded-2xl p-6 text-start space-y-3">
         <div className="flex items-start gap-3">
           <div className="p-2.5 rounded-xl bg-maroon text-cream shrink-0 mt-0.5">
-            <Icon name="whatsapp" size={24} />
+            <Icon name="mail" size={24} />
           </div>
           <div className="space-y-1">
             <h2 className="font-serif text-lg font-semibold text-char">
-              {t.confirmation.finalStepTitle}
+              {t.confirmation.inboxTitle}
             </h2>
             <p className="text-xs sm:text-sm text-muted leading-relaxed">
-              {t.confirmation.finalStepDesc}
+              {t.confirmation.inboxDesc}
             </p>
           </div>
         </div>
 
-        {/* Big WhatsApp button */}
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <Button size="lg" fullWidth className="bg-[#25D366] hover:bg-[#1EBE5D] text-white shadow-md border-transparent text-base">
-            <Icon name="whatsapp" size={22} />
-            <span>{t.confirmation.openWhatsAppBtn}</span>
-          </Button>
-        </a>
-
-        {isFallbackParam && (
-          <p className="text-[11px] text-muted text-center italic">
-            {t.confirmation.fallbackNotice}
-          </p>
+        {customerEmail && (
+          <div className="flex items-center gap-2 bg-white border border-line rounded-xl px-4 py-2.5 text-xs sm:text-sm">
+            <Icon name="check" size={16} className="text-success shrink-0" />
+            <span className="text-muted">{t.confirmation.receiptSentTo}</span>
+            <span className="font-medium text-char break-all">{customerEmail}</span>
+          </div>
         )}
       </div>
 

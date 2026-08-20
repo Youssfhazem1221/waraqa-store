@@ -14,7 +14,7 @@ export default function Badge({
   icon,
 }: BadgeProps) {
   const base =
-    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider select-none';
+    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-semibold uppercase tracking-wider select-none';
 
   const variants = {
     new: 'bg-sage text-[#20301a] border border-sage/40',

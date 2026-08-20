@@ -1,20 +1,28 @@
 /**
- * Waraqa — free "backend" on Google Sheets.
+ * Waraqa — free "backend" on Google Sheets + Gmail.
  * Deploy: Extensions ▸ Apps Script ▸ paste this ▸ Deploy ▸ New deployment ▸
  *   Type: Web app ▸ Execute as: Me ▸ Who has access: Anyone ▸ copy the /exec URL.
- * Put that URL in the website's env var  WEB_APP_URL.
+ * Put that URL in the website's env var  NEXT_PUBLIC_WEB_APP_URL.
+ *
+ * Emails are sent with MailApp (free, uses the Gmail quota of the account that
+ * owns this script — ~100 recipients/day on consumer Gmail). No WhatsApp API,
+ * no paid AppSheet automation required. AppSheet can sit on top of the same
+ * sheet purely as your order-management dashboard.
  *
  * Tabs expected (rename the emoji-prefixed tabs to these plain names, OR edit below):
  *   Products, Orders, Order_Items, Customers
  */
 
-const SHEET_ID   = '1eeCP8SSIWg2V-gjzCjPpQOiPQelYnIXXOvNcjZPfSP0';      // from the sheet URL
-const ADMIN_TOKEN = 'CHANGE_ME_to_a_long_random_secret';   // must match the site's ADMIN_TOKEN
+const SHEET_ID    = '1eeCP8SSIWg2V-gjzCjPpQOiPQelYnIXXOvNcjZPfSP0';   // from the sheet URL
+const ADMIN_TOKEN = 'CHANGE_ME_to_a_long_random_secret';             // must match the site's ADMIN_TOKEN
 
-// ---- WhatsApp Cloud API (OPTIONAL — leave blank to skip auto-send) ----
-const WA_TOKEN    = '';           // Meta WhatsApp Cloud API permanent token
-const WA_PHONE_ID = '';           // Cloud API phone-number ID
-const OWNER_WA    = '201069237525'; // your number, international format (Egypt +20, no leading 0)
+/* ------------------------- EMAIL / STORE CONFIG (edit these) ------------------------- */
+const OWNER_EMAIL = 'youssf.hazem1221@gmail.com'; // where the "new order" alert is sent
+const STORE_NAME  = 'Waraqa';                     // shown as the email sender name
+const REPLY_TO    = 'youssf.hazem1221@gmail.com'; // customer replies land here
+const CURRENCY    = 'EGP';
+const SUPPORT_WA  = '201069237525';               // support WhatsApp, international format, shown in emails
+const SLA_HOURS   = 24;                            // we promise to confirm within this many hours
 
 function ss(){ return SpreadsheetApp.openById(SHEET_ID); }
 function sheet(name){ return ss().getSheetByName(name); }
@@ -61,7 +69,8 @@ function guarded(body, fn){
   return fn();
 }
 
-/* Create an order: writes Orders + Order_Items, upserts Customer, decrements stock. */
+/* Create an order: writes Orders + Order_Items, upserts Customer, decrements stock,
+   emails the owner + emails the customer a receipt. */
 function createOrder(body){
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
@@ -77,14 +86,18 @@ function createOrder(body){
 
     sheet('Orders').appendRow([orderId, now, c.name, c.phone, c.email||'',
       c.city||'', c.address||'', summary, totalQty, subtotal, shipping, total,
-      body.payment||'Cash on delivery', 'Pending', WA_TOKEN?'Auto':'Link', body.notes||'']);
+      body.payment||'Cash on delivery', 'Pending', 'Web', body.notes||'']);
 
     const oi = sheet('Order_Items');
     items.forEach(i => oi.appendRow([orderId, i.sku, i.name, i.qty, i.price, Number(i.qty)*Number(i.price)]));
 
     decrementStock(items);
     upsertCustomer(c, now, total);
-    if (WA_TOKEN && WA_PHONE_ID) sendWhatsApp(orderId, c, summary, total, shipping);
+
+    // Emails must never block/kill the order — swallow any failure.
+    const order = { orderId, now, c, items, subtotal, shipping, total, payment: body.payment||'Cash on delivery', notes: body.notes||'' };
+    try { sendOwnerEmail(order); }     catch(err){ Logger.log('owner email failed: ' + err); }
+    try { sendCustomerReceipt(order); } catch(err){ Logger.log('customer email failed: ' + err); }
 
     return json({ ok:true, orderId, total, subtotal, shipping });
   } finally { lock.releaseLock(); }
@@ -147,15 +160,101 @@ function updateOrderStatus(body){
   return json({ ok:false, error:'order not found' });
 }
 
-/* Optional: auto-DM the owner via WhatsApp Cloud API */
-function sendWhatsApp(orderId, c, summary, total, shipping){
-  const url = `https://graph.facebook.com/v20.0/${WA_PHONE_ID}/messages`;
-  const text = `🟤 New Waraqa order ${orderId}\n${c.name} — ${c.phone}\n${c.city||''} ${c.address||''}\n${summary}\nShipping ${shipping} · TOTAL ${total} EGP\nReply to confirm.`;
-  UrlFetchApp.fetch(url, { method:'post', muteHttpExceptions:true,
-    headers:{ Authorization:'Bearer '+WA_TOKEN },
-    contentType:'application/json',
-    payload: JSON.stringify({ messaging_product:'whatsapp', to:OWNER_WA,
-      type:'text', text:{ body:text } }) });
+/* ------------------------- EMAILS ------------------------- */
+
+function esc(v){
+  return String(v==null?'':v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function money(n){ return Number(n||0) + ' ' + CURRENCY; }
+
+/** Rows of items as an HTML table body (name ×qty ... line total). */
+function itemRowsHtml(items){
+  return items.map(function(i){
+    var line = Number(i.qty)*Number(i.price);
+    return '<tr>'
+      + '<td style="padding:8px 0;border-bottom:1px solid #E6D9C7;color:#241C1B;">' + esc(i.name)
+        + ' <strong>×' + esc(i.qty) + '</strong></td>'
+      + '<td style="padding:8px 0;border-bottom:1px solid #E6D9C7;text-align:right;color:#241C1B;white-space:nowrap;">'
+        + esc(money(line)) + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+/** Shared totals + address block used in both emails. */
+function orderTablesHtml(o){
+  var addr = esc(o.c.governorate || '') + (o.c.city ? ', ' + esc(o.c.city) : '') + ' — ' + esc(o.c.address || '');
+  return ''
+    + '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">'
+    +   itemRowsHtml(o.items)
+    +   '<tr><td style="padding:8px 0;color:#6B5D50;">Delivery (' + esc(o.c.governorate||'') + ')</td>'
+    +     '<td style="padding:8px 0;text-align:right;color:#6B5D50;">' + (o.shipping===0 ? 'FREE' : esc(money(o.shipping))) + '</td></tr>'
+    +   '<tr><td style="padding:10px 0 0;font-weight:bold;color:#4C2224;font-size:16px;">Total (Cash on Delivery)</td>'
+    +     '<td style="padding:10px 0 0;text-align:right;font-weight:bold;color:#4C2224;font-size:16px;">' + esc(money(o.total)) + '</td></tr>'
+    + '</table>'
+    + '<div style="margin-top:16px;padding:12px 14px;background:#F4ECE0;border:1px solid #E6D9C7;font-size:13px;color:#241C1B;">'
+    +   '<div style="font-weight:bold;">Delivery to</div>'
+    +   '<div>' + esc(o.c.name) + ' · ' + esc(o.c.phone) + (o.c.email ? ' · ' + esc(o.c.email) : '') + '</div>'
+    +   '<div>' + addr + '</div>'
+    +   (o.notes ? '<div style="margin-top:6px;color:#6B5D50;"><em>Notes: ' + esc(o.notes) + '</em></div>' : '')
+    + '</div>';
+}
+
+/** Owner alert: a new order just came in. */
+function sendOwnerEmail(o){
+  var subject = 'New order ' + o.orderId + ' — ' + o.c.name + ' — ' + money(o.total);
+  var html = ''
+    + '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#241C1B;">'
+    +   '<h2 style="color:#4C2224;margin:0 0 4px;">New order ' + esc(o.orderId) + '</h2>'
+    +   '<p style="margin:0 0 16px;color:#6B5D50;font-size:13px;">' + esc(o.now) + ' · ' + esc(o.payment) + '</p>'
+    +   orderTablesHtml(o)
+    +   '<p style="margin:18px 0 0;font-size:13px;color:#6B5D50;">Reply to the customer by email or WhatsApp to confirm details, delivery and timing.</p>'
+    + '</div>';
+  MailApp.sendEmail({
+    to: OWNER_EMAIL,
+    replyTo: o.c.email || REPLY_TO,
+    name: STORE_NAME,
+    subject: subject,
+    htmlBody: html
+  });
+}
+
+/** Customer receipt: bilingual (English + Arabic). */
+function sendCustomerReceipt(o){
+  if (!o.c.email) return;
+  var subject = 'Your Waraqa order ' + o.orderId + ' · إيصال طلبك من ورقة';
+
+  var en = ''
+    + '<h2 style="color:#4C2224;margin:0 0 4px;">Thank you for your order!</h2>'
+    + '<p style="margin:0 0 4px;color:#241C1B;">Order reference <strong>' + esc(o.orderId) + '</strong></p>'
+    + '<p style="margin:0 0 16px;color:#6B5D50;font-size:13px;">This is your receipt. We\'ll confirm your order shortly by <strong>email and WhatsApp</strong> to go over your details, delivery, and timing — usually within ' + esc(SLA_HOURS) + ' hours.</p>'
+    + orderTablesHtml(o);
+
+  var ar = ''
+    + '<div dir="rtl" style="text-align:right;">'
+    +   '<h2 style="color:#4C2224;margin:0 0 4px;">شكراً لطلبك من ورقة!</h2>'
+    +   '<p style="margin:0 0 4px;color:#241C1B;">رقم الطلب <strong>' + esc(o.orderId) + '</strong></p>'
+    +   '<p style="margin:0 0 8px;color:#6B5D50;font-size:13px;">ده إيصال طلبك. هنأكد الطلب قريب على <strong>الإيميل وعلى واتساب</strong> عشان نراجع معاك التفاصيل والتوصيل وميعاد التسليم — عادةً خلال ' + esc(SLA_HOURS) + ' ساعة.</p>'
+    + '</div>';
+
+  var html = ''
+    + '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#241C1B;padding:8px;">'
+    +   '<div style="text-align:center;padding:8px 0 16px;font-size:22px;font-weight:bold;color:#4C2224;letter-spacing:1px;">Waraqa · ورقة</div>'
+    +   en
+    +   '<hr style="border:none;border-top:1px solid #E6D9C7;margin:22px 0;" />'
+    +   ar
+    +   '<p style="margin:22px 0 0;font-size:12px;color:#6B5D50;text-align:center;">'
+    +     'Questions? WhatsApp us at +' + esc(SUPPORT_WA) + ' · للاستفسار كلّمنا واتساب على +' + esc(SUPPORT_WA)
+    +   '</p>'
+    + '</div>';
+
+  MailApp.sendEmail({
+    to: o.c.email,
+    replyTo: REPLY_TO,
+    name: STORE_NAME,
+    subject: subject,
+    htmlBody: html
+  });
 }
 
 /* Helper: read a tab as array of {header:value} */

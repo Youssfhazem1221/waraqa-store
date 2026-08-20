@@ -98,7 +98,7 @@ export default function CartSummary() {
           <span>{t.cart.trustCod}</span>
         </div>
         <div className="flex items-center gap-2">
-          <Icon name="whatsapp" size={14} className="text-maroon" />
+          <Icon name="mail" size={14} className="text-maroon" />
           <span>{t.cart.trustWa}</span>
         </div>
       </div>

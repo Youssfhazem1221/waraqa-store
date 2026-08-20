@@ -66,8 +66,9 @@ export default async function ProductDetailPage({
 
       {/* Main Product View */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-        {/* Left: Gallery (5 cols) */}
-        <div className="lg:col-span-6 sticky top-24">
+        {/* Left: Gallery (5 cols) — sticky only on desktop two-column layout;
+            on mobile it must scroll normally, not pin to the top. */}
+        <div className="lg:col-span-6 lg:sticky lg:top-24">
           <ProductGallery
             images={product.images}
             productName={product.name}

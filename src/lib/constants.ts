@@ -85,6 +85,6 @@ export const TRUST_ITEMS = [
   {
     icon: 'shield' as const,
     title: 'Secure Orders',
-    description: 'Cash on delivery, confirmed via WhatsApp',
+    description: 'Cash on delivery, confirmed by email',
   },
 ] as const;

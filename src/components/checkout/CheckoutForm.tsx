@@ -75,11 +75,13 @@ export default function CheckoutForm({
 
           <Input
             label={t.checkout.email}
+            required
             type="email"
             placeholder={t.checkout.emailPlaceholder}
             hint={t.checkout.emailHint}
             value={customer.email}
             onChange={(e) => onChange('email', e.target.value)}
+            error={errors.email}
           />
         </div>
 

@@ -7,7 +7,6 @@ import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Icon from '@/components/ui/Icon';
-import Badge from '@/components/ui/Badge';
 
 interface ProductCardProps {
   product: Product;
@@ -26,23 +25,14 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
     <div className="group relative bg-white border border-line rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
       {/* Top Image Box (1:1 aspect ratio) */}
       <div className="relative aspect-square w-full bg-[#FAF5EE] overflow-hidden">
-        {/* Badges */}
-        <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} z-10 flex flex-col gap-1.5 pointer-events-none`}>
-          {isOutOfStock ? (
-            <Badge variant="out">{t.common.soldOut}</Badge>
-          ) : product.featured ? (
-            <Badge variant="new">{t.common.popular}</Badge>
-          ) : product.compareAt > product.price ? (
-            <Badge variant="sale">{t.common.sale}</Badge>
-          ) : null}
-        </div>
-
-        {/* Spec Pill */}
-        <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} z-10 pointer-events-none`}>
-          <span className="bg-cream/90 backdrop-blur-xs text-char text-[11px] font-mono px-2 py-0.5 rounded-md border border-line/60">
-            {product.sheets} {t.common.sheets} · {product.gsm} {t.common.gsm}
-          </span>
-        </div>
+        {/* Best-seller badge — brand sage, brand type, no uppercase/mono */}
+        {product.featured && !isOutOfStock && (
+          <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} z-10 pointer-events-none`}>
+            <span className="inline-flex items-center bg-sage text-esp text-[11px] sm:text-xs font-semibold px-2.5 py-1 shadow-sm">
+              {t.common.popular}
+            </span>
+          </div>
+        )}
 
         {/* Product Photo with Link */}
         <Link

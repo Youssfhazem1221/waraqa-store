@@ -34,19 +34,26 @@ This guide walks you through setting up your free backend using **Google Sheets*
 1. In your Google Sheet, click **Extensions ▸ Apps Script**.
 2. Delete any existing code in `Code.gs`.
 3. Open `waraqa-apps-script.gs` from this project folder, copy all contents, and paste into the Apps Script editor.
-4. Update the two configuration variables at the top:
+4. Update the configuration variables at the top:
    ```javascript
-   const SHEET_ID   = 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
+   const SHEET_ID    = 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
    const ADMIN_TOKEN = 'CHOOSE_A_STRONG_RANDOM_PASSWORD';
+
+   // Order emails (free, sent from THIS account's Gmail — no extra services):
+   const OWNER_EMAIL = 'youssf.hazem1221@gmail.com'; // where the new-order alert lands
+   const STORE_NAME  = 'Waraqa';                     // email sender name
+   const REPLY_TO    = 'youssf.hazem1221@gmail.com'; // customer replies go here
+   const SUPPORT_WA  = '201069237525';               // shown in the receipt
+   const SLA_HOURS   = 24;                            // "we'll confirm within N hours"
    ```
 5. Click the **Save** icon (💾) or press `Ctrl + S`.
 6. Click **Deploy ▸ New deployment**:
    - **Click the gear icon (⚙️) next to "Select type" ▸ choose "Web app"**
    - **Description**: `Waraqa Store Backend v1`
-   - **Execute as**: `Me (your_email@gmail.com)`
+   - **Execute as**: `Me (your_email@gmail.com)` *(this account's Gmail is what sends the order emails)*
    - **Who has access**: `Anyone` *(Crucial: allows the website to post orders)*
 7. Click **Deploy**.
-8. If asked, click **"Authorize access"**, select your Google account, click **"Advanced"** (or "Go to Untitled project (unsafe)"), and click **"Allow"**.
+8. If asked, click **"Authorize access"**, select your Google account, click **"Advanced"** (or "Go to Untitled project (unsafe)"), and click **"Allow"**. Because the script now sends email, the permission screen will also ask to **"Send email as you"** — approve it.
 9. Copy the **Web App URL** ending in `/exec`:
    `https://script.google.com/macros/s/AKfycb.../exec`
 
@@ -64,30 +71,22 @@ This guide walks you through setting up your free backend using **Google Sheets*
    ```
 2. Your store is now connected! Orders will directly append to your Google Sheet in real-time, stock will decrement automatically, and `/admin` will allow you to edit stock and manage orders.
 
+> [!NOTE]
+> `NEXT_PUBLIC_WHATSAPP_NUMBER` is only used for the **footer contact link** now — checkout no longer pushes customers into WhatsApp.
+
 ---
 
-## Part 4: (Optional) Google Cloud Console & Meta WhatsApp Cloud API
+## Part 4: Order Emails (automatic, $0)
 
-If you want to use Google Cloud Console for advanced OAuth or WhatsApp Cloud API auto-notifications:
+As soon as an order is placed, the Apps Script sends **two emails** — no extra services, no paid plan:
 
-### Optional: Google Cloud Project (for Custom OAuth or Service Accounts)
-1. Go to [Google Cloud Console](https://console.cloud.google.com/).
-2. Click **Select a project ▸ New Project** (e.g. `waraqa-store-backend`).
-3. If using Sheets API directly with a Service Account:
-   - Go to **APIs & Services ▸ Library**
-   - Search for **Google Sheets API** and click **Enable**
-   - Go to **APIs & Services ▸ Credentials ▸ Create Credentials ▸ Service Account**
-   - Download the JSON key file and share your Google Sheet with the generated service account email (`...@...gserviceaccount.com`).
-*(Note: Google Apps Script Web App avoids all service account complexity and works 100% free with no server!)*
+1. **Owner alert → `OWNER_EMAIL`** — a "New order WRQ-####" summary with the items, totals, and the customer's delivery details, so you know to reach out and confirm.
+2. **Customer receipt → the email they entered at checkout** — a bilingual (English + Arabic) receipt that also tells them they'll get a confirmation by **email and WhatsApp** to go over details, delivery, and timing (SLA, `SLA_HOURS`).
 
-### Optional: Automatic WhatsApp Alerts (WhatsApp Cloud API)
-In `waraqa-apps-script.gs`, there are placeholders for:
-```javascript
-const WA_TOKEN    = ''; // Meta WhatsApp Cloud API token
-const WA_PHONE_ID = ''; // Phone Number ID from developers.facebook.com
-const OWNER_WA    = '201069237525';
-```
-When configured, Google Apps Script will also auto-DM your phone on WhatsApp whenever an order is submitted!
+Both are sent with Gmail's built-in `MailApp`, so they come **from the Google account that owns/deployed this script**. On a normal Gmail account you can send to ~100 recipients/day (plenty for a small shop); a Google Workspace account raises that limit. Nothing to configure beyond the config block in Part 2 — just make sure you approved the "Send email as you" permission when deploying.
+
+### (Optional) Manage orders in AppSheet
+AppSheet can sit on top of the **same Google Sheet** as a phone/tablet dashboard to view and update orders (flip status to Confirmed, etc.). It reads the same `Orders` tab — no code changes needed. Emails are already handled by the script above, so AppSheet is purely for order management.
 
 ---
 

@@ -22,27 +22,19 @@ export default function HeroSection() {
           sizes="100vw"
           className="object-cover object-center scale-[1.02] transition-transform duration-1000"
         />
-        {/* Layered cinematic gradient overlays for crystal-clear text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#201513] via-[#201513]/70 to-[#201513]/40" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#201513]/40 to-[#201513]/80" />
+        {/* Light readability scrim — keeps the photo bright while anchoring
+            the text zone. Bottom-weighted so the top of the image stays vivid;
+            a soft radial adds just enough contrast behind the centered copy. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#201513]/80 via-[#201513]/25 to-transparent" />
+        <div className="absolute inset-0 bg-radial from-[#201513]/30 via-transparent to-transparent" />
       </div>
 
       {/* Hero Content Container */}
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="space-y-4 sm:space-y-6">
-          
-          {/* Brand Kicker Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-cream shadow-md">
-            <div className="w-4 h-4 relative flex-shrink-0">
-              <Image
-                src="/logos/waraqa-1x1-dark-cream.svg"
-                alt="Waraqa symbol"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <span>{t.hero.badge}</span>
-          </div>
+        <div
+          className="space-y-4 sm:space-y-6"
+          style={{ textShadow: '0 1px 12px rgba(20,12,10,0.65), 0 1px 3px rgba(20,12,10,0.7)' }}
+        >
 
           {/* Headline Group */}
           <div className="space-y-2">
@@ -55,8 +47,9 @@ export default function HeroSection() {
             </p>
           </div>
 
-          {/* Body Copy */}
-          <p className="text-sm sm:text-base text-cream/80 max-w-xl mx-auto leading-relaxed font-normal">
+          {/* Body Copy — translucent panel keeps the copy legible while the
+              photo behind stays bright. */}
+          <p className="text-sm sm:text-base text-cream max-w-xl mx-auto leading-relaxed font-normal bg-[#201513]/55 backdrop-blur-sm px-4 py-3">
             {t.hero.description}
           </p>
 
@@ -72,7 +65,7 @@ export default function HeroSection() {
               <Button
                 variant="ghost"
                 size="md"
-                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-cream font-medium hover:bg-white/20 hover:border-white/50 px-7 py-3 text-sm"
+                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-cream! font-medium hover:bg-white/20 hover:border-white/50 px-7 py-3 text-sm"
               >
                 <span>{t.hero.storyCta}</span>
                 <Icon name={isRTL ? 'chevron-left' : 'arrow-right'} size={16} />

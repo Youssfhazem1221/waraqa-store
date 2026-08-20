@@ -102,7 +102,7 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     return data as OrderResponse;
   } catch (err) {
     console.error('[Waraqa] Order submission failed:', err);
-    return { ok: false, error: 'Failed to submit order. Please contact us on WhatsApp.' };
+    return { ok: false, error: 'Failed to submit order. Please try again in a moment.' };
   }
 }
 

@@ -105,7 +105,7 @@ export default function FilterBar({
             <button
               key={size}
               onClick={() => onSelectSize(size)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all select-none cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-none text-xs font-medium whitespace-nowrap transition-all select-none cursor-pointer ${
                 isSelected
                   ? 'bg-maroon text-cream font-semibold shadow-xs'
                   : 'bg-white text-char/80 hover:bg-cream border border-line'

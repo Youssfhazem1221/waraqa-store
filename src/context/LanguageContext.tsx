@@ -16,17 +16,23 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = 'waraqa-lang';
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === 'undefined') return 'en';
+  // Always start as 'en' so the first client render matches the server-rendered
+  // HTML (avoids a hydration mismatch). The stored/browser preference is applied
+  // in an effect right after mount.
+  const [locale, setLocaleState] = useState<Locale>('en');
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
-      if (stored === 'ar' || stored === 'en') return stored;
-      if (navigator.language?.startsWith('ar')) return 'ar';
+      if (stored === 'ar' || stored === 'en') {
+        setLocaleState(stored);
+        return;
+      }
+      if (navigator.language?.startsWith('ar')) setLocaleState('ar');
     } catch {
       // Ignore
     }
-    return 'en';
-  });
+  }, []);
 
   // Update HTML tag dir and lang attributes
   useEffect(() => {

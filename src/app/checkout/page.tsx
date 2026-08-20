@@ -7,7 +7,6 @@ import type { CustomerInfo, OrderPayload } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { createOrder } from '@/lib/api';
-import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import OrderReview from '@/components/checkout/OrderReview';
 import EmptyCart from '@/components/cart/EmptyCart';
@@ -56,6 +55,12 @@ export default function CheckoutPage() {
       errs.phone = t.checkout.errors.phone;
     } else if (!/^(\+20|0)?1[0125][0-9]{8}$/.test(customer.phone.replace(/\s+/g, ''))) {
       errs.phone = t.checkout.errors.phoneValid;
+    }
+
+    if (!customer.email.trim()) {
+      errs.email = t.checkout.errors.email;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email.trim())) {
+      errs.email = t.checkout.errors.emailValid;
     }
 
     if (!customer.governorate) errs.governorate = t.checkout.errors.governorate;
@@ -108,17 +113,6 @@ export default function CheckoutPage() {
       const generatedOrderId = res.orderId || `WRQ-${Math.floor(1000 + Math.random() * 9000)}`;
       const isSuccess = res.ok;
 
-      // Construct WhatsApp URL
-      const waUrl = buildWhatsAppUrl(
-        generatedOrderId,
-        customer,
-        items,
-        subtotal,
-        shipping,
-        total,
-        'Cash on delivery'
-      );
-
       // Store in session for the confirmation page
       sessionStorage.setItem(
         'waraqa-last-order',
@@ -130,7 +124,6 @@ export default function CheckoutPage() {
           shipping,
           total,
           notes,
-          waUrl,
           isLoggedToSheet: isSuccess,
         })
       );
@@ -142,17 +135,8 @@ export default function CheckoutPage() {
       router.push(`/confirmation?orderId=${generatedOrderId}`);
     } catch (err) {
       console.error('Order submission error:', err);
-      // Fallback: still navigate to confirmation so customer can confirm via WhatsApp
+      // Fallback: still record the order locally and show confirmation.
       const fallbackOrderId = `WRQ-MANUAL-${Math.floor(1000 + Math.random() * 9000)}`;
-      const waUrl = buildWhatsAppUrl(
-        fallbackOrderId,
-        customer,
-        items,
-        subtotal,
-        shipping,
-        total,
-        'Cash on delivery'
-      );
 
       sessionStorage.setItem(
         'waraqa-last-order',
@@ -164,7 +148,6 @@ export default function CheckoutPage() {
           shipping,
           total,
           notes,
-          waUrl,
           isLoggedToSheet: false,
         })
       );
