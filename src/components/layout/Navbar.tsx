@@ -41,12 +41,12 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Mobile Menu Button + Brand Logo */}
-          <div className="flex items-center gap-3">
+          {/* Left: Mobile Menu Button + Brand Logo (flex-1 on desktop to balance right actions) */}
+          <div className="flex items-center gap-3 md:flex-1 md:justify-start">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 -ml-2 text-maroon hover:bg-maroon/5 rounded-xl transition-colors"
+              className="md:hidden p-2 -ml-2 text-maroon hover:bg-maroon/5 rounded-xl transition-colors cursor-pointer"
               aria-label="Open navigation menu"
             >
               <Icon name="menu" size={24} />
@@ -56,8 +56,8 @@ export default function Navbar() {
             <Logo variant="maroon" size="md" showSubtitle />
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {/* Center: Desktop Nav (centered between left and right) */}
+          <nav className="hidden md:flex items-center justify-center gap-8 text-sm font-medium shrink-0">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
               return (
@@ -72,20 +72,21 @@ export default function Navbar() {
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-2.5 left-0 w-full h-0.5 bg-maroon rounded-full" />
+                    <span className="absolute bottom-2 left-0 w-full h-0.5 bg-maroon rounded-full" />
                   )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Actions: Language Toggle, Search, Cart */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right: Actions: Language Toggle, Search (desktop only), Cart (flex-1 on desktop to balance left) */}
+          <div className="flex items-center justify-end gap-2 sm:gap-3 md:flex-1">
             <LanguageToggle className="hidden sm:inline-flex" />
 
+            {/* Search hidden on mobile, visible on desktop */}
             <Link
               href="/shop"
-              className="p-2 text-char/80 hover:text-maroon hover:bg-maroon/5 rounded-xl transition-colors"
+              className="hidden md:inline-flex p-2 text-char/80 hover:text-maroon hover:bg-maroon/5 rounded-xl transition-colors"
               aria-label={t.nav.search}
               title={t.nav.search}
             >
