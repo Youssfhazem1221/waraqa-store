@@ -29,6 +29,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://waraqa-store.vercel.app'),
   title: {
     default: 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
     template: '%s · Waraqa (ورقة)',
