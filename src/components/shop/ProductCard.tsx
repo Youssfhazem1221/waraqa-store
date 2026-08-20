@@ -16,6 +16,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addItem } = useCart();
   const { t, isRTL } = useLanguage();
+  const [imageFailed, setImageFailed] = React.useState(false);
   const isOutOfStock = product.stock <= 0 || product.status === 'Out of stock';
 
   const displayName = isRTL ? (product.nameAr || product.name) : product.name;
@@ -40,16 +41,24 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
           className="block w-full h-full relative"
           aria-label={`View ${displayName}`}
         >
-          <Image
-            src={product.image}
-            alt={displayName}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            priority={priority}
-            className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
-              isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''
-            }`}
-          />
+          {imageFailed ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted bg-[#FAF5EE]">
+              <Icon name="box" size={28} />
+              <span className="text-xs font-medium">Photo coming soon</span>
+            </div>
+          ) : (
+            <Image
+              src={product.image}
+              alt={displayName}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              priority={priority}
+              onError={() => setImageFailed(true)}
+              className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
+                isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''
+              }`}
+            />
+          )}
         </Link>
       </div>
 

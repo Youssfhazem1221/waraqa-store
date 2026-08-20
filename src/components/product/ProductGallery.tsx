@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Icon from '@/components/ui/Icon';
 
 interface ProductGalleryProps {
   images: string[];
@@ -10,22 +11,35 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const displayList = images && images.length > 0 ? images : ['/products/wrq-a5-kft.jpeg'];
   const activeImage = displayList[selectedIdx] || displayList[0];
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [activeImage]);
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white border border-line shadow-sm">
-        <Image
-          src={activeImage}
-          alt={productName}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover object-center"
-        />
+        {imageFailed ? (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted bg-[#FAF5EE]">
+            <Icon name="box" size={40} />
+            <span className="text-sm font-medium">Photo coming soon</span>
+          </div>
+        ) : (
+          <Image
+            src={activeImage}
+            alt={productName}
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            onError={() => setImageFailed(true)}
+            className="object-cover object-center"
+          />
+        )}
       </div>
 
       {/* Thumbnails (if multiple) */}
