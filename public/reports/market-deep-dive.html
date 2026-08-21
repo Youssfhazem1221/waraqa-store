@@ -247,7 +247,7 @@
   .grp-name { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.4rem; }
   .grp-bar-line { display: grid; grid-template-columns: 90px 1fr 46px; align-items: center; gap: 0.6rem; margin: 0.3rem 0; font-size: 0.78rem; color: var(--ink-muted); }
   .grp-track { height: 14px; background: var(--surface-2); border-radius: 3px; border: 1px solid var(--rule); overflow: hidden; }
-  .grp-fill { height: 100%; }
+  .grp-fill { display: block; height: 100%; }
   .grp-fill.equity { background: var(--series-1); }
   .grp-fill.active { background: var(--series-2); }
 
@@ -281,6 +281,76 @@
   .calc-result .cr-total { font-family: ui-monospace, monospace; font-size: 1.15rem; color: var(--accent-strong); font-weight: 700; }
   .calc-result .cr-break { font-size: 0.76rem; color: var(--ink-faint); margin-top: 0.2rem; }
   .calc-note { font-size: 0.78rem; color: var(--ink-faint); margin-top: 1rem; }
+
+  /* ---- guidance callouts ---- */
+  .howto {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 1.1rem 1.3rem; margin: 1rem 0 1.6rem; box-shadow: var(--shadow);
+  }
+  .howto .howto-step { font-size: 0.85rem; color: var(--ink-muted); }
+  .howto .howto-step strong { display: block; color: var(--ink); font-size: 0.9rem; margin-bottom: 0.2rem; }
+  .action-box {
+    background: var(--good-bg); border: 1px solid var(--rule); border-left: 3px solid var(--good);
+    border-radius: 6px; padding: 1rem 1.2rem; margin: 1rem 0 1.8rem;
+  }
+  .action-box ol { margin: 0.4rem 0 0; padding-left: 1.3rem; }
+  .action-box li { color: var(--ink); font-size: 0.92rem; margin: 0.4rem 0; }
+  .glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.7rem 1.4rem; margin: 1rem 0; }
+  .glossary dt { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-strong); font-size: 0.82rem; }
+  .glossary dd { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--ink-muted); }
+
+  /* ---- meter / progress ---- */
+  .meter-wrap { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.5rem; }
+  .meter-track { flex: 1; height: 10px; background: var(--surface-2); border: 1px solid var(--rule); border-radius: 5px; overflow: hidden; }
+  .meter-fill { display: block; height: 100%; background: var(--series-1); }
+  .meter-fill.warn-fill { background: var(--warn); }
+  .meter-label { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--ink-muted); white-space: nowrap; }
+
+  /* ---- buying journey flow ---- */
+  .journey { display: flex; flex-wrap: wrap; gap: 0; margin: 1.2rem 0; }
+  .journey-step {
+    flex: 1; min-width: 150px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 1rem 1.1rem; position: relative; margin-right: 1.4rem; box-shadow: var(--shadow);
+  }
+  .journey-step:last-child { margin-right: 0; }
+  .journey-step::after {
+    content: "→"; position: absolute; right: -1.3rem; top: 50%; transform: translateY(-50%);
+    color: var(--ink-faint); font-size: 1.1rem;
+  }
+  .journey-step:last-child::after { content: none; }
+  @media (max-width: 800px) {
+    .journey-step { margin-right: 0; margin-bottom: 1.4rem; flex-basis: 100%; }
+    .journey-step::after { content: "↓"; right: 50%; top: auto; bottom: -1.3rem; transform: translateX(50%); }
+    .journey-step:last-child { margin-bottom: 0; }
+  }
+  .journey-step .j-num { font-family: ui-monospace, monospace; font-size: 0.68rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  .journey-step h4 { margin: 0.3rem 0 0.4rem; font-size: 0.92rem; font-family: "Iowan Old Style", "Sitka Text", Georgia, serif; }
+  .journey-step p { margin: 0; font-size: 0.8rem; color: var(--ink-muted); }
+
+  /* ---- scatter chart (positioning map) ---- */
+  .scatter-wrap { position: relative; height: 320px; margin: 1rem 0 0.5rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); padding: 1rem 1rem 2rem 3.2rem; }
+  .scatter-plot { position: relative; width: 100%; height: 100%; }
+  .scatter-grid-h, .scatter-grid-v { position: absolute; background: var(--rule); }
+  .scatter-grid-h { left: 0; right: 0; height: 1px; }
+  .scatter-grid-v { top: 0; bottom: 0; width: 1px; }
+  .scatter-axis-label { position: absolute; font-family: ui-monospace, monospace; font-size: 0.66rem; color: var(--ink-faint); }
+  .scatter-pt { position: absolute; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, 50%); border: 2px solid var(--surface); cursor: default; }
+  .scatter-pt.waraqa { width: 15px; height: 15px; background: var(--series-1); z-index: 2; box-shadow: 0 0 0 3px color-mix(in srgb, var(--series-1) 25%, transparent); }
+  .scatter-pt.other { background: var(--chart-context); }
+  .scatter-pt-label { position: absolute; font-size: 0.66rem; color: var(--ink-muted); transform: translate(-50%, calc(50% + 12px)); white-space: nowrap; }
+  .scatter-axis-x, .scatter-axis-y { position: absolute; font-family: ui-monospace, monospace; font-size: 0.68rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+  .scatter-axis-x { bottom: -1.7rem; left: 50%; transform: translateX(-50%); }
+  .scatter-axis-y { left: -2.9rem; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; }
+
+  /* ---- ordinal channel chart ---- */
+  .ord-row { display: grid; grid-template-columns: 190px 1fr 90px; align-items: center; gap: 0.7rem; margin: 0.6rem 0; font-size: 0.83rem; }
+  .ord-track { height: 16px; background: var(--surface-2); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+  .ord-fill { display: block; height: 100%; border-radius: 4px 0 0 4px; }
+
+  /* ---- KPI scorecard ---- */
+  .kpi-scorecard td:nth-child(2) { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
+  .kpi-scorecard td:nth-child(3) { color: var(--ink-faint); font-style: italic; }
 </style>
 </head>
 <body data-palette="#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948">
@@ -320,6 +390,7 @@
       <a href="#s13"><span class="num">13</span>IG / TikTok / FB plan</a>
       <a href="#s14"><span class="num">14</span>Bottom line</a>
       <a href="#s15"><span class="num">15</span>Team &amp; profit share</a>
+      <a href="#s16"><span class="num">16</span>KPI scorecard</a>
     </nav>
   </aside>
 
@@ -334,11 +405,31 @@
     <section class="card" id="dashboard" aria-labelledby="dashboard-h">
       <h2 id="dashboard-h">Dashboard</h2>
       <p class="dek">The headline numbers from every section below, at a glance.</p>
+
+      <div class="howto">
+        <div class="howto-step"><strong>1. Skim the dashboard</strong>Six numbers and two charts below tell you 80% of what matters before you read a word further.</div>
+        <div class="howto-step"><strong>2. Read §0 and §11</strong>What changed from prior work, and the financial-strategy section — the two places with the highest-stakes findings.</div>
+        <div class="howto-step"><strong>3. Track §16 going forward</strong>The KPI scorecard at the end is meant to be revisited weekly/monthly, not read once.</div>
+      </div>
+
+      <div class="action-box">
+        <strong>This week's 3 actions (from Aug 20):</strong>
+        <ol>
+          <li>Confirm real COGS per SKU and the actual courier rate paid — everything financial in this report depends on these two unknowns (§11).</li>
+          <li>Reactivate Instagram and post the first stress-test video — the Sept–Oct peak is ~12 days out (§13).</li>
+          <li>Decide who funded the current 97-unit batch before finalizing the profit split (§15).</li>
+        </ol>
+      </div>
+
       <div class="kpi-row">
         <div class="kpi-tile"><div class="kpi-label">Total addressable market</div><div class="kpi-value">160–230M EGP</div><div class="kpi-note">≈ $3.3–4.7M · §1</div></div>
         <div class="kpi-tile"><div class="kpi-label">Serviceable market (Waraqa)</div><div class="kpi-value">55–85M EGP</div><div class="kpi-note">≈ $1.1–1.75M · §1</div></div>
         <div class="kpi-tile"><div class="kpi-label">Current stock value</div><div class="kpi-value">16,520 EGP</div><div class="kpi-note">97 units · 8 SKUs · §10</div></div>
-        <div class="kpi-tile"><div class="kpi-label">Validated pricing sweet spot</div><div class="kpi-value">240–340 EGP</div><div class="kpi-note">Only 1 of 8 SKUs reaches it · §6</div></div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Validated pricing sweet spot</div><div class="kpi-value">240–340 EGP</div>
+          <div class="meter-wrap"><span class="meter-track"><span class="meter-fill warn-fill" style="width:12.5%"></span></span><span class="meter-label">1/8 SKUs</span></div>
+          <div class="kpi-note">Target: 8/8 on the next batch · §6</div>
+        </div>
         <div class="kpi-tile"><div class="kpi-label">Back-to-school peak</div><div class="kpi-value">Sept–Oct</div><div class="kpi-note">~12 days away from Aug 20 · §2</div></div>
         <div class="kpi-tile"><div class="kpi-label">Shipping cost gap</div><div class="kpi-value">35–100 EGP</div><div class="kpi-note">Charged vs. benchmark courier rate · §11</div></div>
       </div>
@@ -354,6 +445,18 @@
           <div id="season-chart" aria-hidden="true"></div>
           <p class="viz-note">Bimodal: Sept–Oct intake and May–June graduation peaks — see §2.</p>
         </div>
+      </div>
+
+      <div class="viz-panel" style="margin-top:1.4rem;">
+        <h3>Terms used in this report</h3>
+        <dl class="glossary">
+          <div><dt>GSM</dt><dd>Grams per square metre — paper weight. Higher = heavier, less likely to bleed with ink/marker/watercolor.</dd></div>
+          <div><dt>COGS</dt><dd>Cost of goods sold — what it actually costs to make one unit (paper, binding, labor). Currently unknown for Waraqa — see §11.</dd></div>
+          <div><dt>AOV</dt><dd>Average order value — how much a typical order is worth. The single biggest lever in §11's financial model.</dd></div>
+          <div><dt>CAC</dt><dd>Customer acquisition cost — what it costs, in ad spend, to get one paying customer.</dd></div>
+          <div><dt>TAM / SAM</dt><dd>Total / serviceable addressable market — the whole market vs. the realistic slice Waraqa can reach (§1).</dd></div>
+          <div><dt>COD</dt><dd>Cash on delivery — customer pays the courier on arrival, not online. Waraqa's only payment method today.</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -436,7 +539,15 @@
 
     <section class="card" id="s4">
       <h2><span class="n">4</span>Target customer &amp; buying journey</h2>
-      <p>Age 18–32, Greater Cairo (48% of national e-commerce) + Alexandria (14%), B/A/upper-middle income. Discovery via Reels/TikTok → evaluate on GSM, texture, lay-flat binding → buy via DM/social commerce or COD checkout.</p>
+      <p>Age 18–32, Greater Cairo (48% of national e-commerce) + Alexandria (14%), B/A/upper-middle income.</p>
+
+      <div class="journey" role="img" aria-label="Buying journey: Discovery via Reels and TikTok, then evaluation on GSM texture and binding, then purchase via DM or checkout, then repeat purchase or word of mouth">
+        <div class="journey-step"><span class="j-num">01 · Discovery</span><h4>Short-form video</h4><p>Reels/TikTok stress-tests and flip-throughs — see §13</p></div>
+        <div class="journey-step"><span class="j-num">02 · Evaluation</span><h4>Spec-checking</h4><p>GSM, texture (hot vs. cold-press), lay-flat binding</p></div>
+        <div class="journey-step"><span class="j-num">03 · Purchase</span><h4>DM or checkout</h4><p>Social commerce DM, or COD/wallet checkout — §8</p></div>
+        <div class="journey-step"><span class="j-num">04 · Repeat</span><h4>Word of mouth</h4><p>Facebook groups, campus crawls — §3, §12</p></div>
+      </div>
+
       <h3>Recurring pain points</h3>
       <ol>
         <li><strong>Media bleeding &amp; cockling</strong> — sub-140gsm paper marketed as "mixed media." Waraqa's floor is 150gsm on every SKU — already clear of this failure line.</li>
@@ -517,6 +628,15 @@
       <div class="callout warn">
         <p><strong>Sweet spot: 240–340 EGP.</strong> Only Waraqa's A4 Mixed Media (250 EGP) reaches it — every 250–320gsm SKU below that has room to move up without approaching import territory.</p>
       </div>
+
+      <h3>Price vs. paper weight — where everyone actually sits</h3>
+      <p class="dek">Blue dots are Waraqa. Higher and further right is generally "more premium." The shaded band is the 240–340 EGP sweet spot. Canson's premium and Moleskine's luxury imports (1,125–1,825 EGP) are off this chart's scale — see the table above for those.</p>
+      <div class="scatter-wrap">
+        <div class="scatter-plot" id="positioning-map" aria-hidden="true"></div>
+        <span class="scatter-axis-x">Paper weight (GSM) →</span>
+        <span class="scatter-axis-y">↑ Price (EGP)</span>
+      </div>
+      <p class="viz-note">Full specs and prices for every point are in the table above.</p>
     </section>
 
     <section class="card" id="s7">
@@ -546,6 +666,11 @@
           </tbody>
         </table>
       </div>
+      <h3>Channel margin profile, relative</h3>
+      <p class="dek">Qualitative ranking, not measured percentages — the report gives an exact figure only for marketplace fees (15–22%); the rest are relative "highest → lowest margin retained."</p>
+      <div id="channel-chart" aria-hidden="true"></div>
+      <p class="viz-note">Full detail in the table above.</p>
+
       <p><strong>COD = 45–60% of online buyers' preferred method</strong> — validates Waraqa's COD-only checkout.</p>
       <div class="table-wrap">
         <table>
@@ -785,6 +910,54 @@
       </div>
     </section>
 
+    <section class="card" id="s16">
+      <h2><span class="n">16</span>KPI scorecard</h2>
+      <p class="dek">No analytics exist yet (per the SEO audit) — this is the tracking framework to set up now, with target/benchmark values already sourced from this report, not a live dashboard. Revisit monthly at minimum, weekly once orders flow.</p>
+
+      <h3>Unit economics &amp; pricing</h3>
+      <div class="table-wrap">
+        <table class="kpi-scorecard">
+          <thead><tr><th scope="col">Metric</th><th scope="col">Target / benchmark</th><th scope="col">Frequency</th><th scope="col">Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Gross margin</td><td>60–65%</td><td>Per batch</td><td>Report benchmark — validate against real COGS (§7, §11)</td></tr>
+            <tr><td>Real courier cost vs. charged</td><td>Gap = 0</td><td>Per shipment</td><td>Currently charging 50 EGP against an 85–150 EGP benchmark (§8, §11)</td></tr>
+            <tr><td>Average order value (AOV)</td><td>≥ 522 EGP (3-book bundle)</td><td>Weekly</td><td>Below this, paid-acquired orders are likely loss-making (§11)</td></tr>
+            <tr><td>SKUs priced in the 240–340 EGP sweet spot</td><td>8 of 8</td><td>Per production run</td><td>Only 1 of 8 today (§6)</td></tr>
+            <tr><td>% of orders qualifying for free shipping</td><td>Track, no target yet</td><td>Weekly</td><td>Signals whether AOV fixes are working (§11)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Marketing &amp; acquisition</h3>
+      <div class="table-wrap">
+        <table class="kpi-scorecard">
+          <thead><tr><th scope="col">Metric</th><th scope="col">Target / benchmark</th><th scope="col">Frequency</th><th scope="col">Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Customer acquisition cost (CAC)</td><td>45–80 EGP</td><td>Per campaign</td><td>Report benchmark for Meta/TikTok in this category (§9)</td></tr>
+            <tr><td>Instagram engagement rate</td><td>Track, no target yet</td><td>Weekly</td><td>Baseline before/after reactivation (§13)</td></tr>
+            <tr><td>TikTok views per stress-test video</td><td>Track, no target yet</td><td>Per post</td><td>Validates the format the report says works best here (§9)</td></tr>
+            <tr><td>Seeded creators who post organically</td><td>≥ 50% of units seeded</td><td>Per seeding round</td><td>Justifies seeding over paid ads (§9, §12)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Operations &amp; stock</h3>
+      <div class="table-wrap">
+        <table class="kpi-scorecard">
+          <thead><tr><th scope="col">Metric</th><th scope="col">Target / benchmark</th><th scope="col">Frequency</th><th scope="col">Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Weekly unit sell-through rate</td><td>Track, no target yet</td><td>Weekly</td><td>First real demand signal this brand will have</td></tr>
+            <tr><td>Days of stock remaining, scarce SKUs</td><td>Reorder before 0</td><td>Weekly</td><td>A5 Drawing &amp; A4 Mixed Media at 5 units each (§10)</td></tr>
+            <tr><td>Reinvestment reserve held</td><td>25–30% of net profit</td><td>Per profit cycle</td><td>Funds the next, correctly-priced batch (§15)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <p>Most "Current" values are blank on purpose — there's no analytics or order history yet. The point of this table is to know what to start recording from day one, not to pretend data exists that doesn't.</p>
+      </div>
+    </section>
+
     <footer class="doc-footer">
       Waraqa (<span lang="ar">ورقة</span>) &middot; Market deep-dive &middot; companion to the competitor, SEO, pricing, content-strategy, and copywriting docs in <code>marketing/</code>
     </footer>
@@ -946,6 +1119,66 @@
     document.getElementById('split-chart').innerHTML = html;
   }
 
+  // ---- price-vs-gsm positioning map ----
+  var positioning = [
+    { label: 'El Fagala Generic', gsm: 75, price: 35, waraqa: false, showLabel: true },
+    { label: 'Mofkera Kids', gsm: 100, price: 75, waraqa: false, showLabel: true },
+    { label: 'Bozoor Mini Circle', gsm: 240, price: 125, waraqa: false, showLabel: false },
+    { label: 'Waraqa Mini', gsm: 200, price: 120, waraqa: true, showLabel: true },
+    { label: 'Bozoor Light Grain', gsm: 145, price: 185, waraqa: false, showLabel: false },
+    { label: 'Waraqa A5 Kraft', gsm: 180, price: 180, waraqa: true, showLabel: false },
+    { label: 'Waraqa A5 Drawing', gsm: 150, price: 160, waraqa: true, showLabel: false },
+    { label: 'Waraqa Large 25×35', gsm: 150, price: 180, waraqa: true, showLabel: false },
+    { label: 'Bozoor Black Pocket', gsm: 240, price: 220, waraqa: false, showLabel: false },
+    { label: 'Waraqa Square', gsm: 250, price: 190, waraqa: true, showLabel: false },
+    { label: 'Waraqa A5 Sketchbook', gsm: 250, price: 200, waraqa: true, showLabel: false },
+    { label: 'Waraqa A5 Mixed Media', gsm: 320, price: 220, waraqa: true, showLabel: true },
+    { label: 'Bozoor Heavy Grain Sq.', gsm: 200, price: 350, waraqa: false, showLabel: true },
+    { label: 'Canson Drawing B4', gsm: 150, price: 367, waraqa: false, showLabel: true },
+    { label: 'Alwan Fine Paper', gsm: 300, price: 385, waraqa: false, showLabel: true },
+    { label: 'Waraqa A4 Mixed Media', gsm: 320, price: 250, waraqa: true, showLabel: true },
+  ];
+  function renderPositioningMap() {
+    var maxGsm = 350, maxPrice = 400;
+    var sweetTop = (340 / maxPrice) * 100, sweetBottom = (240 / maxPrice) * 100;
+    var html = '<div style="position:absolute;left:0;right:0;bottom:' + sweetBottom + '%;height:' + (sweetTop - sweetBottom) + '%;background:var(--accent-soft);border-radius:2px;"></div>';
+    [100, 200, 300].forEach(function (g) {
+      html += '<div class="scatter-grid-v" style="left:' + ((g / maxGsm) * 100) + '%"></div><span class="scatter-axis-label" style="left:' + ((g / maxGsm) * 100) + '%;bottom:-1.1rem;">' + g + '</span>';
+    });
+    [100, 200, 300, 400].forEach(function (p) {
+      html += '<div class="scatter-grid-h" style="bottom:' + ((p / maxPrice) * 100) + '%"></div><span class="scatter-axis-label" style="bottom:' + ((p / maxPrice) * 100) + '%;left:-2.4rem;">' + p + '</span>';
+    });
+    positioning.forEach(function (d) {
+      var left = (d.gsm / maxGsm) * 100, bottom = (d.price / maxPrice) * 100;
+      html += '<div class="scatter-pt ' + (d.waraqa ? 'waraqa' : 'other') + '" style="left:' + left + '%;bottom:' + bottom + '%;" title="' + d.label + ': ' + d.gsm + 'gsm, ' + d.price + ' EGP"></div>';
+      if (d.showLabel) {
+        html += '<span class="scatter-pt-label" style="left:' + left + '%;bottom:' + bottom + '%;">' + d.label + '</span>';
+      }
+    });
+    document.getElementById('positioning-map').innerHTML = html;
+  }
+
+  // ---- channel margin chart (ordinal) ----
+  var channels = [
+    { label: 'D2C + social commerce', level: 4, note: 'Highest — full retail capture' },
+    { label: 'Specialty bookstores', level: 3, note: 'Wholesale margin' },
+    { label: 'University pop-ups', level: 3, note: 'Direct, seasonal' },
+    { label: 'Marketplaces (Jumia/Noon)', level: 1, note: '−15–22% referral fee' },
+  ];
+  function renderChannelChart() {
+    var steps = { off: 'var(--season-off)', shoulder: 'var(--season-shoulder)', peak: 'var(--season-peak)' };
+    var levelColor = { 1: 'var(--season-off)', 2: 'var(--season-off)', 3: 'var(--season-shoulder)', 4: 'var(--season-peak)' };
+    var html = '';
+    channels.forEach(function (c) {
+      html += '<div class="ord-row">' +
+        '<span>' + c.label + '</span>' +
+        '<span class="ord-track"><span class="ord-fill" style="width:' + (c.level * 25) + '%;background:' + levelColor[c.level] + '"></span></span>' +
+        '<span style="font-size:0.75rem;color:var(--ink-faint);">' + c.note + '</span>' +
+        '</div>';
+    });
+    document.getElementById('channel-chart').innerHTML = html;
+  }
+
   // pricing matrix tier filter
   document.getElementById('tier-filters').addEventListener('click', function (e) {
     var chip = e.target.closest('.chip-btn');
@@ -1004,6 +1237,8 @@
   renderOrderChart();
   renderSplitChart();
   renderProfitSplit();
+  renderPositioningMap();
+  renderChannelChart();
 
   // sidebar active-section highlight
   var sections = document.querySelectorAll('section.card');

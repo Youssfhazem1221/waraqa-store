@@ -5,6 +5,28 @@
 
 ---
 
+## How to use this document
+
+1. **Skim the dashboard equivalent** — Sections 0, 1, 6, 10, and 11 carry the highest-stakes numbers.
+2. **Read §0 and §11 first** — what changed from prior work, and the financial-strategy section.
+3. **Track §16 (KPI Scorecard) going forward** — it's meant to be revisited weekly/monthly, not read once.
+
+**This week's 3 actions (from 2026-08-20):**
+1. Confirm real COGS per SKU and the actual courier rate paid — everything financial in this report depends on these two unknowns (§11).
+2. Reactivate Instagram and post the first stress-test video — the Sept–Oct peak is ~12 days out (§13).
+3. Decide who funded the current 97-unit batch before finalizing the profit split (§15).
+
+## Glossary
+
+- **GSM** — grams per square metre, paper weight. Higher = heavier, less likely to bleed with ink/marker/watercolor.
+- **COGS** — cost of goods sold; what it actually costs to make one unit. Currently unknown for Waraqa (§11).
+- **AOV** — average order value; the single biggest lever in §11's financial model.
+- **CAC** — customer acquisition cost.
+- **TAM / SAM** — total / serviceable addressable market (§1).
+- **COD** — cash on delivery, Waraqa's only payment method today.
+
+---
+
 ## 0. What this changes from prior work
 
 Three things in this report materially update the earlier `marketing/` audits:
@@ -92,6 +114,13 @@ Everything below is organized to stand on its own, but cross-references the earl
 - Income: **B/A/upper-middle bracket** — discretionary spend on non-commodity creative tools is real but not unlimited.
 - **Discovery journey:** short-form video (Reels/TikTok) creates awareness → buyer evaluates on GSM, texture (hot-press vs. cold-press), and lay-flat binding → purchase via DM social commerce or a Shopify-style storefront, COD or mobile wallet.
 
+```
+01 Discovery         02 Evaluation        03 Purchase           04 Repeat
+Short-form video  →  Spec-checking     →  DM or checkout     →  Word of mouth
+Reels/TikTok          GSM, texture,        Social commerce DM,   Facebook groups,
+stress-tests (§13)    lay-flat binding     or COD/wallet (§8)    campus crawls (§3,§12)
+```
+
 **Recurring pain points (verbatim themes from student forums/community threads):**
 
 1. **Media bleeding & cockling** — sketchbooks marketed as "mixed media" locally often use sub-140gsm paper that bleeds with fineliner ink, alcohol markers, or light watercolor. *Waraqa's floor is 150gsm — already above this failure line on every SKU.*
@@ -157,6 +186,8 @@ Waraqa's current 320gsm A5/A4 Mixed Media SKUs (220–250 EGP) sit in the *botto
 | A4 Mixed Media | 320 | 250 | Mid-Market Premium — the only SKU reaching the validated 240–340 EGP zone, and still below Alwan (385 EGP) and Canson B4 (367 EGP) at similar or lower gsm |
 
 **The strategic pricing sweet spot per the report: 240–340 EGP.** Waraqa has real headroom, especially on its 250–320gsm SKUs, without approaching import-brand territory.
+
+**Price vs. paper weight, read as a map:** plotting price against gsm (excluding Canson/Moleskine's premium and luxury tiers, which sit off-scale at 1,125–1,825 EGP) shows Waraqa's cluster sitting just left of and below the sweet-spot band (240–340 EGP) — while Bozoor's Heavy Grain Square, Canson's Drawing Pad B4, and Alwan's Fine Paper Sketch all sit inside or above it at comparable or lower gsm. The interactive version of this report (`waraqa-market-deep-dive.html`) renders this as a scatter chart; the same conclusion reads directly off the table above.
 
 ---
 
@@ -423,3 +454,36 @@ Abdelfattah earns a real, non-trivial share purely from what he already built, w
 - Revisit the active-pool split (not the equity split) whenever workload actually shifts — e.g., if Nermin ends up doing more than sales/marketing, or if Abdelfattah returns part-time during leave.
 - Since Abdelfattah will be largely unreachable, put day-to-day and even most major decisions in your hands explicitly now, in writing, rather than needing his sign-off later when he can't easily give it.
 - Even a one-page written agreement between the three of you (equity %, this pool structure, what happens if someone leaves) is worth doing before real money is flowing — it's far easier to agree on this now than to renegotiate later once profit exists to argue about.
+
+---
+
+## 16. KPI scorecard
+
+No analytics exist yet (per the SEO audit) — this is the tracking framework to set up now, with target/benchmark values already sourced from this report, not a live dashboard. Revisit monthly at minimum, weekly once orders flow. Most "Current" values are intentionally blank — the point is knowing what to start recording, not pretending data exists that doesn't.
+
+**Unit economics & pricing**
+
+| Metric | Target / benchmark | Frequency | Why it matters |
+|---|---|---|---|
+| Gross margin | 60–65% | Per batch | Report benchmark — validate against real COGS (§7, §11) |
+| Real courier cost vs. charged | Gap = 0 | Per shipment | Currently charging 50 EGP against an 85–150 EGP benchmark (§8, §11) |
+| Average order value (AOV) | ≥ 522 EGP (3-book bundle) | Weekly | Below this, paid-acquired orders are likely loss-making (§11) |
+| SKUs priced in the 240–340 EGP sweet spot | 8 of 8 | Per production run | Only 1 of 8 today (§6) |
+| % of orders qualifying for free shipping | Track, no target yet | Weekly | Signals whether AOV fixes are working (§11) |
+
+**Marketing & acquisition**
+
+| Metric | Target / benchmark | Frequency | Why it matters |
+|---|---|---|---|
+| Customer acquisition cost (CAC) | 45–80 EGP | Per campaign | Report benchmark for Meta/TikTok in this category (§9) |
+| Instagram engagement rate | Track, no target yet | Weekly | Baseline before/after reactivation (§13) |
+| TikTok views per stress-test video | Track, no target yet | Per post | Validates the format the report says works best here (§9) |
+| Seeded creators who post organically | ≥ 50% of units seeded | Per seeding round | Justifies seeding over paid ads (§9, §12) |
+
+**Operations & stock**
+
+| Metric | Target / benchmark | Frequency | Why it matters |
+|---|---|---|---|
+| Weekly unit sell-through rate | Track, no target yet | Weekly | First real demand signal this brand will have |
+| Days of stock remaining, scarce SKUs | Reorder before 0 | Weekly | A5 Drawing & A4 Mixed Media at 5 units each (§10) |
+| Reinvestment reserve held | 25–30% of net profit | Per profit cycle | Funds the next, correctly-priced batch (§15) |

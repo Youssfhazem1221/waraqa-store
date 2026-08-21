@@ -1,5 +1,5 @@
 // ============================================================
-// Waraqa Store — TypeScript Types
+// Waraqa Store & CRM — TypeScript Types
 // ============================================================
 
 /** Product as returned from the Google Sheet / products.json */
@@ -29,6 +29,10 @@ export interface ApiProduct {
   name: string;
   nameAr: string;
   category: string;
+  size?: string;
+  sheets?: number;
+  gsm?: number;
+  paperType?: string;
   price: number;
   compareAt: number;
   stock: number;
@@ -91,12 +95,42 @@ export interface StockUpdatePayload {
   status: string;
 }
 
+/** Admin: save/create product payload */
+export interface SaveProductPayload {
+  action: 'saveProduct';
+  token: string;
+  product: Partial<Product> & { sku: string; name: string; price: number };
+}
+
+/** Admin: delete product payload */
+export interface DeleteProductPayload {
+  action: 'deleteProduct';
+  token: string;
+  sku: string;
+}
+
 /** Admin: order status update payload */
 export interface OrderStatusUpdatePayload {
   action: 'updateOrderStatus';
   token: string;
   orderId: string;
   status: string;
+}
+
+/** Admin: log WhatsApp message payload */
+export interface LogWhatsAppPayload {
+  action: 'logWhatsApp';
+  token: string;
+  orderId: string;
+  sent: boolean;
+}
+
+/** Admin: update customer profile payload */
+export interface UpdateCustomerPayload {
+  action: 'updateCustomer';
+  token: string;
+  phone: string;
+  tag?: string;
 }
 
 /** Order as returned from admin GET */
@@ -117,6 +151,34 @@ export interface Order {
   'Status': string;
   'WhatsApp sent?': string;
   'Notes': string;
+}
+
+/** Customer row from Google Sheet Customers tab */
+export interface Customer {
+  'Phone (WhatsApp)': string;
+  'Customer Name': string;
+  'Email': string;
+  'Delivery Address': string;
+  'First Order Date': string;
+  'Total Orders': number;
+  'Total Spent (EGP)': number;
+  'Customer Tag': string;
+}
+
+/** Aggregated Analytics from Apps Script */
+export interface AnalyticsData {
+  totalRevenue: number;
+  deliveredRevenue: number;
+  totalOrders: number;
+  pendingOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
+  aov: number;
+  totalCustomers: number;
+  totalStockUnits: number;
+  lowStockSkus: number;
+  outOfStockSkus: number;
+  govDistribution: Record<string, number>;
 }
 
 /** Cart context actions */
