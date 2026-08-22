@@ -5,13 +5,10 @@
 /** Google Apps Script Web App URL for dynamic data & order placement */
 export const WEB_APP_URL =
   process.env.NEXT_PUBLIC_WEB_APP_URL ||
-  'https://script.google.com/macros/s/AKfycbynYVPM62OXO7dkeh5on3uSRgbZOAJOqJtWac0EXt9tbCK-rpfLOw1F8zmsY0rZeogE/exec';
+  'https://script.google.com/macros/s/AKfycbz7sJWx7ntjg4E1J6mIb6yYsaD1l3XlSOdEKc9HGc4pdxKqqvunQeVJrCu_F0YwZyZ5/exec';
 
 /** Owner's WhatsApp number in international format (Egypt +20) */
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
-
-/** Admin token — only sent in admin requests, never embedded in client bundle */
-export const ADMIN_TOKEN = ''; // Entered by admin at runtime, never hardcoded
 
 /** Shipping configuration */
 export const SHIPPING_FLAT = Number(process.env.NEXT_PUBLIC_SHIPPING_FLAT) || 50;

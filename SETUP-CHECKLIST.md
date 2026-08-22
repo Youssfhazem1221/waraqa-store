@@ -41,7 +41,7 @@ Follow these 5 simple steps to get your online store live and receiving customer
 
 ---
 
-### Step 5: Manage Orders on `/admin`
-- [ ] Go to `https://your-store.com/admin`.
-- [ ] Enter your password (`ADMIN_TOKEN`).
+### Step 5: Manage Orders in the Waraqa CRM
+- [ ] Open the `waraqa-crm` app.
+- [ ] In Settings, paste your Apps Script Web App URL and your `ADMIN_TOKEN` password.
 - [ ] Update stock levels or mark orders as Confirmed/Shipped/Delivered right from your phone!

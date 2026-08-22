@@ -10,7 +10,7 @@ A production-quality, mobile-first, zero-backend e-commerce storefront for **War
 - **Free Google Sheets Backend**: Reads and writes directly to Google Sheets via Google Apps Script Web App without CORS issues.
 - **WhatsApp Order Confirmation**: Automatically formats complete order summaries and links directly to owner WhatsApp (`+20 106 923 7525`) for Cash on Delivery order handoffs.
 - **Offline & Graceful Fallbacks**: Bundled `products.json` seed ensures the store functions flawlessly even if the backend is unreachable.
-- **Owner Admin Portal (`/admin`)**: Real-time inventory stock editing and order status updates protected by token authentication.
+- **Managed via the standalone `waraqa-crm` app**: Inventory, orders, and customers are managed from the separate CRM project, which reads/writes the same Google Sheet backend.
 - **Brand System Fidelity**: Fraunces (display), Inter (UI), and Tajawal (Arabic) typography combined with Maroon (`#4C2224`), Espresso (`#201513`), Cream (`#F4ECE0`), Kraft (`#C0A286`), Sage, and Terracotta design tokens.
 
 ---
@@ -78,9 +78,6 @@ See [`GOOGLE_SHEETS_APPS_SCRIPT_GUIDE.md`](../GOOGLE_SHEETS_APPS_SCRIPT_GUIDE.md
 
 ---
 
-## 🔐 Admin Management (`/admin`)
+## 🔐 Admin Management
 
-Access `/admin` on your website:
-- Enter the secret token defined in `ADMIN_TOKEN` in your Apps Script.
-- Update product stock levels or toggle availability (Active / Out of stock / Hidden).
-- Advance order statuses (Pending ➔ Confirmed ➔ Packed ➔ Shipped ➔ Delivered).
+The storefront itself has no admin UI. Manage stock, product details, and orders from the standalone `waraqa-crm` app, using the same `ADMIN_TOKEN` and Web App URL configured in your Apps Script.

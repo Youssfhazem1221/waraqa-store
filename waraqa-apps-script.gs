@@ -131,7 +131,25 @@ function createOrder(body){
   lock.waitLock(20000);
   try {
     var c = body.customer || {};
-    var items = body.items || [];
+    var rawItems = body.items || [];
+    if (!rawItems.length) return json({ ok: false, error: 'Your cart is empty.' });
+
+    // createOrder is a public, unauthenticated endpoint — never trust the
+    // price/name a client sends. Re-price every line against the live
+    // Products sheet by SKU so a tampered request can't under/over-charge.
+    var catalog = {};
+    readProducts().forEach(function(p){ catalog[String(p.sku)] = p; });
+
+    var items = [];
+    for (var idx = 0; idx < rawItems.length; idx++){
+      var ri = rawItems[idx];
+      var product = catalog[String(ri.sku)];
+      if (!product) return json({ ok: false, error: 'One of the items in your cart is no longer available. Please refresh and try again.' });
+      var qty = Math.floor(Number(ri.qty));
+      if (!qty || qty <= 0) return json({ ok: false, error: 'Invalid quantity for ' + ri.sku + '.' });
+      items.push({ sku: product.sku, name: product.name, qty: qty, price: product.price });
+    }
+
     var orderId = nextOrderId();
     var now = Utilities.formatDate(new Date(), 'GMT+2', 'yyyy-MM-dd HH:mm');
     var totalQty = items.reduce(function(s, i){ return s + Number(i.qty); }, 0);
@@ -211,23 +229,54 @@ function decrementStock(items){
   });
 }
 
+/* Customer columns are looked up by header name (not fixed position) so this
+ * stays correct regardless of column order on the actual Sheet — same
+ * approach as saveProduct(). */
+function customerCols(head){
+  return {
+    phone: findCol(head, ['Phone (WhatsApp)', 'Phone']),
+    name:  findCol(head, ['Customer Name', 'Name']),
+    email: findCol(head, ['Email']),
+    addr:  findCol(head, ['Delivery Address', 'Address']),
+    date:  findCol(head, ['First Order Date', 'Date']),
+    count: findCol(head, ['Total Orders']),
+    spent: findCol(head, ['Total Spent (EGP)', 'Total Spent']),
+    tag:   findCol(head, ['Customer Tag', 'Tag']),
+    notes: findCol(head, ['Notes'])
+  };
+}
+
 function upsertCustomer(c, now, total){
   if (!c.phone) return;
   var s = sheet('Customers');
   var data = s.getDataRange().getValues();
+  var head = data[0];
+  var col = customerCols(head);
   var phoneStr = String(c.phone).trim();
+  var phoneC = col.phone >= 0 ? col.phone : 0;
 
   for (var r = 1; r < data.length; r++){
-    if (String(data[r][0]).trim() === phoneStr){
-      var count = (Number(data[r][5]) || 0) + 1;
-      var spent = (Number(data[r][6]) || 0) + Number(total);
-      s.getRange(r + 1, 6).setValue(count);
-      s.getRange(r + 1, 7).setValue(spent);
-      s.getRange(r + 1, 8).setValue(count >= 3 ? 'VIP' : count >= 2 ? 'Repeat' : 'Active');
+    if (String(data[r][phoneC]).trim() === phoneStr){
+      var count = (col.count >= 0 ? Number(data[r][col.count]) || 0 : 0) + 1;
+      var spent = (col.spent >= 0 ? Number(data[r][col.spent]) || 0 : 0) + Number(total);
+      if (col.count >= 0) s.getRange(r + 1, col.count + 1).setValue(count);
+      if (col.spent >= 0) s.getRange(r + 1, col.spent + 1).setValue(spent);
+      if (col.tag >= 0)   s.getRange(r + 1, col.tag + 1).setValue(count >= 3 ? 'VIP' : count >= 2 ? 'Repeat' : 'Active');
       return;
     }
   }
-  s.appendRow([phoneStr, c.name, c.email || '', (c.governorate || '') + ' ' + (c.address || ''), now.split(' ')[0], 1, total, 'New']);
+
+  var row = [];
+  for (var i = 0; i < head.length; i++) row.push('');
+  if (col.phone >= 0) row[col.phone] = phoneStr;
+  if (col.name >= 0)  row[col.name] = c.name || '';
+  if (col.email >= 0) row[col.email] = c.email || '';
+  if (col.addr >= 0)  row[col.addr] = (c.governorate || '') + ' ' + (c.address || '');
+  if (col.date >= 0)  row[col.date] = now.split(' ')[0];
+  if (col.count >= 0) row[col.count] = 1;
+  if (col.spent >= 0) row[col.spent] = total;
+  if (col.tag >= 0)   row[col.tag] = 'New';
+  s.appendRow(row);
 }
 
 /* ------------------------- CRM ACTION HANDLERS ------------------------- */
@@ -251,7 +300,9 @@ function updateStock(body){
   return json({ ok: false, error: 'sku not found' });
 }
 
-/* Save (Create or Edit) full product details from CRM */
+/* Save (Create or Edit) full product details from CRM.
+ * Writes by COLUMN HEADER NAME (not fixed position) so this stays correct
+ * no matter what order the columns are in on the actual Sheet. */
 function saveProduct(body){
   var p = body.product;
   if (!p || !p.sku) return json({ ok: false, error: 'missing product data or sku' });
@@ -269,32 +320,37 @@ function saveProduct(body){
     }
   }
 
-  // Row values mapped to standard columns
-  var rowValues = [
-    p.sku,
-    p.name || '',
-    p.nameAr || '',
-    p.category || 'Sketchbooks',
-    p.size || 'A5',
-    Number(p.sheets) || 0,
-    Number(p.gsm) || 0,
-    p.paperType || '',
-    Number(p.price) || 0,
-    Number(p.compareAt) || 0,
-    Number(p.stock) || 0,
-    p.status || 'Active',
-    p.image || '',
-    p.description || '',
-    p.featured ? 'Yes' : 'No'
+  if (targetRow < 0) {
+    // Append a new row with just the SKU, then fill in the rest by column name below.
+    s.appendRow([p.sku]);
+    targetRow = s.getLastRow();
+    // Header row may have grown/shrunk since `data` was read; re-read to be safe.
+    head = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0];
+  }
+
+  var fieldsByColumn = [
+    { aliases: ['Name (EN)', 'Name'],                    value: p.name || '' },
+    { aliases: ['Name (AR)'],                             value: p.nameAr || '' },
+    { aliases: ['Category'],                              value: p.category || 'Sketchbooks' },
+    { aliases: ['Size'],                                  value: p.size || 'A5' },
+    { aliases: ['Sheets'],                                value: Number(p.sheets) || 0 },
+    { aliases: ['GSM'],                                   value: Number(p.gsm) || 0 },
+    { aliases: ['Paper Type', 'Paper feel'],              value: p.paperType || '' },
+    { aliases: ['Price (EGP)', 'Price'],                  value: Number(p.price) || 0 },
+    { aliases: ['Compare-at (EGP)', 'Compare-at'],        value: Number(p.compareAt) || 0 },
+    { aliases: ['Stock', 'Quantity'],                     value: Number(p.stock) || 0 },
+    { aliases: ['Status'],                                value: p.status || 'Active' },
+    { aliases: ['Image filename', 'Image'],               value: p.image || '' },
+    { aliases: ['Short description', 'Description'],      value: p.description || '' },
+    { aliases: ['Featured?', 'Featured'],                 value: p.featured ? 'Yes' : 'No' }
   ];
 
-  if (targetRow > 0) {
-    // Update existing row
-    s.getRange(targetRow, 1, 1, Math.min(rowValues.length, head.length)).setValues([rowValues.slice(0, head.length)]);
-  } else {
-    // Append new product
-    s.appendRow(rowValues);
-  }
+  fieldsByColumn.forEach(function(f){
+    var col = findCol(head, f.aliases);
+    if (col >= 0) {
+      s.getRange(targetRow, col + 1).setValue(f.value);
+    }
+  });
 
   return json({ ok: true, sku: p.sku });
 }
@@ -353,11 +409,15 @@ function logWhatsApp(body){
 function updateCustomer(body){
   var s = sheet('Customers');
   var data = s.getDataRange().getValues();
+  var head = data[0];
+  var col = customerCols(head);
+  var phoneC = col.phone >= 0 ? col.phone : 0;
   var phoneStr = String(body.phone).trim();
 
   for (var r = 1; r < data.length; r++){
-    if (String(data[r][0]).trim() === phoneStr){
-      if (body.tag) s.getRange(r + 1, 8).setValue(body.tag);
+    if (String(data[r][phoneC]).trim() === phoneStr){
+      if (body.tag !== undefined && col.tag >= 0) s.getRange(r + 1, col.tag + 1).setValue(body.tag);
+      if (body.notes !== undefined && col.notes >= 0) s.getRange(r + 1, col.notes + 1).setValue(body.notes);
       return json({ ok: true });
     }
   }

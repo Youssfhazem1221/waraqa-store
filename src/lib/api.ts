@@ -5,7 +5,7 @@
 // All POSTs use Content-Type: text/plain to avoid CORS preflight.
 // ============================================================
 
-import type { Product, ApiProduct, OrderPayload, OrderResponse, StockUpdatePayload, OrderStatusUpdatePayload, Order } from '@/types';
+import type { Product, ApiProduct, OrderPayload, OrderResponse } from '@/types';
 import { WEB_APP_URL } from './constants';
 import fallbackProducts from '@/data/products.json';
 
@@ -31,10 +31,10 @@ function mapApiProduct(api: ApiProduct): Product {
     name: api.name,
     nameAr: api.nameAr || fallback?.nameAr || '',
     category: api.category || fallback?.category || 'Sketchbooks',
-    size: fallback?.size || 'A5',
-    sheets: fallback?.sheets || 0,
-    gsm: fallback?.gsm || 0,
-    paperType: fallback?.paperType || '',
+    size: api.size || fallback?.size || 'A5',
+    sheets: api.sheets || fallback?.sheets || 0,
+    gsm: api.gsm || fallback?.gsm || 0,
+    paperType: api.paperType || fallback?.paperType || '',
     price: api.price,
     compareAt: api.compareAt || 0,
     stock: api.stock,
@@ -106,62 +106,3 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
   }
 }
 
-/**
- * Admin: fetch all orders.
- */
-export async function fetchOrders(token: string): Promise<Order[]> {
-  if (!WEB_APP_URL) return [];
-
-  try {
-    const res = await fetch(`${WEB_APP_URL}?what=orders&token=${encodeURIComponent(token)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'unauthorized');
-
-    return data.orders as Order[];
-  } catch (err) {
-    console.error('[Waraqa] Failed to fetch orders:', err);
-    throw err;
-  }
-}
-
-/**
- * Admin: update stock and status for a product.
- */
-export async function updateStock(payload: StockUpdatePayload): Promise<boolean> {
-  if (!WEB_APP_URL) return false;
-
-  try {
-    const res = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    return data.ok === true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Admin: update an order's status.
- */
-export async function updateOrderStatus(payload: OrderStatusUpdatePayload): Promise<boolean> {
-  if (!WEB_APP_URL) return false;
-
-  try {
-    const res = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    return data.ok === true;
-  } catch {
-    return false;
-  }
-}

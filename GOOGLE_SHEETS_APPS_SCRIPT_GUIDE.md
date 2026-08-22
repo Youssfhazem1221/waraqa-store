@@ -69,7 +69,7 @@ This guide walks you through setting up your free backend using **Google Sheets*
    NEXT_PUBLIC_FREE_SHIP_OVER=800
    NEXT_PUBLIC_CURRENCY=EGP
    ```
-2. Your store is now connected! Orders will directly append to your Google Sheet in real-time, stock will decrement automatically, and `/admin` will allow you to edit stock and manage orders.
+2. Your store is now connected! Orders will directly append to your Google Sheet in real-time, and stock will decrement automatically. Manage stock, products, and orders from the separate `waraqa-crm` app (same Web App URL and `ADMIN_TOKEN`).
 
 > [!NOTE]
 > `NEXT_PUBLIC_WHATSAPP_NUMBER` is only used for the **footer contact link** now — checkout no longer pushes customers into WhatsApp.
