@@ -70,26 +70,55 @@ function doGet(e){
   return json({ ok: false, error: 'unknown "what"' });
 }
 
-/* Expose products cleanly for both storefront and CRM */
+/* Expose products cleanly for both storefront and CRM.
+ * Columns are resolved by header name (case/whitespace-insensitive, with
+ * aliases) via findCol() — same approach as saveProduct()/updateStock() —
+ * instead of exact-string object keys, so this can't silently read 0 for
+ * price/stock just because a header doesn't match one hardcoded spelling. */
 function readProducts(){
-  var rows = readSheet('Products');
-  return rows.map(function(r){
+  var s = sheet('Products');
+  if (!s) return [];
+  var data = s.getDataRange().getValues();
+  if (data.length < 2) return [];
+  var head = data[0];
+
+  var col = {
+    sku:         findCol(head, ['SKU']),
+    name:        findCol(head, ['Name (EN)', 'Name']),
+    nameAr:      findCol(head, ['Name (AR)']),
+    category:    findCol(head, ['Category']),
+    size:        findCol(head, ['Size']),
+    sheets:      findCol(head, ['Sheets']),
+    gsm:         findCol(head, ['GSM']),
+    paperType:   findCol(head, ['Paper Type', 'Paper feel']),
+    price:       findCol(head, ['Price (EGP)', 'Price']),
+    compareAt:   findCol(head, ['Compare-at (EGP)', 'Compare-at']),
+    stock:       findCol(head, ['Stock', 'Quantity', 'Amount', 'In Stock', 'Qty']),
+    status:      findCol(head, ['Status']),
+    image:       findCol(head, ['Image filename', 'Image']),
+    description: findCol(head, ['Short description', 'Description']),
+    featured:    findCol(head, ['Featured?', 'Featured'])
+  };
+
+  function cell(row, c){ return c >= 0 ? row[c] : ''; }
+
+  return data.slice(1).filter(function(r){ return String(r[col.sku >= 0 ? col.sku : 0]).trim() !== ''; }).map(function(r){
     return {
-      sku: r['SKU'] || '',
-      name: r['Name (EN)'] || r['Name'] || '',
-      nameAr: r['Name (AR)'] || '',
-      category: r['Category'] || 'Sketchbooks',
-      size: r['Size'] || 'A5',
-      sheets: Number(r['Sheets']) || 0,
-      gsm: Number(r['GSM']) || 0,
-      paperType: r['Paper Type'] || r['Paper feel'] || '',
-      price: Number(r['Price (EGP)']) || Number(r['Price']) || 0,
-      compareAt: Number(r['Compare-at (EGP)']) || Number(r['Compare-at']) || 0,
-      stock: Number(r['Stock']) || 0,
-      status: r['Status'] || 'Active',
-      image: r['Image filename'] || r['Image'] || '',
-      description: r['Short description'] || r['Description'] || '',
-      featured: (String(r['Featured?']).toLowerCase() === 'yes' || String(r['Featured']).toLowerCase() === 'true')
+      sku: cell(r, col.sku) || '',
+      name: cell(r, col.name) || '',
+      nameAr: cell(r, col.nameAr) || '',
+      category: cell(r, col.category) || 'Sketchbooks',
+      size: cell(r, col.size) || 'A5',
+      sheets: Number(cell(r, col.sheets)) || 0,
+      gsm: Number(cell(r, col.gsm)) || 0,
+      paperType: cell(r, col.paperType) || '',
+      price: Number(cell(r, col.price)) || 0,
+      compareAt: Number(cell(r, col.compareAt)) || 0,
+      stock: Number(cell(r, col.stock)) || 0,
+      status: cell(r, col.status) || 'Active',
+      image: cell(r, col.image) || '',
+      description: cell(r, col.description) || '',
+      featured: (String(cell(r, col.featured)).toLowerCase() === 'yes' || String(cell(r, col.featured)).toLowerCase() === 'true')
     };
   });
 }
