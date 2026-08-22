@@ -5,7 +5,7 @@
 /** Google Apps Script Web App URL for dynamic data & order placement */
 export const WEB_APP_URL =
   process.env.NEXT_PUBLIC_WEB_APP_URL ||
-  'https://script.google.com/macros/s/AKfycbz7sJWx7ntjg4E1J6mIb6yYsaD1l3XlSOdEKc9HGc4pdxKqqvunQeVJrCu_F0YwZyZ5/exec';
+  'https://script.google.com/macros/s/AKfycbyeMKSS9OBDWPyoyNYLDeauHlL5K9atQSvpFEdTJRfwwEdefRltToOmHbbps3jZxlY/exec';
 
 /** Owner's WhatsApp number in international format (Egypt +20) */
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
