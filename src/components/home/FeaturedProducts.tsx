@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/types';
 import ProductCard from '@/components/shop/ProductCard';
@@ -14,11 +14,15 @@ interface FeaturedProductsProps {
 export default function FeaturedProducts({ products }: FeaturedProductsProps) {
   const { t, isRTL } = useLanguage();
 
-  const featured = products
-    .filter((p) => p.featured)
-    .slice(0, 4);
-
-  const displayList = featured.length >= 4 ? featured : products.slice(0, 4);
+  // Show the featured products first, topped up with the rest of the catalog to
+  // fill the four-card row. The previous version threw the featured list away
+  // entirely unless it held four or more, so a shop with two best-sellers
+  // showed neither of them here.
+  const displayList = useMemo(() => {
+    const inStock = (p: Product) => p.stock > 0 && p.status === 'Active';
+    const rank = (p: Product) => (p.featured ? 0 : 1) + (inStock(p) ? 0 : 2);
+    return [...products].sort((a, b) => rank(a) - rank(b) || a.price - b.price).slice(0, 4);
+  }, [products]);
 
   return (
     <section className="py-16 sm:py-24 border-b border-line bg-cream">

@@ -1,16 +1,26 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import type { Product } from '@/types';
 import productsData from '@/data/products.json';
 import ProductGallery from '@/components/product/ProductGallery';
 import ProductInfo from '@/components/product/ProductInfo';
 import RelatedProducts from '@/components/product/RelatedProducts';
-import Icon from '@/components/ui/Icon';
-import { fetchProducts } from '@/lib/api';
+import ProductBreadcrumb from '@/components/product/ProductBreadcrumb';
+import { getCatalog } from '@/lib/catalog';
 
 const products = productsData as Product[];
+
+/**
+ * Re-generate a product page at most once every 5 minutes.
+ *
+ * This route used to read the catalog with `cache: 'no-store'`, which opted it
+ * out of static generation entirely: every visit blocked on a fresh Apps Script
+ * round-trip before a single byte was sent. With ISR the page is served from the
+ * cache instantly and refreshed in the background, so stock and pricing stay
+ * current without the shopper paying the backend's latency.
+ */
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return products.map((p) => ({
@@ -24,12 +34,15 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  const catalog = await getCatalog();
+  const product =
+    catalog.find((p) => p.slug === slug) || products.find((p) => p.slug === slug);
   if (!product) return { title: 'Product Not Found' };
 
   return {
     title: product.name,
     description: product.description,
+    alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
       title: `${product.name} · Waraqa (ورقة)`,
       description: product.description,
@@ -44,51 +57,65 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  
-  // Fetch live products for real-time pricing and stock
-  const liveProducts = await fetchProducts();
-  const product = liveProducts.find((p) => p.slug === slug) || products.find((p) => p.slug === slug);
+
+  // Live catalog for real-time pricing and stock, bundled data as the floor.
+  const liveProducts = await getCatalog();
+  const product =
+    liveProducts.find((p) => p.slug === slug) || products.find((p) => p.slug === slug);
 
   if (!product) {
     notFound();
   }
 
+  const catalog = liveProducts.length > 0 ? liveProducts : products;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-muted font-medium">
-        <Link href="/" className="hover:text-maroon transition-colors">
-          Home
-        </Link>
-        <Icon name="chevron-right" size={14} />
-        <Link href="/shop" className="hover:text-maroon transition-colors">
-          Shop
-        </Link>
-        <Icon name="chevron-right" size={14} />
-        <span className="text-char truncate max-w-xs">{product.name}</span>
-      </nav>
+      <ProductBreadcrumb productName={product.name} productNameAr={product.nameAr} />
 
       {/* Main Product View */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-        {/* Left: Gallery (5 cols) — sticky only on desktop two-column layout;
+        {/* Left: Gallery — sticky only on the desktop two-column layout;
             on mobile it must scroll normally, not pin to the top. */}
         <div className="lg:col-span-6 lg:sticky lg:top-24">
-          <ProductGallery
-            images={product.images}
-            productName={product.name}
-          />
+          <ProductGallery images={product.images} productName={product.name} />
         </div>
 
-        {/* Right: Info & Actions (7 cols) */}
+        {/* Right: Info & Actions */}
         <div className="lg:col-span-6">
           <ProductInfo product={product} />
         </div>
       </div>
 
-      {/* Related Products */}
-      <RelatedProducts
-        currentSku={product.sku}
-        allProducts={products}
+      {/* Related — from the live catalog, so a card here can't advertise a
+          price or stock level the product page itself has already corrected. */}
+      <RelatedProducts current={product} allProducts={catalog} />
+
+      {/* Structured data: lets Google show price and availability directly in
+          results, and is what AI answer engines read to cite the product. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            alternateName: product.nameAr || undefined,
+            description: product.description,
+            sku: product.sku,
+            image: product.images,
+            brand: { '@type': 'Brand', name: 'Waraqa' },
+            offers: {
+              '@type': 'Offer',
+              price: product.price,
+              priceCurrency: 'EGP',
+              availability:
+                product.stock > 0 && product.status === 'Active'
+                  ? 'https://schema.org/InStock'
+                  : 'https://schema.org/OutOfStock',
+            },
+          }),
+        }}
       />
     </div>
   );

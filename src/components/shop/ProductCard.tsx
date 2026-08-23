@@ -7,6 +7,7 @@ import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Icon from '@/components/ui/Icon';
+import { formatAmount } from '@/lib/money';
 
 interface ProductCardProps {
   product: Product;
@@ -46,7 +47,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
           {imageFailed ? (
             <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted bg-[#FAF5EE]">
               <Icon name="box" size={28} />
-              <span className="text-xs font-medium">Photo coming soon</span>
+              <span className="text-xs font-medium">{t.common.photoComingSoon}</span>
             </div>
           ) : (
             <Image
@@ -83,11 +84,11 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
           {/* Price */}
           <div className="flex items-baseline gap-2 mt-2">
             <span className="font-serif font-bold text-maroon text-xl sm:text-2xl">
-              {product.price} <span className="text-sm font-sans font-normal text-muted">{t.common.currency}</span>
+              {formatAmount(product.price)} <span className="text-sm font-sans font-normal text-muted">{t.common.currency}</span>
             </span>
             {product.compareAt > product.price && (
               <span className="text-sm text-muted/70 line-through">
-                {product.compareAt} {t.common.currency}
+                {formatAmount(product.compareAt)} {t.common.currency}
               </span>
             )}
           </div>

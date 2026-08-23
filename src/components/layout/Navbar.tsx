@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/ui/Logo';
@@ -18,18 +18,37 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    // Passive, and coalesced into one read per frame. The old handler ran
+    // unthrottled and non-passive on every scroll event, which blocks the
+    // browser from starting the scroll until JS has replied — the classic
+    // source of scroll jank on mobile.
+    let frame = 0;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        setScrolled(window.scrollY > 20);
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
-  const navLinks = [
-    { href: '/', label: t.nav.home },
-    { href: '/shop', label: t.nav.shop },
-    { href: '/about', label: t.nav.about },
-  ];
+  // Rebuilt only when the language changes, so MobileMenu is not handed a new
+  // `links` array (and re-rendered) on every scroll tick.
+  const navLinks = useMemo(
+    () => [
+      { href: '/', label: t.nav.home },
+      { href: '/shop', label: t.nav.shop },
+      { href: '/about', label: t.nav.about },
+    ],
+    [t]
+  );
 
   return (
     <>
@@ -64,6 +83,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`transition-colors relative py-2.5 ${
                     isActive
                       ? 'text-maroon font-semibold'

@@ -6,20 +6,29 @@ import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
+import { formatAmount, lineTotal } from '@/lib/money';
 
 interface OrderReviewProps {
   onConfirm: () => void;
   isSubmitting: boolean;
   errorMessage?: string;
+  /** Chosen delivery governorate. The fee depends on it, so until one is
+   *  picked this panel shows a range rather than a number. */
+  governorate?: string;
 }
 
 export default function OrderReview({
   onConfirm,
   isSubmitting,
   errorMessage,
+  governorate,
 }: OrderReviewProps) {
-  const { items, subtotal, shipping, total } = useCart();
+  const { items, subtotal, itemCount, quoteFor } = useCart();
   const { t, isRTL } = useLanguage();
+
+  const quote = quoteFor(governorate);
+  const shipping = quote.amount;
+  const total = subtotal + shipping;
 
   return (
     <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs sticky top-24">
@@ -28,7 +37,7 @@ export default function OrderReview({
           {t.checkout.orderReview}
         </h2>
         <span className="text-xs text-muted font-medium">
-          {items.reduce((s, i) => s + i.qty, 0)} {t.cart.items}
+          {itemCount} {t.cart.items}
         </span>
       </div>
 
@@ -52,12 +61,12 @@ export default function OrderReview({
                 <div className="min-w-0">
                   <div className="font-semibold text-char truncate">{displayName}</div>
                   <div className="text-muted">
-                    {item.qty} × {item.product.price} {t.common.currency}
+                    {item.qty} × {formatAmount(item.product.price)} {t.common.currency}
                   </div>
                 </div>
               </div>
               <div className="font-semibold text-char shrink-0 font-mono">
-                {item.product.price * item.qty} {t.common.currency}
+                {formatAmount(lineTotal(item.product.price, item.qty))} {t.common.currency}
               </div>
             </div>
           );
@@ -68,23 +77,33 @@ export default function OrderReview({
       <div className="pt-4 border-t border-line space-y-2.5 text-xs sm:text-sm">
         <div className="flex justify-between text-char/80">
           <span>{t.cart.subtotal}</span>
-          <span className="font-medium text-char">{subtotal} {t.common.currency}</span>
+          <span className="font-medium text-char">{formatAmount(subtotal)} {t.common.currency}</span>
         </div>
 
         <div className="flex justify-between text-char/80">
           <span>{t.checkout.deliveryFee}</span>
           <span className="font-medium text-char">
-            {shipping === 0 ? (
+            {!quote.exact ? (
+              <span className="text-muted">
+                {formatAmount(quote.low)}–{formatAmount(quote.high)} {t.common.currency}
+              </span>
+            ) : quote.free ? (
               <span className="text-success font-bold">{t.common.freeShippingTag}</span>
             ) : (
-              `${shipping} ${t.common.currency}`
+              `${formatAmount(shipping)} ${t.common.currency}`
             )}
           </span>
         </div>
 
+        {!quote.exact && (
+          <p className="text-[11px] text-muted leading-relaxed">
+            {t.checkout.pickGovernorateForFee}
+          </p>
+        )}
+
         <div className="pt-3 border-t border-line flex justify-between items-baseline font-serif text-xl font-bold text-maroon">
-          <span>{t.checkout.totalDue}</span>
-          <span>{total} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span></span>
+          <span>{quote.exact ? t.checkout.totalDue : t.checkout.totalFrom}</span>
+          <span>{formatAmount(total)} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span></span>
         </div>
       </div>
 

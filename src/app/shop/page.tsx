@@ -1,95 +1,110 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import type { Product } from '@/types';
 import { fetchProducts } from '@/lib/api';
 import { useLanguage } from '@/context/LanguageContext';
 import FilterBar from '@/components/shop/FilterBar';
 import ProductGrid from '@/components/shop/ProductGrid';
 import EmptyState from '@/components/shop/EmptyState';
-import Spinner from '@/components/ui/Spinner';
 import fallbackProducts from '@/data/products.json';
 
+const BUNDLED = fallbackProducts as Product[];
+
 export default function ShopPage() {
-  const { t, isRTL } = useLanguage();
-  const [products, setProducts] = useState<Product[]>(fallbackProducts as Product[]);
-  const [loading, setLoading] = useState(true);
+  const { t, locale, isRTL } = useLanguage();
+  const [products, setProducts] = useState<Product[]>(BUNDLED);
   const [selectedSize, setSelectedSize] = useState('All');
   const [selectedSort, setSelectedSort] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch live products on mount
+  // Typing filters a small list, but deferring keeps the input responsive as
+  // the catalog grows.
+  const deferredQuery = useDeferredValue(searchQuery);
+
+  // Refresh from the live catalog in the background. The bundled snapshot is
+  // already rendered, so there is nothing to wait for — the page used to hide
+  // it behind a full-page spinner until Apps Script answered, which cost a
+  // second or more of blank screen for data we already had.
   useEffect(() => {
-    let isMounted = true;
-    async function load() {
-      try {
-        const live = await fetchProducts();
-        if (isMounted) {
-          setProducts(live);
-        }
-      } catch (err) {
-        console.warn('Using bundled products fallback', err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
-    load();
+    let active = true;
+    fetchProducts()
+      .then((live) => {
+        if (active && live.length > 0) setProducts(live);
+      })
+      .catch((err) => console.warn('Using bundled products fallback', err));
     return () => {
-      isMounted = false;
+      active = false;
     };
   }, []);
 
-  // Filter and sort logic
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+  // Collator built once per locale instead of per comparison — localeCompare
+  // with no locale also sorted Arabic names by the browser's default, not the
+  // language actually on screen.
+  const collator = useMemo(
+    () => new Intl.Collator(locale === 'ar' ? 'ar-EG' : 'en', { numeric: true, sensitivity: 'base' }),
+    [locale]
+  );
 
-    // Filter by size
+  const filteredProducts = useMemo(() => {
+    let result = products;
+
     if (selectedSize !== 'All') {
       result = result.filter((p) => p.size === selectedSize);
     }
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.nameAr.includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.paperType.toLowerCase().includes(q) ||
-          `${p.gsm}gsm`.includes(q) ||
-          `${p.sheets} sheets`.includes(q) ||
-          p.size.toLowerCase().includes(q)
-      );
+    const q = deferredQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter((p) => {
+        const haystack = [
+          p.name,
+          p.nameAr,
+          p.sku,
+          p.description,
+          p.paperType,
+          p.size,
+          p.category,
+          `${p.gsm}gsm`,
+          `${p.gsm} gsm`,
+          `${p.sheets} sheets`,
+          `${p.sheets}`,
+        ]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(q);
+      });
     }
 
-    // Sort
+    // Copy before sorting: sorting `products` in place would mutate state.
+    const sorted = [...result];
     switch (selectedSort) {
       case 'price-asc':
-        result.sort((a, b) => a.price - b.price);
+        sorted.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        result.sort((a, b) => b.price - a.price);
+        sorted.sort((a, b) => b.price - a.price);
         break;
       case 'name-asc':
-        result.sort((a, b) => {
-          const nameA = isRTL ? a.nameAr : a.name;
-          const nameB = isRTL ? b.nameAr : b.name;
-          return nameA.localeCompare(nameB);
-        });
+        sorted.sort((a, b) =>
+          collator.compare(isRTL ? a.nameAr || a.name : a.name, isRTL ? b.nameAr || b.name : b.name)
+        );
         break;
       case 'featured':
       default:
-        result.sort((a, b) => {
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          return 0;
+        // Featured first, then in-stock, then cheapest — so the default view
+        // never leads with a sold-out book.
+        sorted.sort((a, b) => {
+          if (a.featured !== b.featured) return a.featured ? -1 : 1;
+          const aIn = a.stock > 0 && a.status === 'Active';
+          const bIn = b.stock > 0 && b.status === 'Active';
+          if (aIn !== bIn) return aIn ? -1 : 1;
+          return a.price - b.price;
         });
         break;
     }
 
-    return result;
-  }, [products, selectedSize, selectedSort, searchQuery, isRTL]);
+    return sorted;
+  }, [products, selectedSize, selectedSort, deferredQuery, isRTL, collator]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
@@ -118,12 +133,7 @@ export default function ShopPage() {
       />
 
       {/* Grid or Empty */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <Spinner size="lg" />
-          <p className="text-xs text-muted font-medium">{t.shop.loadingLive}</p>
-        </div>
-      ) : filteredProducts.length > 0 ? (
+      {filteredProducts.length > 0 ? (
         <ProductGrid products={filteredProducts} />
       ) : (
         <EmptyState

@@ -92,4 +92,5 @@ export type CartAction =
   | { type: 'REMOVE_ITEM'; sku: string }
   | { type: 'UPDATE_QTY'; sku: string; qty: number }
   | { type: 'CLEAR_CART' }
-  | { type: 'HYDRATE'; items: CartItem[] };
+  | { type: 'HYDRATE'; items: CartItem[] }
+  | { type: 'REPLACE_ITEMS'; items: CartItem[] };

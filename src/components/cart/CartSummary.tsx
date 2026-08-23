@@ -7,9 +7,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import { FREE_SHIP_OVER } from '@/lib/constants';
+import { formatAmount } from '@/lib/money';
 
 export default function CartSummary() {
-  const { subtotal, shipping, total, items } = useCart();
+  const { subtotal, shippingQuote, total, itemCount } = useCart();
   const { t } = useLanguage();
 
   const qualifiesForFreeShipping = subtotal >= FREE_SHIP_OVER;
@@ -24,16 +25,19 @@ export default function CartSummary() {
       {/* Free shipping progress bar */}
       <div className="bg-cream/80 border border-line rounded-2xl p-4 space-y-2 text-xs">
         {qualifiesForFreeShipping ? (
-          <div className="flex items-center gap-2 text-success font-semibold">
-            <Icon name="check" size={16} />
-            <span>{t.cart.qualifyFreeShip}</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-success font-semibold">
+              <Icon name="check" size={16} />
+              <span>{t.cart.qualifyFreeShip}</span>
+            </div>
+            <p className="text-[11px] text-muted leading-relaxed">{t.cart.freeShipZoneNote}</p>
           </div>
         ) : (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between font-medium text-char">
               <span>{t.cart.progressPrefix}</span>
               <span className="text-maroon font-bold">
-                {remainingForFreeShipping} {t.common.currency} {t.cart.toFreeShip}
+                {formatAmount(remainingForFreeShipping)} {t.common.currency} {t.cart.toFreeShip}
               </span>
             </div>
             <div className="w-full bg-line rounded-full h-1.5 overflow-hidden">
@@ -49,24 +53,42 @@ export default function CartSummary() {
       {/* Line item amounts */}
       <div className="space-y-3 text-sm">
         <div className="flex justify-between text-char/80">
-          <span>{t.cart.subtotal} ({items.reduce((s, i) => s + i.qty, 0)} {t.cart.items})</span>
-          <span className="font-medium text-char">{subtotal} {t.common.currency}</span>
+          <span>{t.cart.subtotal} ({itemCount} {t.cart.items})</span>
+          <span className="font-medium text-char">{formatAmount(subtotal)} {t.common.currency}</span>
         </div>
 
-        <div className="flex justify-between text-char/80">
-          <span>{t.cart.estimatedShipping}</span>
-          <span className="font-medium text-char">
-            {shipping === 0 ? (
-              <span className="text-success font-semibold">{t.common.freeShippingTag}</span>
-            ) : (
-              `${shipping} ${t.common.currency}`
-            )}
-          </span>
+        <div className="space-y-1">
+          <div className="flex justify-between text-char/80">
+            <span>{t.cart.shippingFromLabel}</span>
+            <span className="font-medium text-char">
+              {shippingQuote.exact ? (
+                shippingQuote.free ? (
+                  <span className="text-success font-semibold">{t.common.freeShippingTag}</span>
+                ) : (
+                  `${formatAmount(shippingQuote.amount)} ${t.common.currency}`
+                )
+              ) : shippingQuote.low === 0 ? (
+                // Past the free threshold the cheap end is 0. "0–75" reads like
+                // a glitch; name it.
+                <>
+                  <span className="text-success font-semibold">{t.common.freeShippingTag}</span>
+                  <span>–{formatAmount(shippingQuote.high)} {t.common.currency}</span>
+                </>
+              ) : (
+                `${formatAmount(shippingQuote.low)}–${formatAmount(shippingQuote.high)} ${t.common.currency}`
+              )}
+            </span>
+          </div>
+          <p className="text-[11px] text-muted leading-relaxed">
+            {shippingQuote.low === 0
+              ? t.cart.shippingEstimateNoteFree
+              : t.cart.shippingEstimateNote}
+          </p>
         </div>
 
         <div className="pt-3 border-t border-line flex justify-between items-baseline font-serif text-lg sm:text-xl font-bold text-maroon">
-          <span>{t.cart.total}</span>
-          <span>{total} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span></span>
+          <span>{shippingQuote.exact ? t.cart.total : t.checkout.totalFrom}</span>
+          <span>{formatAmount(total)} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span></span>
         </div>
 
         <p className="text-[11px] text-muted text-start leading-relaxed">

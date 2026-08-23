@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Icon from '@/components/ui/Icon';
 import QuantityStepper from './QuantityStepper';
+import { formatAmount, lineTotal } from '@/lib/money';
 
 interface ProductInfoProps {
   product: Product;
@@ -16,8 +17,14 @@ interface ProductInfoProps {
 export default function ProductInfo({ product }: ProductInfoProps) {
   const { addItem } = useCart();
   const { t, isRTL } = useLanguage();
-  const [qty, setQty] = useState(1);
+  const [requestedQty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+
+  // A live stock drop (or navigating to a product with less stock) must not
+  // leave a quantity above what we can actually ship. Derived at render, so
+  // there is no window in which a too-large quantity is displayed or added.
+  const maxQty = Math.max(1, product.stock);
+  const qty = Math.min(Math.max(1, requestedQty), maxQty);
 
   const isOutOfStock = product.stock <= 0 || product.status === 'Out of stock';
   const isLowStock = product.stock > 0 && product.stock <= 5;
@@ -27,12 +34,24 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     ? `${product.paperType} · ${product.gsm} جرام · ${product.sheets} ورقة`
     : `${product.paperType} · ${product.gsm} GSM · ${product.sheets} Sheets`;
 
+  // Held in a ref so rapid clicks restart one timer instead of stacking
+  // several, and so an unmount (navigating away) cancels it rather than
+  // setting state on a component that is gone.
+  const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    },
+    []
+  );
+
   const handleAddToCart = () => {
-    if (!isOutOfStock) {
-      addItem(product, qty);
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
-    }
+    if (isOutOfStock) return;
+    addItem(product, qty);
+    setAdded(true);
+    if (addedTimer.current) clearTimeout(addedTimer.current);
+    addedTimer.current = setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -69,12 +88,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       {/* Price */}
       <div className="flex items-baseline gap-3 pt-1 border-b border-line pb-6">
         <span className="font-serif text-3xl sm:text-4xl font-bold text-maroon">
-          {product.price}{' '}
+          {formatAmount(product.price)}{' '}
           <span className="text-lg font-sans font-normal text-muted">{t.common.currency}</span>
         </span>
         {product.compareAt > product.price && (
           <span className="text-lg text-muted/60 line-through font-normal">
-            {product.compareAt} {t.common.currency}
+            {formatAmount(product.compareAt)} {t.common.currency}
           </span>
         )}
       </div>
@@ -120,7 +139,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <QuantityStepper
             qty={qty}
-            max={Math.max(1, product.stock)}
+            max={maxQty}
             min={1}
             onChange={setQty}
             disabled={isOutOfStock}
@@ -137,7 +156,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                 ? t.product.currentlySoldOut
                 : added
                 ? t.product.addedToBag
-                : `${t.shop.addToBag} · ${product.price * qty} ${t.common.currency}`}
+                : `${t.shop.addToBag} · ${formatAmount(lineTotal(product.price, qty))} ${t.common.currency}`}
             </span>
           </Button>
         </div>

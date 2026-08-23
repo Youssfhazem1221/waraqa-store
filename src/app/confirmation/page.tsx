@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useCallback, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { CustomerInfo, CartItem } from '@/types';
@@ -8,6 +8,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Spinner from '@/components/ui/Spinner';
+import { useStoredJson } from '@/lib/useStoredValue';
+import { formatAmount, lineTotal } from '@/lib/money';
 
 interface StoredOrder {
   orderId: string;
@@ -28,19 +30,58 @@ function ConfirmationContent() {
   // Read the stored order AFTER mount so the first client render matches the
   // server-rendered HTML (reading sessionStorage during render causes a
   // hydration mismatch).
-  const [order, setOrder] = useState<StoredOrder | null>(null);
+  const parseOrder = useCallback(
+    (raw: unknown): StoredOrder | null => {
+      if (!raw || typeof raw !== 'object') return null;
+      const parsed = raw as StoredOrder;
+      if (typeof parsed.orderId !== 'string' || !Array.isArray(parsed.items)) return null;
 
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem('waraqa-last-order');
-      if (raw) setOrder(JSON.parse(raw));
-    } catch {
-      // Ignore
-    }
-  }, []);
+      // Only show the receipt that belongs to the order in the URL. Landing on
+      // /confirmation later (bookmark, back button, a second order in the same
+      // tab) used to redisplay whichever order happened to be in session.
+      if (orderIdParam && parsed.orderId !== orderIdParam) return null;
 
-  const orderId = order?.orderId || orderIdParam || 'WRQ-NEW';
+      return parsed;
+    },
+    [orderIdParam]
+  );
+
+  const order = useStoredJson('waraqa-last-order', parseOrder, 'session');
+
+  const orderId = order?.orderId || orderIdParam;
   const customerEmail = order?.customer?.email?.trim();
+
+  // No id in the URL and nothing in session: there is no order to confirm, so
+  // say that instead of inventing a plausible-looking "WRQ-NEW" receipt.
+  if (!orderId) {
+    return (
+      <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-6">
+        <div className="w-16 h-16 rounded-3xl bg-cream border border-line flex items-center justify-center mx-auto text-muted">
+          <Icon name="box" size={32} />
+        </div>
+        <div className="space-y-2">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-char">
+            {t.confirmation.noOrderTitle}
+          </h1>
+          <p className="text-sm text-muted leading-relaxed max-w-md mx-auto">
+            {t.confirmation.noOrderDesc}
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/shop" className="w-full sm:w-auto">
+            <Button variant="secondary" size="md" className="w-full sm:w-auto">
+              <span>{t.confirmation.continueShopping}</span>
+            </Button>
+          </Link>
+          <Link href="/" className="w-full sm:w-auto">
+            <Button variant="ghost" size="md" className="w-full sm:w-auto text-xs">
+              <span>{t.confirmation.returnHome}</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-8">
@@ -103,7 +144,7 @@ function ConfirmationContent() {
                     {displayName} <strong className="text-char">×{i.qty}</strong>
                   </span>
                   <span className="font-medium text-char font-mono">
-                    {i.product.price * i.qty} {t.common.currency}
+                    {formatAmount(lineTotal(i.product.price, i.qty))} {t.common.currency}
                   </span>
                 </div>
               );
@@ -111,12 +152,12 @@ function ConfirmationContent() {
 
             <div className="pt-3 flex justify-between text-xs text-muted">
               <span>{t.checkout.deliveryFee} ({order.customer.governorate})</span>
-              <span>{order.shipping === 0 ? t.common.freeShippingTag : `${order.shipping} ${t.common.currency}`}</span>
+              <span>{order.shipping === 0 ? t.common.freeShippingTag : `${formatAmount(order.shipping)} ${t.common.currency}`}</span>
             </div>
 
             <div className="pt-3 flex justify-between font-serif text-base font-bold text-maroon">
               <span>{t.confirmation.totalCod}</span>
-              <span>{order.total} {t.common.currency}</span>
+              <span>{formatAmount(order.total)} {t.common.currency}</span>
             </div>
           </div>
 

@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Icon from '@/components/ui/Icon';
 import QuantityStepper from '@/components/product/QuantityStepper';
+import { formatAmount, lineTotal } from '@/lib/money';
 
 interface CartItemProps {
   item: CartItemType;
@@ -20,8 +21,16 @@ export default function CartItem({ item }: CartItemProps) {
 
   const displayName = isRTL ? (product.nameAr || product.name) : product.name;
 
+  // A bag can outlive the stock it was filled from. Flag the line instead of
+  // letting it look ordinary all the way to a rejected checkout.
+  const isOutOfStock = product.stock <= 0 || product.status !== 'Active';
+
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-6 border-b border-line">
+    <div
+      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-6 border-b border-line ${
+        isOutOfStock ? 'opacity-70' : ''
+      }`}
+    >
       {/* Product Image & Info */}
       <div className="flex items-center gap-4 flex-1">
         <Link
@@ -47,8 +56,11 @@ export default function CartItem({ item }: CartItemProps) {
           <div className="text-xs text-muted">
             <span>{product.size}</span> · <span>{product.sheets} {t.common.sheets}</span> · <span>{product.gsm} {t.common.gsm}</span>
           </div>
+          {isOutOfStock && (
+            <div className="text-xs font-semibold text-error">{t.cart.outOfStockLine}</div>
+          )}
           <div className="text-sm font-semibold text-maroon sm:hidden">
-            {product.price * qty} {t.common.currency}
+            {formatAmount(lineTotal(product.price, qty))} {t.common.currency}
           </div>
         </div>
       </div>
@@ -59,15 +71,16 @@ export default function CartItem({ item }: CartItemProps) {
           qty={qty}
           max={Math.max(1, product.stock)}
           min={1}
+          disabled={isOutOfStock}
           onChange={(newQty) => updateQty(product.sku, newQty)}
         />
 
         <div className="hidden sm:block text-right min-w-[90px]">
           <div className="font-serif font-bold text-maroon text-lg">
-            {product.price * qty} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span>
+            {formatAmount(lineTotal(product.price, qty))} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span>
           </div>
           <div className="text-[11px] text-muted">
-            {product.price} {t.common.currency} {t.cart.each}
+            {formatAmount(product.price)} {t.common.currency} {t.cart.each}
           </div>
         </div>
 

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/ui/Icon';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ProductGalleryProps {
   images: string[];
@@ -10,15 +11,32 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
+  const { t } = useLanguage();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [imageFailed, setImageFailed] = useState(false);
 
   const displayList = images && images.length > 0 ? images : ['/products/wrq-a5-kft.jpeg'];
+
+  // Reset during render rather than in an effect. Client-side navigation
+  // between two products reuses this component, so a thumbnail selected on the
+  // previous product used to carry over — and index past the end of a shorter
+  // image list. Adjusting here also avoids painting one frame of the wrong
+  // image, which the effect version could not.
+  const [trackedImages, setTrackedImages] = useState(images);
+  if (trackedImages !== images) {
+    setTrackedImages(images);
+    setSelectedIdx(0);
+    setImageFailed(false);
+  }
+
   const activeImage = displayList[selectedIdx] || displayList[0];
 
-  useEffect(() => {
+  // Same idea for the error state: a new image deserves a fresh attempt.
+  const [trackedImage, setTrackedImage] = useState(activeImage);
+  if (trackedImage !== activeImage) {
+    setTrackedImage(activeImage);
     setImageFailed(false);
-  }, [activeImage]);
+  }
 
   return (
     <div className="space-y-4">
@@ -27,7 +45,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
         {imageFailed ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted bg-[#FAF5EE]">
             <Icon name="box" size={40} />
-            <span className="text-sm font-medium">Photo coming soon</span>
+            <span className="text-sm font-medium">{t.common.photoComingSoon}</span>
           </div>
         ) : (
           <Image
