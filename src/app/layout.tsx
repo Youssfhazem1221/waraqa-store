@@ -3,6 +3,7 @@ import { Fraunces, Inter, Tajawal } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
+import { PostHogProvider } from '@/providers/PostHogProvider';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -79,12 +80,14 @@ export default function RootLayout({
         className="bg-cream text-char antialiased min-h-screen flex flex-col selection:bg-maroon selection:text-cream font-sans"
       >
         <LanguageProvider>
-          <CartProvider>
-            <AnnouncementBar />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </CartProvider>
+          <PostHogProvider>
+            <CartProvider>
+              <AnnouncementBar />
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </CartProvider>
+          </PostHogProvider>
         </LanguageProvider>
       </body>
     </html>
