@@ -8,6 +8,7 @@ import ProductGallery from '@/components/product/ProductGallery';
 import ProductInfo from '@/components/product/ProductInfo';
 import RelatedProducts from '@/components/product/RelatedProducts';
 import Icon from '@/components/ui/Icon';
+import { fetchProducts } from '@/lib/api';
 
 const products = productsData as Product[];
 
@@ -43,7 +44,10 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  
+  // Fetch live products for real-time pricing and stock
+  const liveProducts = await fetchProducts();
+  const product = liveProducts.find((p) => p.slug === slug) || products.find((p) => p.slug === slug);
 
   if (!product) {
     notFound();
