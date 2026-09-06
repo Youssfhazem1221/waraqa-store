@@ -22,6 +22,9 @@ export const WEB_APP_URL =
 /** Owner's WhatsApp number in international format (Egypt +20) */
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
 
+/** Social profile URLs for sameAs and link elements */
+export const INSTAGRAM_URL = 'https://www.instagram.com/waraqa.store';
+
 export const CURRENCY = process.env.NEXT_PUBLIC_CURRENCY || 'EGP';
 
 // ---- Shipping ------------------------------------------------------

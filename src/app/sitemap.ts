@@ -1,15 +1,20 @@
 import type { MetadataRoute } from 'next';
 import type { Product } from '@/types';
 import productsData from '@/data/products.json';
-import { SITE_URL, LOCALES } from '@/lib/seo';
+import { SITE_URL, LOCALES, DEFAULT_LOCALE } from '@/lib/seo';
 
 const products = productsData as Product[];
 
 /**
- * Built from the bundled catalog rather than the live Apps Script feed: a sitemap
- * must be generated deterministically at build time, and the slug set only changes
- * on deploy. Prices and stock are not sitemap data.
+ * Bump this by hand when page copy or the catalog actually changes.
+ *
+ * It replaces a build-time `new Date()`: that stamped every URL with the moment
+ * of the last deploy, so a CSS-only push told Google all 22 pages had changed.
+ * Crawlers discount a lastmod that moves without the content moving, which costs
+ * us the signal exactly when we do ship a real content update.
  */
+const CONTENT_REVISION = new Date('2026-09-06T00:00:00.000Z');
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths: {
     path: string;
@@ -26,18 +31,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  const lastModified = new Date();
-
   return paths.flatMap(({ path, priority, changeFrequency }) =>
     LOCALES.map((locale) => ({
       url: `${SITE_URL}/${locale}${path}`,
-      lastModified,
+      lastModified: CONTENT_REVISION,
       changeFrequency,
       priority,
       alternates: {
-        languages: Object.fromEntries(
-          LOCALES.map((l) => [l, `${SITE_URL}/${l}${path}`])
-        ),
+        languages: {
+          ...Object.fromEntries(
+            LOCALES.map((l) => [l, `${SITE_URL}/${l}${path}`])
+          ),
+          // Mirrors seoAlternates() in lib/seo.ts. Without it the sitemap and the
+          // <head> disagree about what an unknown-locale visitor should get.
+          'x-default': `${SITE_URL}/${DEFAULT_LOCALE}${path}`,
+        },
       },
     }))
   );

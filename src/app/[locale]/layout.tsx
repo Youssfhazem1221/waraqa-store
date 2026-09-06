@@ -80,6 +80,15 @@ export async function generateMetadata({
       siteName: 'Waraqa',
       ...ogLocale(l),
       type: 'website',
+      images: [{ url: `${SITE_URL}/lifestyle/hero-fullbleed.jpg`, width: 1200, height: 630, alt: 'Waraqa — Handmade sketchbooks' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: isAr ? 'ورقة — سكتش بوك وورق رسم فاخر' : 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
+      description: isAr
+        ? 'سكتشات رسم وورق فاخر مصنوع يدوي — للفنانين والمبدعين في مصر.'
+        : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
+      images: [`${SITE_URL}/lifestyle/hero-fullbleed.jpg`],
     },
   };
 }

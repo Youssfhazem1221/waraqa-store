@@ -8,10 +8,22 @@
 
 import type { Product } from '@/types';
 import type { Locale } from '@/lib/translations';
-import { BRAND, WHATSAPP_NUMBER } from '@/lib/constants';
+import {
+  BRAND,
+  WHATSAPP_NUMBER,
+  INSTAGRAM_URL,
+  SHIPPING_CAIRO,
+  SHIPPING_OUTSIDE,
+  FREE_SHIP_OVER,
+  DELIVERY_DAYS_MIN,
+  DELIVERY_DAYS_MAX,
+} from '@/lib/constants';
 import { SITE_URL, absoluteUrl } from '@/lib/seo';
 
 const ORG_ID = `${SITE_URL}/#organization`;
+const RETURN_POLICY_ID = `${SITE_URL}/#return-policy`;
+const SHIPPING_CAIRO_ID = `${SITE_URL}/#shipping-cairo`;
+const SHIPPING_OUTSIDE_ID = `${SITE_URL}/#shipping-outside`;
 
 export function organizationSchema() {
   return {
@@ -27,6 +39,13 @@ export function organizationSchema() {
     telephone: `+${WHATSAPP_NUMBER}`,
     areaServed: { '@type': 'Country', name: 'Egypt' },
     address: { '@type': 'PostalAddress', addressCountry: 'EG' },
+    sameAs: [INSTAGRAM_URL, `https://wa.me/${WHATSAPP_NUMBER}`],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: `+${WHATSAPP_NUMBER}`,
+      contactType: 'customer service',
+      availableLanguage: ['English', 'Arabic'],
+    },
   };
 }
 
@@ -100,6 +119,51 @@ export function productSchema(product: Product, locale: Locale) {
       itemCondition: 'https://schema.org/NewCondition',
       seller: { '@id': ORG_ID },
       areaServed: { '@type': 'Country', name: 'Egypt' },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        '@id': RETURN_POLICY_ID,
+        applicableCountry: 'EG',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+      },
+      shippingDetails: [
+        {
+          '@type': 'OfferShippingDetails',
+          '@id': SHIPPING_CAIRO_ID,
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: 'EG',
+            addressRegion: ['Cairo', 'Giza'],
+          },
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: product.price >= FREE_SHIP_OVER ? 0 : SHIPPING_CAIRO,
+            currency: 'EGP',
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'd' },
+            transitTime: { '@type': 'QuantitativeValue', minValue: DELIVERY_DAYS_MIN, maxValue: DELIVERY_DAYS_MAX, unitCode: 'd' },
+          },
+        },
+        {
+          '@type': 'OfferShippingDetails',
+          '@id': SHIPPING_OUTSIDE_ID,
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: 'EG',
+          },
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: SHIPPING_OUTSIDE,
+            currency: 'EGP',
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'd' },
+            transitTime: { '@type': 'QuantitativeValue', minValue: DELIVERY_DAYS_MIN, maxValue: DELIVERY_DAYS_MAX, unitCode: 'd' },
+          },
+        },
+      ],
     },
   };
 }
