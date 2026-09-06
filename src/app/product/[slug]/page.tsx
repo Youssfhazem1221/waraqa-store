@@ -7,6 +7,8 @@ import ProductGallery from '@/components/product/ProductGallery';
 import ProductInfo from '@/components/product/ProductInfo';
 import RelatedProducts from '@/components/product/RelatedProducts';
 import ProductBreadcrumb from '@/components/product/ProductBreadcrumb';
+import JsonLd from '@/components/seo/JsonLd';
+import { productSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
 
 const products = productsData as Product[];
@@ -93,29 +95,15 @@ export default async function ProductDetailPage({
 
       {/* Structured data: lets Google show price and availability directly in
           results, and is what AI answer engines read to cite the product. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Product',
-            name: product.name,
-            alternateName: product.nameAr || undefined,
-            description: product.description,
-            sku: product.sku,
-            image: product.images,
-            brand: { '@type': 'Brand', name: 'Waraqa' },
-            offers: {
-              '@type': 'Offer',
-              price: product.price,
-              priceCurrency: 'EGP',
-              availability:
-                product.stock > 0 && product.status === 'Active'
-                  ? 'https://schema.org/InStock'
-                  : 'https://schema.org/OutOfStock',
-            },
-          }),
-        }}
+      <JsonLd
+        data={[
+          productSchema(product, 'en'),
+          breadcrumbSchema('en', [
+            { name: 'Home', path: '/' },
+            { name: 'Shop', path: '/shop' },
+            { name: product.name, path: `/product/${product.slug}` },
+          ]),
+        ]}
       />
     </div>
   );

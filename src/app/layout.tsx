@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Fraunces, Inter, Tajawal } from 'next/font/google';
 import './globals.css';
 import { SITE_URL } from '@/lib/seo';
+import { organizationSchema, webSiteSchema } from '@/lib/schema';
+import JsonLd from '@/components/seo/JsonLd';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -91,6 +93,7 @@ export default function RootLayout({
             </CartProvider>
           </PostHogProvider>
         </LanguageProvider>
+        <JsonLd data={[organizationSchema(), webSiteSchema('en')]} />
         <Analytics />
       </body>
     </html>

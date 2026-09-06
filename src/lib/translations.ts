@@ -250,6 +250,17 @@ export const translations = {
       pHonestDesc: 'Real artist-grade quality at accessible local prices',
       exploreBtn: 'Check Out The Formats',
     },
+    faq: {
+      title: 'Questions, answered',
+      items: [
+        { q: 'Do you deliver across Egypt?', a: 'Yes — we ship to all 27 Egyptian governorates via express courier.' },
+        { q: 'How much is delivery and when does it arrive?', a: 'Delivery is 60 EGP inside Cairo and Giza, or 75 EGP everywhere else. Orders over 800 EGP qualify for free delivery in the Cairo zone. Expect 3–7 business days depending on your governorate.' },
+        { q: 'How do I pay?', a: 'Cash on delivery only — you pay the courier when your order arrives, after you inspect it.' },
+        { q: 'What does gsm mean and which weight should I pick?', a: 'GSM (grams per square metre) measures paper thickness. Our range runs from 150gsm (good for pencil, pen and light ink) through 250gsm (multi-purpose drawing) up to 320gsm (heavy enough for watercolour, gouache and wet media without buckling).' },
+        { q: 'Which sketchbook suits watercolour or markers?', a: 'Pick one of the 320gsm Mixed Media sketchbooks (available in A5 and A4). The heavy, acid-free paper handles water-based media, gouache, ink and alcohol markers without bleeding through.' },
+        { q: 'Is the paper acid-free?', a: "Yes — every Waraqa sketchbook uses acid-free paper, so your work won't yellow or deteriorate over time." },
+      ],
+    },
     footer: {
       subtitle: 'Handmade Sketchbooks · Cairo, Egypt',
       navigation: 'Quick Links',
@@ -505,6 +516,17 @@ export const translations = {
       pHonest: 'سعر عادل وحقيقي',
       pHonestDesc: 'جودة استوديو فنية تنافس المستورد وبأسعار محلية عادلة',
       exploreBtn: 'شوف كل المقاسات والخامات',
+    },
+    faq: {
+      title: 'أسئلة شائعة',
+      items: [
+        { q: 'بتوصّلوا لكل مصر؟', a: 'أيوه — بنشحن لكل الـ ٢٧ محافظة في مصر بشحن سريع.' },
+        { q: 'الشحن بكام وبيوصل في قد إيه؟', a: 'الشحن ٦٠ جنيه للقاهرة والجيزة، و٧٥ جنيه لباقي المحافظات. الطلبات اللي فوق ٨٠٠ جنيه الشحن مجاني في القاهرة والجيزة. التوصيل من ٣ لـ ٧ أيام عمل حسب المحافظة.' },
+        { q: 'بتدفعوا إزاي؟', a: 'الدفع عند الاستلام بس — بتدفع للمندوب كاش لما الطلب يوصلك وبعد ما تعاينه.' },
+        { q: 'يعني إيه gsm وأختار وزن كام؟', a: 'الـ gsm (جرام لكل متر مربع) بيقيس سمك الورق. عندنا من ١٥٠ gsm (مناسب للرصاص والقلم والحبر الخفيف) لـ ٢٥٠ gsm (رسم متعدد الخامات) لغاية ٣٢٠ gsm (بيستحمل ألوان ميّه وجواش ووسائط رطبة من غير ما يتعوّج).' },
+        { q: 'أنهي سكتش بوك يناسب ألوان الميّه أو الماركرز؟', a: 'اختار سكتش بوك الـ Mixed Media وزن ٣٢٠ gsm (متوفر A5 و A4). الورق السميك الخالي من الأحماض بيستحمل ألوان الميّه والجواش والحبر وماركرز الكحول من غير ما ينفذ للوش التاني.' },
+        { q: 'الورق acid-free؟', a: 'أيوه — كل سكتشات ورقة بتستخدم ورق خالي من الأحماض، فشغلك مش هيصفّر ولا يتلف مع الوقت.' },
+      ],
     },
     footer: {
       subtitle: 'سكتشات رسم وورق فاخر · القاهرة، مصر',

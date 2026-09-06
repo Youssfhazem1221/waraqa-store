@@ -19,6 +19,7 @@ export interface Product {
   image: string;
   images: string[];
   description: string;
+  descriptionAr?: string;
   featured: boolean;
   slug: string;
 }
