@@ -10,7 +10,7 @@ import TrustRow from '@/components/home/TrustRow';
 import NewsletterCapture from '@/components/home/NewsletterCapture';
 import fallbackProducts from '@/data/products.json';
 
-export default function HomePage() {
+export default function HomeClient() {
   const [products, setProducts] = useState<Product[]>(fallbackProducts as Product[]);
 
   useEffect(() => {

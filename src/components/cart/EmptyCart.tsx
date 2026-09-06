@@ -1,9 +1,13 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function EmptyCart() {
+  const { lp } = useLanguage();
   return (
     <div className="max-w-md mx-auto my-16 bg-white border border-line rounded-3xl p-10 sm:p-12 text-center shadow-xs">
       <div className="w-20 h-20 rounded-2xl bg-cream border border-line flex items-center justify-center mx-auto mb-6 text-maroon">
@@ -19,7 +23,7 @@ export default function EmptyCart() {
         formats and fill your blank page.
       </p>
 
-      <Link href="/shop" className="block">
+      <Link href={lp('/shop')} className="block">
         <Button size="lg" fullWidth>
           <Icon name="bag" size={18} />
           <span>Explore Sketchbooks</span>

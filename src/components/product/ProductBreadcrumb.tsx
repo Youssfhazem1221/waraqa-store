@@ -17,7 +17,7 @@ export default function ProductBreadcrumb({
   productName: string;
   productNameAr?: string;
 }) {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   // The trail read "الرئيسية / المتجر / Mini Sketchbook" in Arabic, because the
   // server page only ever passed the English name.
@@ -28,11 +28,11 @@ export default function ProductBreadcrumb({
       aria-label="Breadcrumb"
       className="mb-8 flex items-center gap-2 text-xs text-muted font-medium"
     >
-      <Link href="/" className="hover:text-maroon transition-colors">
+      <Link href={lp('/')} className="hover:text-maroon transition-colors">
         {t.product.breadcrumbHome}
       </Link>
       <Icon name={isRTL ? 'chevron-left' : 'chevron-right'} size={14} />
-      <Link href="/shop" className="hover:text-maroon transition-colors">
+      <Link href={lp('/shop')} className="hover:text-maroon transition-colors">
         {t.product.breadcrumbShop}
       </Link>
       <Icon name={isRTL ? 'chevron-left' : 'chevron-right'} size={14} />

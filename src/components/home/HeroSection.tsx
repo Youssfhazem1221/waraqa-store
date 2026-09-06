@@ -8,7 +8,7 @@ import Icon from '@/components/ui/Icon';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function HeroSection() {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   return (
     <section
@@ -76,7 +76,7 @@ export default function HeroSection() {
               users. Focus rings are forced to cream here because the shared
               maroon ring is invisible against this photograph. */}
           <Link
-            href="/shop"
+            href={lp('/shop')}
             className={buttonClasses({
               size: 'lg',
               fullWidth: true,
@@ -88,7 +88,7 @@ export default function HeroSection() {
             <span>{t.hero.shopCta}</span>
           </Link>
           <Link
-            href="/about"
+            href={lp('/about')}
             className={buttonClasses({
               size: 'lg',
               fullWidth: true,

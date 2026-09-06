@@ -16,7 +16,7 @@ interface CartItemProps {
 
 export default function CartItem({ item }: CartItemProps) {
   const { updateQty, removeItem } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
   const { product, qty } = item;
 
   const displayName = isRTL ? (product.nameAr || product.name) : product.name;
@@ -34,7 +34,7 @@ export default function CartItem({ item }: CartItemProps) {
       {/* Product Image & Info */}
       <div className="flex items-center gap-4 flex-1">
         <Link
-          href={`/product/${product.slug}`}
+          href={lp(`/product/${product.slug}`)}
           className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white border border-line shrink-0 shadow-xs"
         >
           <Image
@@ -48,7 +48,7 @@ export default function CartItem({ item }: CartItemProps) {
 
         <div className="space-y-1">
           <Link
-            href={`/product/${product.slug}`}
+            href={lp(`/product/${product.slug}`)}
             className="font-semibold text-char text-base hover:text-maroon transition-colors line-clamp-1"
           >
             {displayName}

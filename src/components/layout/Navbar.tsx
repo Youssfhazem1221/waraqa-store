@@ -13,7 +13,7 @@ import MobileMenu from '@/components/layout/MobileMenu';
 export default function Navbar() {
   const pathname = usePathname();
   const { itemCount } = useCart();
-  const { t } = useLanguage();
+  const { t, lp } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -43,11 +43,11 @@ export default function Navbar() {
   // `links` array (and re-rendered) on every scroll tick.
   const navLinks = useMemo(
     () => [
-      { href: '/', label: t.nav.home },
-      { href: '/shop', label: t.nav.shop },
-      { href: '/about', label: t.nav.about },
+      { href: lp('/'), label: t.nav.home },
+      { href: lp('/shop'), label: t.nav.shop },
+      { href: lp('/about'), label: t.nav.about },
     ],
-    [t]
+    [t, lp]
   );
 
   return (
@@ -105,7 +105,7 @@ export default function Navbar() {
 
             {/* Search hidden on mobile, visible on desktop */}
             <Link
-              href="/shop"
+              href={lp('/shop')}
               className="hidden md:inline-flex p-2 text-char/80 hover:text-maroon hover:bg-maroon/5 rounded-xl transition-colors"
               aria-label={t.nav.search}
               title={t.nav.search}
@@ -114,7 +114,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/cart"
+              href={lp('/cart')}
               className="relative inline-flex items-center gap-2 bg-maroon text-cream px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl font-medium text-sm transition-transform hover:bg-esp active:scale-95 shadow-xs shadow-maroon/10"
               aria-label={`${t.nav.bag} with ${itemCount} items`}
             >

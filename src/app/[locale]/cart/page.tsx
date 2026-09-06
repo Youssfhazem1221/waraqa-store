@@ -13,7 +13,7 @@ import { formatAmount } from '@/lib/money';
 
 export default function CartPage() {
   const { items, isHydrated, clearCart, replaceItems } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   const [notices, setNotices] = useState<string[]>([]);
   const checked = useRef(false);
@@ -130,7 +130,7 @@ export default function CartPage() {
 
           <div className="mt-8 pt-6 border-t border-line flex items-center justify-between text-xs text-muted">
             <Link
-              href="/shop"
+              href={lp('/shop')}
               className="inline-flex items-center gap-1.5 font-medium text-maroon hover:underline"
             >
               <Icon name={isRTL ? 'chevron-right' : 'chevron-left'} size={14} />

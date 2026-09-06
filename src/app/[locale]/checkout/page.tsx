@@ -49,7 +49,7 @@ function parseStoredCustomer(raw: unknown): CustomerInfo | null {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, isHydrated, clearCart, quoteFor } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   // Restored through an external-store read: `null` on the server and during
   // hydration, the saved details immediately after. Reading localStorage in the
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
 
       // Clear the cart and go to confirmation
       clearCart();
-      router.push(`/confirmation?orderId=${encodeURIComponent(res.orderId)}`);
+      router.push(lp(`/confirmation?orderId=${encodeURIComponent(res.orderId)}`));
     } catch (err) {
       console.error('Order submission error:', err);
       setSubmitError(t.checkout.submitError);
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-muted font-medium">
-        <Link href="/cart" className="hover:text-maroon transition-colors flex items-center gap-1">
+        <Link href={lp('/cart')} className="hover:text-maroon transition-colors flex items-center gap-1">
           <Icon name={isRTL ? 'chevron-right' : 'chevron-left'} size={14} />
           <span>{t.checkout.breadcrumbBag}</span>
         </Link>

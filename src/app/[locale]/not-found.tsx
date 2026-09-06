@@ -1,9 +1,13 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function NotFound() {
+  const { lp } = useLanguage();
   return (
     <div className="max-w-md mx-auto my-20 px-4 text-center space-y-6">
       <div className="w-20 h-20 rounded-3xl bg-white border border-line flex items-center justify-center mx-auto text-maroon shadow-xs">
@@ -24,13 +28,13 @@ export default function NotFound() {
       </div>
 
       <div className="pt-2 flex justify-center gap-4">
-        <Link href="/shop">
+        <Link href={lp('/shop')}>
           <Button size="md">
             <Icon name="bag" size={18} />
             <span>Go to Shop</span>
           </Button>
         </Link>
-        <Link href="/">
+        <Link href={lp('/')}>
           <Button variant="secondary" size="md">
             <span>Back Home</span>
           </Button>

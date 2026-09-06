@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useCallback, useMemo } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { translations, type Locale } from '@/lib/translations';
-import { useStoredString, writeStored } from '@/lib/useStoredValue';
+import { localePath } from '@/lib/seo';
 
 interface LanguageContextValue {
   locale: Locale;
@@ -10,53 +11,51 @@ interface LanguageContextValue {
   t: typeof translations.en;
   setLocale: (loc: Locale) => void;
   toggleLocale: () => void;
+  /** Prefix a path with the current locale: `/shop` → `/ar/shop`. */
+  lp: (path: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-const STORAGE_KEY = 'waraqa-lang';
-
-function isLocale(value: string | null): value is Locale {
-  return value === 'ar' || value === 'en';
-}
-
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Reads as `null` on the server and during hydration, so the first client
-  // render matches the server HTML; the stored preference then applies without
-  // the extra render an effect-plus-setState would cost.
-  const stored = useStoredString(STORAGE_KEY);
-  const locale: Locale = isLocale(stored) ? stored : 'en';
+/**
+ * Locale is now a URL fact passed down from the server layout, not a stored
+ * preference. The middleware reads a `NEXT_LOCALE` cookie + Accept-Language to
+ * redirect bare paths, and the `[locale]` segment decides what the server
+ * renders. No `useEffect` needed for dir/lang — they are set on `<html>` at
+ * render time.
+ */
+export function LanguageProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: React.ReactNode;
+}) {
   const isRTL = locale === 'ar';
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // First visit with an Arabic browser: adopt Arabic. This writes the
-  // preference rather than calling setState, so the value still arrives through
-  // the same external-store path and no hydration mismatch is possible.
-  useEffect(() => {
-    if (stored !== null) return;
-    try {
-      if (navigator.language?.toLowerCase().startsWith('ar')) {
-        writeStored(STORAGE_KEY, 'ar');
-      }
-    } catch {
-      // navigator.language can be unavailable in exotic environments.
-    }
-  }, [stored]);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      if (next === locale) return;
+      // Read by the middleware on the next un-prefixed request, so a returning
+      // visitor lands in the language they chose.
+      document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; samesite=lax`;
+      const rest = pathname.replace(/^\/(en|ar)(?=\/|$)/, '');
+      router.push(`/${next}${rest || ''}`);
+    },
+    [locale, pathname, router]
+  );
 
-  // Update the html tag's dir/lang so the browser lays the page out RTL and
-  // reads it in the right language.
-  useEffect(() => {
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = locale;
-    document.documentElement.classList.toggle('rtl', isRTL);
-  }, [locale, isRTL]);
+  const toggleLocale = useCallback(
+    () => setLocale(isRTL ? 'en' : 'ar'),
+    [isRTL, setLocale]
+  );
 
-  const setLocale = useCallback((newLocale: Locale) => {
-    writeStored(STORAGE_KEY, newLocale);
-  }, []);
-
-  const toggleLocale = useCallback(() => {
-    writeStored(STORAGE_KEY, isRTL ? 'en' : 'ar');
-  }, [isRTL]);
+  const lp = useCallback(
+    (path: string) => localePath(locale, path),
+    [locale]
+  );
 
   // Memoised so switching pages does not hand every consumer of this context a
   // brand-new value object and force a re-render of the whole tree.
@@ -67,8 +66,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       t: translations[locale] || translations.en,
       setLocale,
       toggleLocale,
+      lp,
     }),
-    [locale, isRTL, setLocale, toggleLocale]
+    [locale, isRTL, setLocale, toggleLocale, lp]
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

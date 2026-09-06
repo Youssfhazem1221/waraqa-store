@@ -11,7 +11,7 @@ import { formatAmount } from '@/lib/money';
 
 export default function CartSummary() {
   const { subtotal, shippingQuote, total, itemCount } = useCart();
-  const { t } = useLanguage();
+  const { t, lp } = useLanguage();
 
   const qualifiesForFreeShipping = subtotal >= FREE_SHIP_OVER;
   const remainingForFreeShipping = Math.max(0, FREE_SHIP_OVER - subtotal);
@@ -98,7 +98,7 @@ export default function CartSummary() {
 
       {/* Proceed to Checkout CTA */}
       <div className="space-y-3 pt-2">
-        <Link href="/checkout" className="block">
+        <Link href={lp('/checkout')} className="block">
           <Button size="lg" fullWidth className="shadow-md">
             <Icon name="lock" size={18} />
             <span>{t.cart.proceedCheckout}</span>
@@ -106,7 +106,7 @@ export default function CartSummary() {
         </Link>
 
         <Link
-          href="/shop"
+          href={lp('/shop')}
           className="block text-center text-xs font-medium text-muted hover:text-maroon transition-colors py-1"
         >
           {t.cart.continueShopping}

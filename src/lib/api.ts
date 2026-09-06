@@ -68,6 +68,7 @@ export function mapApiProduct(api: ApiProduct): Product {
     image,
     images: fallback?.images?.length ? fallback.images : [image],
     description: api.description || fallback?.description || '',
+    descriptionAr: api.descriptionAr || fallback?.descriptionAr || '',
     featured: Boolean(api.featured),
     slug: fallback?.slug || slugify(api.name),
   };

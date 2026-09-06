@@ -16,7 +16,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addItem } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
   const [imageFailed, setImageFailed] = React.useState(false);
   const isOutOfStock = product.stock <= 0 || product.status === 'Out of stock';
 
@@ -40,7 +40,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
 
         {/* Product Photo with Link */}
         <Link
-          href={`/product/${product.slug}`}
+          href={lp(`/product/${product.slug}`)}
           className="block w-full h-full relative"
           aria-label={`View ${displayName}`}
         >
@@ -75,7 +75,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
           </div>
 
           {/* Product Title */}
-          <Link href={`/product/${product.slug}`} className="block group-hover:text-maroon transition-colors">
+          <Link href={lp(`/product/${product.slug}`)} className="block group-hover:text-maroon transition-colors">
             <h3 className="font-semibold text-char text-base line-clamp-1">
               {displayName}
             </h3>

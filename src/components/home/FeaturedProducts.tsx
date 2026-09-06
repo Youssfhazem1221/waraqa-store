@@ -12,7 +12,7 @@ interface FeaturedProductsProps {
 }
 
 export default function FeaturedProducts({ products }: FeaturedProductsProps) {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   // Show the featured products first, topped up with the rest of the catalog to
   // fill the four-card row. The previous version threw the featured list away
@@ -38,7 +38,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             </h2>
           </div>
           <Link
-            href="/shop"
+            href={lp('/shop')}
             className="inline-flex items-center gap-2 text-sm font-semibold text-maroon hover:text-esp transition-colors group"
           >
             <span>{t.featured.viewAll}</span>

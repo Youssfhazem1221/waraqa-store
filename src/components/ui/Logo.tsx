@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface LogoProps {
   variant?: 'light' | 'dark' | 'maroon';
@@ -12,6 +15,7 @@ export default function Logo({
   variant = 'maroon',
   size = 'md',
 }: LogoProps) {
+  const { lp } = useLanguage();
   const iconSizes = {
     sm: 'w-9 h-9',
     md: 'w-11 h-11 sm:w-12 sm:h-12',
@@ -28,7 +32,7 @@ export default function Logo({
 
   return (
     <Link
-      href="/"
+      href={lp('/')}
       aria-label="Waraqa — home"
       className="inline-flex items-center group select-none"
     >

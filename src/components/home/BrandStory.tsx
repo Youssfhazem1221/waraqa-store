@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function BrandStory() {
-  const { t } = useLanguage();
+  const { t, lp } = useLanguage();
 
   return (
     <section className="py-16 sm:py-24 border-b border-line bg-[#FAF5EE]">
@@ -64,7 +64,7 @@ export default function BrandStory() {
             </div>
 
             <div className="pt-2">
-              <Link href="/about">
+              <Link href={lp('/about')}>
                 <Button variant="secondary">
                   <span>{t.story.learnMore}</span>
                 </Button>

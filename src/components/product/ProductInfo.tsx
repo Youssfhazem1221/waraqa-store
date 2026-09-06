@@ -100,7 +100,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Description */}
       <div className="text-char/80 text-sm sm:text-base leading-relaxed space-y-3">
-        <p>{product.description}</p>
+        <p>{isRTL ? (product.descriptionAr || product.description) : product.description}</p>
       </div>
 
       {/* Specs Grid */}

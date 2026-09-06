@@ -9,7 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 export default function Footer() {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   return (
     <footer className="bg-esp text-cream/80 border-t border-white/10 mt-auto">
@@ -43,22 +43,22 @@ export default function Footer() {
             </h3>
             <ul className="text-sm -my-1">
               <li>
-                <Link href="/" className="inline-block py-2.5 hover:text-cream transition-colors">
+                <Link href={lp('/')} className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.home}
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="inline-block py-2.5 hover:text-cream transition-colors">
+                <Link href={lp('/shop')} className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.allSketchbooks || t.nav.shop}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="inline-block py-2.5 hover:text-cream transition-colors">
+                <Link href={lp('/about')} className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.ourStory}
                 </Link>
               </li>
               <li>
-                <Link href="/cart" className="inline-block py-2.5 hover:text-cream transition-colors">
+                <Link href={lp('/cart')} className="inline-block py-2.5 hover:text-cream transition-colors">
                   {t.nav.shoppingBag}
                 </Link>
               </li>

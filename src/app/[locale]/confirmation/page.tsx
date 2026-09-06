@@ -25,7 +25,7 @@ interface StoredOrder {
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderIdParam = searchParams.get('orderId');
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   // Read the stored order AFTER mount so the first client render matches the
   // server-rendered HTML (reading sessionStorage during render causes a
@@ -68,12 +68,12 @@ function ConfirmationContent() {
           </p>
         </div>
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/shop" className="w-full sm:w-auto">
+          <Link href={lp('/shop')} className="w-full sm:w-auto">
             <Button variant="secondary" size="md" className="w-full sm:w-auto">
               <span>{t.confirmation.continueShopping}</span>
             </Button>
           </Link>
-          <Link href="/" className="w-full sm:w-auto">
+          <Link href={lp('/')} className="w-full sm:w-auto">
             <Button variant="ghost" size="md" className="w-full sm:w-auto text-xs">
               <span>{t.confirmation.returnHome}</span>
             </Button>
@@ -175,12 +175,12 @@ function ConfirmationContent() {
 
       {/* Continue Shopping */}
       <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <Link href="/shop" className="w-full sm:w-auto">
+        <Link href={lp('/shop')} className="w-full sm:w-auto">
           <Button variant="secondary" size="md" className="w-full sm:w-auto">
             <span>{t.confirmation.continueShopping}</span>
           </Button>
         </Link>
-        <Link href="/" className="w-full sm:w-auto">
+        <Link href={lp('/')} className="w-full sm:w-auto">
           <Button variant="ghost" size="md" className="w-full sm:w-auto text-xs">
             <span>{t.confirmation.returnHome}</span>
           </Button>

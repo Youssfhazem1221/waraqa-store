@@ -11,7 +11,7 @@ import fallbackProducts from '@/data/products.json';
 
 const BUNDLED = fallbackProducts as Product[];
 
-export default function ShopPage() {
+export default function ShopClient() {
   const { t, locale, isRTL } = useLanguage();
   const [products, setProducts] = useState<Product[]>(BUNDLED);
   const [selectedSize, setSelectedSize] = useState('All');
@@ -61,6 +61,7 @@ export default function ShopPage() {
           p.nameAr,
           p.sku,
           p.description,
+          p.descriptionAr,
           p.paperType,
           p.size,
           p.category,

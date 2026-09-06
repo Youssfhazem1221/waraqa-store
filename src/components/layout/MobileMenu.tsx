@@ -18,7 +18,7 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
   const pathname = usePathname();
   const { itemCount } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -136,7 +136,7 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
             })}
 
             <Link
-              href="/cart"
+              href={lp('/cart')}
               onClick={onClose}
               className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium text-char hover:bg-maroon/5 hover:text-maroon mt-2 border border-line"
             >

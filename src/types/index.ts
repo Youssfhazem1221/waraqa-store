@@ -40,6 +40,7 @@ export interface ApiProduct {
   status: string;
   image: string;
   description: string;
+  descriptionAr?: string;
   featured: boolean;
 }
 
