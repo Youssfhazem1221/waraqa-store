@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Fraunces, Inter, Tajawal } from 'next/font/google';
 import './globals.css';
+import { SITE_URL } from '@/lib/seo';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -31,7 +32,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://waraqa-store.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
     template: '%s · Waraqa (ورقة)',
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
     description: 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
-    url: 'https://waraqa.store',
+    url: SITE_URL,
     siteName: 'Waraqa',
     locale: 'en_US',
     type: 'website',
