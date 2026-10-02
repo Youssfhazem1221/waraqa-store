@@ -17,6 +17,9 @@ const fraunces = Fraunces({
   variable: '--font-fraunces',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
+  // The hero's second line is set in italic; without the real cut the browser
+  // fakes one by slanting the roman.
+  style: ['normal', 'italic'],
 });
 
 const inter = Inter({

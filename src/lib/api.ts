@@ -34,6 +34,15 @@ export function slugify(name: string): string {
 }
 
 /**
+ * "A5 Kraft Sketchbook, 40 Sheets, 180gsm" -> "A5 Kraft Sketchbook". For places
+ * that show the specs on their own line. The Sheet separates with commas, the
+ * bundled catalog with an em dash.
+ */
+export function shortName(name: string): string {
+  return String(name || '').split(/,| — /)[0].trim();
+}
+
+/**
  * Map an API product (from the Sheet) to our full Product type.
  * The Sheet doesn't have all fields (slug, images array, etc.),
  * so we merge with fallback data when available.

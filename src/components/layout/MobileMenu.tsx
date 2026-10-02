@@ -88,7 +88,7 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
         role="dialog"
         aria-modal="true"
         aria-label={t.nav.allSketchbooks}
-        className={`fixed inset-y-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} w-4/5 max-w-xs bg-cream shadow-2xl p-6 flex flex-col justify-between border-line z-10 animate-slideRight overflow-y-auto`}
+        className={`fixed inset-y-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} w-4/5 max-w-xs bg-cream p-6 flex flex-col justify-between border-line z-10 animate-slideRight overflow-y-auto`}
       >
         <div>
           {/* Header */}
@@ -98,7 +98,7 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="p-2 text-char hover:text-maroon rounded-xl"
+              className="p-2 -me-2 text-char hover:text-maroon"
               aria-label="Close menu"
             >
               <Icon name="close" size={24} />
@@ -107,14 +107,14 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
 
           {/* Language Switcher row */}
           <div className="pt-4 pb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+            <span className="text-sm text-muted">
               {isRTL ? 'اللغة' : 'Language'}
             </span>
             <LanguageToggle />
           </div>
 
           {/* Links */}
-          <nav className="mt-4 flex flex-col gap-2">
+          <nav className="mt-4 flex flex-col">
             {links.map((link) => {
               const isActive =
                 pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -124,10 +124,8 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
                   href={link.href}
                   onClick={onClose}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                    isActive
-                      ? 'bg-maroon text-cream font-semibold'
-                      : 'text-char hover:bg-maroon/5 hover:text-maroon'
+                  className={`py-3.5 border-b border-line font-serif text-xl transition-colors ${
+                    isActive ? 'text-maroon' : 'text-char hover:text-maroon'
                   }`}
                 >
                   <span>{link.label}</span>
@@ -138,28 +136,18 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
             <Link
               href={lp('/cart')}
               onClick={onClose}
-              className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium text-char hover:bg-maroon/5 hover:text-maroon mt-2 border border-line"
+              className="py-3.5 border-b border-line font-serif text-xl text-char hover:text-maroon flex items-center justify-between"
             >
-              <div className="flex items-center gap-3">
-                <Icon name="bag" size={20} />
-                <span>{t.nav.shoppingBag}</span>
-              </div>
-              <span className="bg-maroon text-cream text-xs font-bold px-2 py-0.5 rounded-full">
-                {itemCount}
-              </span>
+              <span>{t.nav.shoppingBag}</span>
+              <span className="font-sans text-sm tabular-nums text-muted">({itemCount})</span>
             </Link>
           </nav>
         </div>
 
         {/* Footer info */}
         <div className="pt-6 border-t border-line text-xs text-muted">
-          <p className="font-serif text-maroon font-semibold text-sm mb-1">Waraqa (ورقة)</p>
-          <p>
-            {isRTL
-              ? 'دفاتر رسم وأوراق فاخرة مصنوعة يدوياً في مصر.'
-              : 'Handmade sketchbooks & paper goods in Egypt.'}
-          </p>
-          <p className="mt-2 text-[11px] font-medium">{t.hero.specCod}</p>
+          <p>{t.hero.subtitle}</p>
+          <p className="mt-2">{t.hero.specDelivery} · {t.hero.specCod}</p>
         </div>
       </div>
     </div>

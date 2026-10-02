@@ -3,121 +3,75 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import Icon from '@/components/ui/Icon';
+import { buttonClasses } from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AboutClient() {
-  const { t, isRTL, lp } = useLanguage();
+  const { t, lp } = useLanguage();
+
+  const principles = [
+    [t.about.pNatural, t.about.pNaturalDesc],
+    [t.about.pTactile, t.about.pTactileDesc],
+    [t.about.pUnhurried, t.about.pUnhurriedDesc],
+    [t.about.pHonest, t.about.pHonestDesc],
+  ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-16 sm:space-y-24">
-      {/* Intro Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
-          {t.about.badge}
-        </span>
-        <h1 className="font-serif text-4xl sm:text-6xl font-bold text-maroon">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <header className="max-w-3xl">
+        <p className="text-sm text-muted">{t.about.badge}</p>
+        <h1 className="mt-3 font-serif text-4xl sm:text-6xl font-semibold text-maroon leading-[1.02]">
           {t.about.title}
         </h1>
-        <p className={`text-xl sm:text-2xl text-char/80 pt-1 ${isRTL ? 'font-serif font-arabic' : 'font-sans'}`}>
-          {t.about.subtitle}
-        </p>
-      </div>
+        <p className="mt-5 text-lg sm:text-xl text-char/80">{t.about.subtitle}</p>
+      </header>
 
-      {/* Hero Image */}
-      <div className="relative aspect-16/9 rounded-3xl overflow-hidden border-2 border-kraft shadow-lg bg-white">
+      <div className="mt-12 relative aspect-16/9 overflow-hidden bg-kraft/30">
         <Image
           src="/lifestyle/lifestyle-3.jpeg"
-          alt="Hands sketching on Waraqa notebook"
+          alt="Hands holding three Waraqa kraft sketchbooks"
           fill
           priority
-          sizes="(max-width: 1024px) 100vw, 80vw"
+          sizes="(max-width: 1152px) 100vw, 1152px"
           className="object-cover object-center"
         />
       </div>
 
-      {/* Story Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        <div className="bg-white border border-line rounded-3xl p-8 space-y-4 shadow-xs">
-          <div className="w-10 h-10 rounded-xl bg-cream border border-line flex items-center justify-center font-serif text-maroon font-bold text-base">
-            {t.about.sec1Num}
-          </div>
-          <h2 className="font-serif text-2xl font-semibold text-char">
-            {t.about.sec1Title}
-          </h2>
-          <p className="text-muted text-sm sm:text-base leading-relaxed">
-            {t.story.p1}
-          </p>
-        </div>
+      <div className="mt-16 grid md:grid-cols-2 gap-x-16 gap-y-12">
+        <section>
+          <p className="font-serif text-maroon text-lg">{t.about.sec1Num}</p>
+          <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-semibold text-char">{t.about.sec1Title}</h2>
+          <p className="mt-4 text-char/85 leading-relaxed">{t.story.p1}</p>
+        </section>
 
-        <div className="bg-white border border-line rounded-3xl p-8 space-y-4 shadow-xs">
-          <div className="w-10 h-10 rounded-xl bg-cream border border-line flex items-center justify-center font-serif text-maroon font-bold text-base">
-            {t.about.sec2Num}
-          </div>
-          <h2 className="font-serif text-2xl font-semibold text-char">
-            {t.about.sec2Title}
-          </h2>
-          <div className="space-y-3 text-muted text-sm sm:text-base leading-relaxed">
+        <section>
+          <p className="font-serif text-maroon text-lg">{t.about.sec2Num}</p>
+          <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-semibold text-char">{t.about.sec2Title}</h2>
+          <div className="mt-4 space-y-4 text-char/85 leading-relaxed">
             <p>
-              <strong className="text-char">{t.about.voice1Title}</strong> {t.about.voice1Desc}
+              <strong className="font-semibold text-char">{t.about.voice1Title}</strong> {t.about.voice1Desc}
             </p>
             <p>
-              <strong className="text-char">{t.about.voice2Title}</strong> {t.about.voice2Desc}
+              <strong className="font-semibold text-char">{t.about.voice2Title}</strong> {t.about.voice2Desc}
             </p>
           </div>
-        </div>
+        </section>
       </div>
 
-      {/* Brand Values Row */}
-      <div className="bg-[#FAF5EE] border border-line rounded-3xl p-8 sm:p-12 text-center space-y-8">
-        <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-char">
-          {t.about.principlesTitle}
-        </h2>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-          <div className="space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-line flex items-center justify-center mx-auto text-maroon">
-              <Icon name="leaf" size={24} />
+      <section className="mt-16 pt-10 border-t border-line">
+        <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-char">{t.about.principlesTitle}</h2>
+        <dl className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-8">
+          {principles.map(([title, desc]) => (
+            <div key={title} className="border-t border-char/20 pt-4">
+              <dt className="font-semibold text-char">{title}</dt>
+              <dd className="mt-1 text-sm text-muted leading-relaxed">{desc}</dd>
             </div>
-            <div className="font-semibold text-char text-sm">{t.about.pNatural}</div>
-            <div className="text-xs text-muted">{t.about.pNaturalDesc}</div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-line flex items-center justify-center mx-auto text-maroon">
-              <Icon name="box" size={24} />
-            </div>
-            <div className="font-semibold text-char text-sm">{t.about.pTactile}</div>
-            <div className="text-xs text-muted">{t.about.pTactileDesc}</div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-line flex items-center justify-center mx-auto text-maroon">
-              <Icon name="heart" size={24} />
-            </div>
-            <div className="font-semibold text-char text-sm">{t.about.pUnhurried}</div>
-            <div className="text-xs text-muted">{t.about.pUnhurriedDesc}</div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-line flex items-center justify-center mx-auto text-maroon">
-              <Icon name="shield" size={24} />
-            </div>
-            <div className="font-semibold text-char text-sm">{t.about.pHonest}</div>
-            <div className="text-xs text-muted">{t.about.pHonestDesc}</div>
-          </div>
-        </div>
-
-        <div className="pt-4">
-          <Link href={lp('/shop')}>
-            <Button size="lg">
-              <Icon name="bag" size={20} />
-              <span>{t.about.exploreBtn}</span>
-            </Button>
-          </Link>
-        </div>
-      </div>
+          ))}
+        </dl>
+        <Link href={lp('/shop')} className={buttonClasses({ size: 'lg', className: 'mt-12' })}>
+          {t.about.exploreBtn}
+        </Link>
+      </section>
     </div>
   );
 }

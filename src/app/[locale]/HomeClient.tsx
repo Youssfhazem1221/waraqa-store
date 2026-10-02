@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import type { Product } from '@/types';
 import { fetchProducts } from '@/lib/api';
 import HeroSection from '@/components/home/HeroSection';
+import PaperGuide from '@/components/home/PaperGuide';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
+import Audience from '@/components/home/Audience';
 import BrandStory from '@/components/home/BrandStory';
-import TrustRow from '@/components/home/TrustRow';
 import NewsletterCapture from '@/components/home/NewsletterCapture';
 
 export default function HomeClient({ initialProducts }: { initialProducts: Product[] }) {
@@ -30,10 +31,11 @@ export default function HomeClient({ initialProducts }: { initialProducts: Produ
 
   return (
     <>
-      <HeroSection />
+      <HeroSection products={products} />
       <FeaturedProducts products={products} />
+      <PaperGuide products={products} />
+      <Audience />
       <BrandStory />
-      <TrustRow />
       <NewsletterCapture />
     </>
   );

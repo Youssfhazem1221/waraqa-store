@@ -12,23 +12,23 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 font-medium transition-all duration-150 cursor-pointer select-none rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none active:scale-[0.98]';
+  'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-150 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-maroon/60 focus-visible:ring-offset-cream disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'text-xs px-3 py-2 rounded-lg gap-1.5',
-  md: 'text-sm sm:text-base px-5 py-3 rounded-xl gap-2',
-  lg: 'text-base sm:text-lg px-7 py-4 rounded-2xl gap-2.5 font-semibold',
+  sm: 'text-xs px-3 py-2 gap-1.5',
+  md: 'text-sm px-5 py-3 gap-2',
+  lg: 'text-base px-7 py-3.5 gap-2.5',
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-maroon text-cream hover:bg-esp border border-transparent shadow-sm shadow-maroon/10 hover:shadow-md',
+    'bg-maroon text-cream hover:bg-esp border border-maroon hover:border-esp',
   secondary:
     'bg-transparent text-maroon border border-maroon hover:bg-maroon hover:text-cream',
   ghost:
-    'bg-transparent text-maroon hover:bg-maroon/10 border border-transparent px-3',
+    'bg-transparent text-maroon hover:bg-maroon/5 border border-transparent px-3',
   light:
-    'bg-cream text-maroon hover:bg-white border border-line shadow-sm',
+    'bg-cream text-maroon hover:bg-white border border-cream',
   danger:
     'bg-error text-white hover:bg-red-800 border border-transparent',
 };

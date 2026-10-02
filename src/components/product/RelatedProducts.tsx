@@ -53,18 +53,11 @@ export default function RelatedProducts({ current, allProducts }: RelatedProduct
 
   return (
     <section className="pt-16 sm:pt-24 mt-16 border-t border-line">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
-            {t.product.relatedBadge}
-          </span>
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-char mt-1">
-            {t.product.relatedTitle}
-          </h2>
-        </div>
-      </div>
+      <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-char mb-8">
+        {t.product.relatedTitle}
+      </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10">
         {related.map((product) => (
           <ProductCard key={product.sku} product={product} />
         ))}

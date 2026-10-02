@@ -41,9 +41,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white border border-line shadow-sm">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#EFE5D6]">
         {imageFailed ? (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted bg-[#FAF5EE]">
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
             <Icon name="box" size={40} />
             <span className="text-sm font-medium">{t.common.photoComingSoon}</span>
           </div>
@@ -62,7 +62,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
 
       {/* Thumbnails (if multiple) */}
       {displayList.length > 1 && (
-        <div className="flex items-center gap-3 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 overflow-x-auto">
           {displayList.map((img, idx) => {
             const isSelected = selectedIdx === idx;
             return (
@@ -70,10 +70,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
                 key={idx}
                 type="button"
                 onClick={() => setSelectedIdx(idx)}
-                className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
-                  isSelected
-                    ? 'border-maroon ring-2 ring-maroon/20 scale-105'
-                    : 'border-line opacity-70 hover:opacity-100'
+                aria-pressed={isSelected}
+                className={`relative w-20 h-20 overflow-hidden border transition-opacity shrink-0 cursor-pointer ${
+                  isSelected ? 'border-maroon' : 'border-transparent opacity-60 hover:opacity-100'
                 }`}
               >
                 <Image

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/ui/Logo';
@@ -15,32 +15,9 @@ export default function Navbar() {
   const { itemCount } = useCart();
   const { t, lp } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    // Passive, and coalesced into one read per frame. The old handler ran
-    // unthrottled and non-passive on every scroll event, which blocks the
-    // browser from starting the scroll until JS has replied — the classic
-    // source of scroll jank on mobile.
-    let frame = 0;
-    const handleScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        setScrolled(window.scrollY > 20);
-      });
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
 
   // Rebuilt only when the language changes, so MobileMenu is not handed a new
-  // `links` array (and re-rendered) on every scroll tick.
+  // `links` array (and re-rendered) on every render.
   const navLinks = useMemo(
     () => [
       { href: lp('/'), label: t.nav.home },
@@ -52,83 +29,55 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`sticky top-0 z-40 w-full transition-all duration-200 ${
-          scrolled
-            ? 'bg-cream/95 backdrop-blur-md shadow-xs border-b border-line/80 py-3.5'
-            : 'bg-cream border-b border-line py-4'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Left: Mobile Menu Button + Brand Logo (flex-1 on desktop to balance right actions) */}
-          <div className="flex items-center gap-3 md:flex-1 md:justify-start">
+      <header className="sticky top-0 z-40 w-full bg-cream/95 backdrop-blur-sm border-b border-line">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 grid grid-cols-[1fr_auto_1fr] items-center">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 -ml-2 text-maroon hover:bg-maroon/5 rounded-xl transition-colors cursor-pointer"
+              className="md:hidden p-2 -ms-2 text-char cursor-pointer"
               aria-label="Open navigation menu"
             >
-              <Icon name="menu" size={24} />
+              <Icon name="menu" size={22} />
             </button>
-
-            {/* Brand Logo */}
-            <Logo variant="maroon" size="md" showSubtitle />
+            <nav className="hidden md:flex items-center gap-7 text-sm">
+              {navLinks.map((link) => {
+                const isActive =
+                  pathname === link.href ||
+                  (link.href !== lp('/') && pathname.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`py-2 underline-offset-[6px] decoration-1 transition-colors ${
+                      isActive ? 'text-maroon underline' : 'text-char/75 hover:text-maroon'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Center: Desktop Nav (centered between left and right) */}
-          <nav className="hidden md:flex items-center justify-center gap-8 text-sm font-medium shrink-0">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`transition-colors relative py-2.5 ${
-                    isActive
-                      ? 'text-maroon font-semibold'
-                      : 'text-char/80 hover:text-maroon'
-                  }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-2 left-0 w-full h-0.5 bg-maroon rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+          <Logo variant="maroon" size="md" />
 
-          {/* Right: Actions: Language Toggle, Search (desktop only), Cart (flex-1 on desktop to balance left) */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3 md:flex-1">
+          <div className="flex items-center justify-end gap-5 text-char/80">
             <LanguageToggle className="hidden sm:inline-flex" />
-
-            {/* Search hidden on mobile, visible on desktop */}
-            <Link
-              href={lp('/shop')}
-              className="hidden md:inline-flex p-2 text-char/80 hover:text-maroon hover:bg-maroon/5 rounded-xl transition-colors"
-              aria-label={t.nav.search}
-              title={t.nav.search}
-            >
-              <Icon name="search" size={20} />
-            </Link>
-
             <Link
               href={lp('/cart')}
-              className="relative inline-flex items-center gap-2 bg-maroon text-cream px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl font-medium text-sm transition-transform hover:bg-esp active:scale-95 shadow-xs shadow-maroon/10"
+              className="inline-flex items-center gap-1.5 text-sm hover:text-maroon transition-colors py-2"
               aria-label={`${t.nav.bag} with ${itemCount} items`}
             >
-              <Icon name="bag" size={18} />
+              <Icon name="bag" size={19} />
               <span className="hidden sm:inline">{t.nav.bag}</span>
-              <span className="inline-flex items-center justify-center bg-cream text-maroon text-xs font-bold w-5 h-5 rounded-full">
-                {itemCount}
-              </span>
+              <span className="tabular-nums">({itemCount})</span>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer */}
       <MobileMenu
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}

@@ -36,7 +36,7 @@ export default function Logo({
       aria-label="Waraqa — home"
       className="inline-flex items-center group select-none"
     >
-      <div className={`relative flex items-center justify-center p-1 transition-transform group-hover:scale-105 ${iconSizes[size]}`}>
+      <div className={`relative flex items-center justify-center p-1 ${iconSizes[size]}`}>
         <svg
           viewBox="0 0 2057 2057"
           className="w-full h-full object-contain"

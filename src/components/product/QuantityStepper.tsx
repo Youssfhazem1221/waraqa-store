@@ -27,18 +27,18 @@ export default function QuantityStepper({
   };
 
   return (
-    <div className="inline-flex items-center bg-white border border-line rounded-xl overflow-hidden shadow-xs">
+    <div className="inline-flex items-center border border-char/30">
       <button
         type="button"
         disabled={disabled || qty <= min}
         onClick={handleDecrement}
-        className="px-3.5 py-2.5 text-maroon hover:bg-cream/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+        className="px-3.5 py-2.5 text-maroon hover:bg-maroon/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
         aria-label="Decrease quantity"
       >
         <Icon name="minus" size={16} />
       </button>
 
-      <span className="w-10 text-center font-semibold text-char text-sm select-none">
+      <span className="w-10 text-center text-char tabular-nums select-none" aria-live="polite">
         {qty}
       </span>
 
@@ -46,7 +46,7 @@ export default function QuantityStepper({
         type="button"
         disabled={disabled || qty >= max}
         onClick={handleIncrement}
-        className="px-3.5 py-2.5 text-maroon hover:bg-cream/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+        className="px-3.5 py-2.5 text-maroon hover:bg-maroon/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
         aria-label="Increase quantity"
       >
         <Icon name="plus" size={16} />

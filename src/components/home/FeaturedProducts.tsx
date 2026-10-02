@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/types';
 import ProductCard from '@/components/shop/ProductCard';
-import Icon from '@/components/ui/Icon';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface FeaturedProductsProps {
@@ -12,7 +11,7 @@ interface FeaturedProductsProps {
 }
 
 export default function FeaturedProducts({ products }: FeaturedProductsProps) {
-  const { t, isRTL, lp } = useLanguage();
+  const { t, lp } = useLanguage();
 
   // Show the featured products first, topped up with the rest of the catalog to
   // fill the four-card row. The previous version threw the featured list away
@@ -25,33 +24,21 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
   }, [products]);
 
   return (
-    <section className="py-16 sm:py-24 border-b border-line bg-cream">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
-              {t.featured.badge}
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-semibold text-char mt-1">
-              {t.featured.title}
-            </h2>
-          </div>
+    <section aria-labelledby="featured-title" className="border-b border-line">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="flex items-baseline justify-between gap-4 mb-8">
+          <h2 id="featured-title" className="font-serif text-3xl sm:text-4xl font-semibold text-char">
+            {t.featured.title}
+          </h2>
           <Link
             href={lp('/shop')}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-maroon hover:text-esp transition-colors group"
+            className="text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2 shrink-0"
           >
-            <span>{t.featured.viewAll}</span>
-            <Icon
-              name={isRTL ? 'chevron-left' : 'arrow-right'}
-              size={18}
-              className={`transition-transform ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}
-            />
+            {t.featured.viewAll}
           </Link>
         </div>
 
-        {/* Product Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10">
           {displayList.map((product) => (
             <ProductCard key={product.sku} product={product} />
           ))}

@@ -3,99 +3,56 @@
 import React from 'react';
 import Link from 'next/link';
 import Logo from '@/components/ui/Logo';
-import Icon from '@/components/ui/Icon';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useLanguage } from '@/context/LanguageContext';
-import { WHATSAPP_NUMBER } from '@/lib/constants';
+import { WHATSAPP_NUMBER, INSTAGRAM_URL } from '@/lib/constants';
 
 export default function Footer() {
-  const { t, isRTL, lp } = useLanguage();
+  const { t, lp } = useLanguage();
+
+  const linkClass = 'hover:text-cream underline-offset-4 hover:underline';
 
   return (
-    <footer className="bg-esp text-cream/80 border-t border-white/10 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
-          {/* Brand Col */}
-          <div className="md:col-span-2 space-y-4">
-            <Logo variant="dark" size="lg" showSubtitle />
-            <p className="text-sm leading-relaxed text-cream/70 max-w-md pt-2">
-              {t.story.p1}
-            </p>
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-cream text-maroon hover:bg-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-transform hover:scale-105 shadow-xs"
-              >
-                <Icon name="whatsapp" size={16} />
-                <span>WhatsApp: +{WHATSAPP_NUMBER}</span>
-              </a>
-
-              <LanguageToggle className="bg-white/10 border-white/15 text-cream" />
-            </div>
+    <footer className="bg-esp text-cream/70 mt-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-10">
+          <div className="col-span-2 md:col-span-6 space-y-4">
+            <Logo variant="dark" size="lg" />
+            <p className="text-sm leading-relaxed max-w-sm">{t.hero.subtitle}</p>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-serif text-white font-semibold text-base tracking-wide">
-              {t.footer.navigation}
-            </h3>
-            <ul className="text-sm -my-1">
-              <li>
-                <Link href={lp('/')} className="inline-block py-2.5 hover:text-cream transition-colors">
-                  {t.nav.home}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp('/shop')} className="inline-block py-2.5 hover:text-cream transition-colors">
-                  {t.nav.allSketchbooks || t.nav.shop}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp('/about')} className="inline-block py-2.5 hover:text-cream transition-colors">
-                  {t.nav.ourStory}
-                </Link>
-              </li>
-              <li>
-                <Link href={lp('/cart')} className="inline-block py-2.5 hover:text-cream transition-colors">
-                  {t.nav.shoppingBag}
-                </Link>
-              </li>
+          <div className="md:col-span-3">
+            <h3 className="text-cream font-medium mb-3">{t.footer.navigation}</h3>
+            <ul className="text-sm space-y-2">
+              <li><Link href={lp('/shop')} className={linkClass}>{t.nav.allSketchbooks}</Link></li>
+              <li><Link href={lp('/about')} className={linkClass}>{t.nav.ourStory}</Link></li>
+              <li><Link href={lp('/cart')} className={linkClass}>{t.nav.shoppingBag}</Link></li>
             </ul>
           </div>
 
-          {/* Service & Guarantee */}
-          <div className="space-y-4">
-            <h3 className="font-serif text-white font-semibold text-base tracking-wide">
-              {t.footer.customerCare}
-            </h3>
-            <ul className="space-y-2.5 text-sm text-cream/70">
-              <li className="flex items-start gap-2">
-                <Icon name="truck" size={18} className="text-sage mt-0.5 shrink-0" />
-                <span>{t.footer.deliveriesInfo}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon name="card" size={18} className="text-kraft mt-0.5 shrink-0" />
-                <span>{t.footer.codInfo}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon name="shield" size={18} className="text-sage mt-0.5 shrink-0" />
-                <span>{t.footer.inspectedInfo}</span>
+          <div className="md:col-span-3">
+            <h3 className="text-cream font-medium mb-3">{t.footer.customerCare}</h3>
+            <ul className="text-sm space-y-2">
+              <li>{t.footer.deliveriesInfo}</li>
+              <li>{t.footer.codInfo}</li>
+              <li>
+                <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  WhatsApp
+                </a>
+                {' · '}
+                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  Instagram
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-12 mt-12 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/60">
-          <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} {isRTL ? `${t.common.brandNameAr} (${t.common.brandName})` : t.common.brandName}. {t.footer.rights}</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span>{t.footer.madeWith}</span>
-            <span className="text-[11px] font-mono opacity-50">{t.footer.version}</span>
-          </div>
+        <div className="mt-12 pt-6 border-t border-cream/10 flex flex-wrap items-center justify-between gap-4 text-xs text-cream/50">
+          <span>
+            © {new Date().getFullYear()} {t.common.brandName} ({t.common.brandNameAr}) · {t.footer.madeWith}
+          </span>
+          <LanguageToggle className="text-cream text-xs" />
         </div>
       </div>
     </footer>

@@ -71,7 +71,7 @@ export default async function ProductDetailPage({
   const productName = l === 'ar' ? (product.nameAr || product.name) : product.name;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <ProductBreadcrumb productName={product.name} productNameAr={product.nameAr} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">

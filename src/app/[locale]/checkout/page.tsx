@@ -199,22 +199,22 @@ export default function CheckoutPage() {
 
   if (!isHydrated) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-        <div className="animate-pulse font-serif text-lg text-muted">{t.common.loading}</div>
+      <div className="max-w-6xl mx-auto px-4 py-24 text-center">
+        <div className="font-serif text-lg text-muted">{t.common.loading}</div>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <EmptyCart />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-muted font-medium">
         <Link href={lp('/cart')} className="hover:text-maroon transition-colors flex items-center gap-1">
@@ -226,7 +226,7 @@ export default function CheckoutPage() {
       </nav>
 
       <div className="mb-8">
-        <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
+        <span className="text-sm text-muted">
           {t.checkout.badge}
         </span>
         <h1 className="font-serif text-3xl sm:text-4xl font-semibold text-char mt-1">

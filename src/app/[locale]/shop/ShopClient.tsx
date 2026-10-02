@@ -105,18 +105,10 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   }, [products, selectedSize, selectedSort, deferredQuery, isRTL, collator]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-      {/* Header */}
-      <div className="mb-10 text-center max-w-2xl mx-auto space-y-2">
-        <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
-          {t.shop.tag}
-        </span>
-        <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-maroon">
-          {t.shop.title}
-        </h1>
-        <p className="text-muted text-sm sm:text-base leading-relaxed">
-          {t.shop.description}
-        </p>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="mb-8 pb-8 border-b border-line max-w-2xl">
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold text-maroon">{t.shop.title}</h1>
+        <p className="mt-3 text-muted leading-relaxed">{t.shop.description}</p>
       </div>
 
       {/* Filter Bar */}
@@ -137,6 +129,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         <EmptyState
           title={t.shop.emptyTitle}
           message={t.shop.emptyMessage}
+          resetLabel={t.shop.resetFilters}
           onReset={() => {
             setSelectedSize('All');
             setSearchQuery('');

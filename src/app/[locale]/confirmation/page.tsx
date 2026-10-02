@@ -56,9 +56,6 @@ function ConfirmationContent() {
   if (!orderId) {
     return (
       <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-6">
-        <div className="w-16 h-16 rounded-3xl bg-cream border border-line flex items-center justify-center mx-auto text-muted">
-          <Icon name="box" size={32} />
-        </div>
         <div className="space-y-2">
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-char">
             {t.confirmation.noOrderTitle}
@@ -85,17 +82,13 @@ function ConfirmationContent() {
 
   return (
     <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-8">
-      {/* Success Icon */}
-      <div className="w-20 h-20 rounded-3xl bg-sage/20 border border-sage/40 flex items-center justify-center mx-auto text-success">
-        <Icon name="check" size={40} />
-      </div>
 
       {/* Title */}
       <div className="space-y-2">
-        <span className="text-xs font-semibold uppercase tracking-widest text-maroon">
+        <span className="text-sm text-muted">
           {t.confirmation.badge}
         </span>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-char">
+        <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-char">
           {t.confirmation.title}
         </h1>
         <div className="inline-flex items-center gap-2 bg-cream border border-line px-4 py-1.5 rounded-none mt-2 font-mono text-sm font-bold text-maroon">
@@ -104,9 +97,9 @@ function ConfirmationContent() {
       </div>
 
       {/* What happens next — receipt emailed + confirmation to follow */}
-      <div className="bg-[#FAF5EE] border-2 border-maroon/20 rounded-2xl p-6 text-start space-y-3">
+      <div className="border-y border-line rounded-2xl p-6 text-start space-y-3">
         <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-xl bg-maroon text-cream shrink-0 mt-0.5">
+          <div className="text-maroon shrink-0 mt-0.5">
             <Icon name="mail" size={24} />
           </div>
           <div className="space-y-1">

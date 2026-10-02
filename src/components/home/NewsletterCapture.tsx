@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Button from '@/components/ui/Button';
-import Icon from '@/components/ui/Icon';
 import { useLanguage } from '@/context/LanguageContext';
 import { subscribeNewsletter } from '@/lib/api';
 
@@ -41,39 +39,23 @@ export default function NewsletterCapture() {
   };
 
   return (
-    <section className="py-16 sm:py-20 bg-esp text-cream/90 relative overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-        <div className="w-12 h-12 rounded-2xl bg-cream/10 border border-white/10 flex items-center justify-center mx-auto text-cream">
-          <Icon name="mail" size={24} />
-        </div>
-
-        <div className="space-y-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-kraft">
-            {t.newsletter.badge}
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-semibold text-white">
+    <section aria-labelledby="newsletter-title" className="bg-[#EFE5D6]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 grid lg:grid-cols-2 gap-8 items-end">
+        <div>
+          <h2 id="newsletter-title" className="font-serif text-2xl sm:text-3xl font-semibold text-char">
             {t.newsletter.title}
           </h2>
-          <p className="text-cream/70 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-            {t.newsletter.description}
-          </p>
+          <p className="mt-2 text-muted leading-relaxed max-w-md">{t.newsletter.description}</p>
         </div>
 
         {status === 'done' ? (
-          <div
-            role="status"
-            className="bg-white/10 border border-white/20 rounded-2xl p-6 max-w-md mx-auto animate-fadeIn"
-          >
-            <p className="font-semibold text-white text-base">{t.newsletter.successTitle}</p>
-            <p className="text-cream/70 text-xs mt-1">{t.newsletter.successDesc}</p>
+          <div role="status" className="border-t border-char/20 pt-4">
+            <p className="font-semibold text-char">{t.newsletter.successTitle}</p>
+            <p className="text-sm text-muted mt-1">{t.newsletter.successDesc}</p>
           </div>
         ) : (
-          <form
-            onSubmit={handleSubmit}
-            noValidate
-            className="max-w-md mx-auto space-y-2"
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="flex border-b border-char/40 focus-within:border-maroon">
               <input
                 type="email"
                 required
@@ -87,26 +69,19 @@ export default function NewsletterCapture() {
                   setEmail(e.target.value);
                   if (status === 'error') setStatus('idle');
                 }}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-cream/40 focus:outline-none focus:border-kraft focus:ring-2 focus:ring-kraft/20"
+                className="flex-1 min-w-0 bg-transparent py-3 text-char placeholder:text-muted focus:outline-none focus:shadow-none border-0"
               />
-              <Button
+              <button
                 type="submit"
-                variant="light"
-                isLoading={status === 'sending'}
-                className="w-full sm:w-auto shrink-0"
+                disabled={status === 'sending'}
+                className="shrink-0 py-3 ps-4 text-maroon font-medium hover:text-esp disabled:opacity-60 cursor-pointer"
               >
-                <span>
-                  {status === 'sending' ? t.newsletter.submitting : t.newsletter.subscribe}
-                </span>
-              </Button>
+                {status === 'sending' ? t.newsletter.submitting : t.newsletter.subscribe}
+              </button>
             </div>
 
             {status === 'error' && (
-              <p
-                id="newsletter-error"
-                role="alert"
-                className="text-xs text-terra font-medium text-start"
-              >
+              <p id="newsletter-error" role="alert" className="mt-2 text-sm text-error">
                 {errorMessage}
               </p>
             )}
