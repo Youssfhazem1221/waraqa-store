@@ -6,9 +6,12 @@ import { translations } from '@/lib/translations';
 import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
 import { itemListSchema, breadcrumbSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
+import { getCatalog } from '@/lib/catalog';
 import ShopClient from './ShopClient';
 
 type Params = { params: Promise<{ locale: string }> };
+
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale } = await params;
@@ -31,10 +34,12 @@ export default async function ShopPage({ params }: Params) {
   const { locale } = await params;
   const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const products = productsData as Product[];
+  // Live prices on the first paint — see the home page for why.
+  const live = await getCatalog();
 
   return (
     <>
-      <ShopClient />
+      <ShopClient initialProducts={live} />
       {/* Listed from the bundled catalog, not the client's live fetch: this markup
           has to be in the server response to be read at all. */}
       <JsonLd

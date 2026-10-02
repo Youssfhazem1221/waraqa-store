@@ -1,9 +1,13 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { getCatalog } from '@/lib/catalog';
 import HomeClient from './HomeClient';
 
 type Params = { params: Promise<{ locale: string }> };
+
+// Must stay a literal for Next's static analysis; mirrors CATALOG_REVALIDATE_SECONDS.
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale } = await params;
@@ -32,5 +36,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function HomePage({ params }: Params) {
   await params;
-  return <HomeClient />;
+  // Read on the server so the first paint already carries live prices. Rendering
+  // the bundled snapshot and swapping in the Sheet's numbers after hydration made
+  // every price visibly jump on load.
+  const products = await getCatalog();
+  return <HomeClient initialProducts={products} />;
 }

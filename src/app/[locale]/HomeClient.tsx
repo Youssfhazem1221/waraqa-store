@@ -8,10 +8,9 @@ import FeaturedProducts from '@/components/home/FeaturedProducts';
 import BrandStory from '@/components/home/BrandStory';
 import TrustRow from '@/components/home/TrustRow';
 import NewsletterCapture from '@/components/home/NewsletterCapture';
-import fallbackProducts from '@/data/products.json';
 
-export default function HomeClient() {
-  const [products, setProducts] = useState<Product[]>(fallbackProducts as Product[]);
+export default function HomeClient({ initialProducts }: { initialProducts: Product[] }) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
 
   useEffect(() => {
     let isMounted = true;

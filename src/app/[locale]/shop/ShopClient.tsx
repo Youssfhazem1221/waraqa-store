@@ -7,13 +7,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import FilterBar from '@/components/shop/FilterBar';
 import ProductGrid from '@/components/shop/ProductGrid';
 import EmptyState from '@/components/shop/EmptyState';
-import fallbackProducts from '@/data/products.json';
 
-const BUNDLED = fallbackProducts as Product[];
-
-export default function ShopClient() {
+export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
   const { t, locale, isRTL } = useLanguage();
-  const [products, setProducts] = useState<Product[]>(BUNDLED);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [selectedSize, setSelectedSize] = useState('All');
   const [selectedSort, setSelectedSort] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,7 +19,7 @@ export default function ShopClient() {
   // the catalog grows.
   const deferredQuery = useDeferredValue(searchQuery);
 
-  // Refresh from the live catalog in the background. The bundled snapshot is
+  // Refresh from the live catalog in the background. The server-rendered list is
   // already rendered, so there is nothing to wait for — the page used to hide
   // it behind a full-page spinner until Apps Script answered, which cost a
   // second or more of blank screen for data we already had.
