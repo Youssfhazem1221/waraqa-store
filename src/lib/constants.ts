@@ -23,7 +23,18 @@ export const WEB_APP_URL =
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
 
 /** Social profile URLs for sameAs and link elements */
-export const INSTAGRAM_URL = 'https://www.instagram.com/waraqa.store';
+export const INSTAGRAM_URL = 'https://www.instagram.com/waraqastore.1/';
+
+/** Public contact address shown on the legal pages. */
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'youssf.hazem1221@gmail.com';
+
+/**
+ * Seller registration details. The Consumer Protection Law (Art. 37) requires
+ * online sellers to show their commercial registration and tax card numbers;
+ * each line only renders once its value is set.
+ */
+export const COMMERCIAL_REGISTRATION = process.env.NEXT_PUBLIC_COMMERCIAL_REGISTRATION || '';
+export const TAX_CARD_NUMBER = process.env.NEXT_PUBLIC_TAX_CARD_NUMBER || '';
 
 export const CURRENCY = process.env.NEXT_PUBLIC_CURRENCY || 'EGP';
 

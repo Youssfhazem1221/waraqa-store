@@ -24,6 +24,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/shop', priority: 0.9, changeFrequency: 'weekly' },
     { path: '/about', priority: 0.6, changeFrequency: 'monthly' },
+    { path: '/shipping', priority: 0.4, changeFrequency: 'monthly' },
+    { path: '/returns', priority: 0.4, changeFrequency: 'monthly' },
+    { path: '/privacy', priority: 0.3, changeFrequency: 'monthly' },
+    { path: '/terms', priority: 0.3, changeFrequency: 'monthly' },
     ...products.map((p) => ({
       path: `/product/${p.slug}`,
       priority: 0.8,

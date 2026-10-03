@@ -16,17 +16,27 @@ export default function Footer() {
     <footer className="bg-esp text-cream/70 mt-auto">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-10">
-          <div className="col-span-2 md:col-span-6 space-y-4">
+          <div className="col-span-2 md:col-span-4 space-y-4">
             <Logo variant="dark" size="lg" />
             <p className="text-sm leading-relaxed max-w-sm">{t.hero.subtitle}</p>
           </div>
 
-          <div className="md:col-span-3">
+          <div className="md:col-span-2">
             <h3 className="text-cream font-medium mb-3">{t.footer.navigation}</h3>
             <ul className="text-sm space-y-2">
               <li><Link href={lp('/shop')} className={linkClass}>{t.nav.allSketchbooks}</Link></li>
               <li><Link href={lp('/about')} className={linkClass}>{t.nav.ourStory}</Link></li>
               <li><Link href={lp('/cart')} className={linkClass}>{t.nav.shoppingBag}</Link></li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-3">
+            <h3 className="text-cream font-medium mb-3">{t.footer.help}</h3>
+            <ul className="text-sm space-y-2">
+              <li><Link href={lp('/shipping')} className={linkClass}>{t.footer.shippingLink}</Link></li>
+              <li><Link href={lp('/returns')} className={linkClass}>{t.footer.returnsLink}</Link></li>
+              <li><Link href={lp('/privacy')} className={linkClass}>{t.footer.privacyLink}</Link></li>
+              <li><Link href={lp('/terms')} className={linkClass}>{t.footer.termsLink}</Link></li>
             </ul>
           </div>
 

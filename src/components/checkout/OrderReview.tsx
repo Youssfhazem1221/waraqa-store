@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
+import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
@@ -24,7 +25,7 @@ export default function OrderReview({
   governorate,
 }: OrderReviewProps) {
   const { items, subtotal, itemCount, quoteFor } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
 
   const quote = quoteFor(governorate);
   const shipping = quote.amount;
@@ -129,6 +130,21 @@ export default function OrderReview({
 
         <p className="text-[11px] text-muted text-center leading-relaxed">
           {t.checkout.disclaimer}
+        </p>
+        <p className="text-xs text-muted text-center leading-relaxed">
+          {t.legal.agreePrefix}{' '}
+          <Link href={lp('/terms')} target="_blank" className="underline underline-offset-2 hover:text-char">
+            {t.footer.termsLink}
+          </Link>
+          {', '}
+          <Link href={lp('/returns')} target="_blank" className="underline underline-offset-2 hover:text-char">
+            {t.footer.returnsLink}
+          </Link>{' '}
+          {t.legal.and}{' '}
+          <Link href={lp('/privacy')} target="_blank" className="underline underline-offset-2 hover:text-char">
+            {t.footer.privacyLink}
+          </Link>
+          .
         </p>
       </div>
     </div>
