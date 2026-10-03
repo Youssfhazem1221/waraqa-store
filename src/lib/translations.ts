@@ -146,6 +146,14 @@ export const translations = {
       relatedTitle: 'You might also like',
       quantity: 'Quantity',
       bestFor: 'Good for',
+      detailsTitle: 'Details',
+      specsTitle: 'Specifications',
+      deliveryTitle: 'Delivery & payment',
+      deliveryBody:
+        'Delivery is 60 EGP in Cairo & Giza and 75 EGP to other governorates — free in Cairo & Giza on orders over 800 EGP. It arrives in 3–7 working days, and you pay the courier in cash after checking your order.',
+      checkedNote: 'Checked by hand before it ships',
+      added: 'Added',
+      sizeLabel: 'Size',
     },
     cart: {
       reviewBag: 'Your Order',
@@ -446,6 +454,14 @@ export const translations = {
       relatedTitle: 'ممكن يعجبك كمان',
       quantity: 'الكمية',
       bestFor: 'مناسب لـ',
+      detailsTitle: 'التفاصيل',
+      specsTitle: 'المواصفات',
+      deliveryTitle: 'التوصيل والدفع',
+      deliveryBody:
+        'التوصيل ٦٠ جنيه في القاهرة والجيزة و٧٥ جنيه لباقي المحافظات — ومجاني في القاهرة والجيزة للطلبات فوق ٨٠٠ جنيه. بيوصل في ٣–٧ أيام عمل، وبتدفع للمندوب كاش بعد ما تعاين طلبك.',
+      checkedNote: 'بيتراجع بالإيد قبل الشحن',
+      added: 'اتضاف',
+      sizeLabel: 'المقاس',
     },
     cart: {
       reviewBag: 'مراجعة السلة',

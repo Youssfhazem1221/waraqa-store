@@ -41,7 +41,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative aspect-square w-full overflow-hidden bg-cream">
+      <div className="relative aspect-4/5 w-full overflow-hidden">
         {imageFailed ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
             <Icon name="box" size={40} />
@@ -53,7 +53,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
             alt={productName}
             fill
             priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            sizes="(max-width: 1024px) 100vw, 45vw"
             onError={() => setImageFailed(true)}
             className="object-cover object-center"
           />
@@ -71,7 +71,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
                 type="button"
                 onClick={() => setSelectedIdx(idx)}
                 aria-pressed={isSelected}
-                className={`relative w-20 h-20 overflow-hidden border transition-opacity shrink-0 cursor-pointer ${
+                className={`relative w-16 h-20 overflow-hidden border transition-opacity shrink-0 cursor-pointer ${
                   isSelected ? 'border-maroon' : 'border-transparent opacity-60 hover:opacity-100'
                 }`}
               >
