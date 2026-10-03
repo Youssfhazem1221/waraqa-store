@@ -112,7 +112,7 @@ export function shippingFor(subtotal: number, governorate?: string): number {
 }
 
 /** How long a fetched catalog stays fresh before we re-ask the Sheet (ms). */
-export const CATALOG_TTL_MS = 5 * 60 * 1000;
+export const CATALOG_TTL_MS = 60 * 1000;
 
 /** Give up on the Apps Script backend after this long (ms). Apps Script cold
  *  starts are slow, so this is generous — but not unbounded, which would hang

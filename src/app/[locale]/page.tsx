@@ -6,8 +6,9 @@ import HomeClient from './HomeClient';
 
 type Params = { params: Promise<{ locale: string }> };
 
-// Must stay a literal for Next's static analysis; mirrors CATALOG_REVALIDATE_SECONDS.
-export const revalidate = 300;
+// Rendered per request so prices are never older than the catalog cache
+// (lib/catalog.ts). ISR left the deploy-time prices up on Cloudflare.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale } = await params;

@@ -10,17 +10,14 @@ import ProductBreadcrumb from '@/components/product/ProductBreadcrumb';
 import JsonLd from '@/components/seo/JsonLd';
 import { productSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
-import { LOCALES, isLocale, seoAlternates } from '@/lib/seo';
+import { isLocale, seoAlternates } from '@/lib/seo';
 
 const products = productsData as Product[];
 
-export const revalidate = 300;
+// Rendered per request so prices are never older than the catalog cache
+// (lib/catalog.ts). ISR left the deploy-time prices up on Cloudflare.
+export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() {
-  return LOCALES.flatMap((locale) =>
-    products.map((p) => ({ locale, slug: p.slug }))
-  );
-}
 
 export async function generateMetadata({
   params,

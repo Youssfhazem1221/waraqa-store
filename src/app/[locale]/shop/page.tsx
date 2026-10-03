@@ -11,7 +11,9 @@ import ShopClient from './ShopClient';
 
 type Params = { params: Promise<{ locale: string }> };
 
-export const revalidate = 300;
+// Rendered per request so prices are never older than the catalog cache
+// (lib/catalog.ts). ISR left the deploy-time prices up on Cloudflare.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale } = await params;
