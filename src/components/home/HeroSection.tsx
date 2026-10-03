@@ -32,7 +32,7 @@ export default function HeroSection({ products }: { products: Product[] }) {
           >
             {t.hero.titleLine1}
             <br />
-            <span className="italic font-normal text-char">{t.hero.titleLine2}</span>
+            <span className="font-light text-char">{t.hero.titleLine2}</span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-char">{t.hero.subtitle}</p>

@@ -11,7 +11,7 @@ A production-quality, mobile-first, zero-backend e-commerce storefront for **War
 - **WhatsApp Order Confirmation**: Automatically formats complete order summaries and links directly to owner WhatsApp (`+20 106 923 7525`) for Cash on Delivery order handoffs.
 - **Offline & Graceful Fallbacks**: Bundled `products.json` seed ensures the store functions flawlessly even if the backend is unreachable.
 - **Managed via the standalone `waraqa-crm` app**: Inventory, orders, and customers are managed from the separate CRM project, which reads/writes the same Google Sheet backend.
-- **Brand System Fidelity**: Fraunces (display), Inter (UI), and Tajawal (Arabic) typography combined with Maroon (`#4C2224`), Espresso (`#201513`), Cream (`#F4ECE0`), Kraft (`#C0A286`), Sage, and Terracotta design tokens.
+- **Brand System Fidelity**: Reem Kufi (Arabic headlines) and Readex Pro (Arabic + English text, English headlines, UI) typography — see `../BRAND_GUIDELINES.md` — combined with Maroon (`#4C2224`), Espresso (`#201513`), Cream (`#F4ECE0`), Kraft (`#C0A286`), Sage, and Terracotta design tokens.
 
 ---
 

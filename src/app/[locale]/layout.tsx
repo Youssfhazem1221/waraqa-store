@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Fraunces, Inter, Tajawal } from 'next/font/google';
+import { Readex_Pro, Reem_Kufi } from 'next/font/google';
 import '../globals.css';
 import { SITE_URL, LOCALES, isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
 import { organizationSchema, webSiteSchema } from '@/lib/schema';
@@ -13,28 +13,19 @@ import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/cart/CartDrawer';
 import { Analytics } from '@vercel/analytics/next';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  // The hero's second line is set in italic; without the real cut the browser
-  // fakes one by slanting the roman.
-  style: ['normal', 'italic'],
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-const tajawal = Tajawal({
+// Brand typography (see BRAND_GUIDELINES.md): Reem Kufi sets Arabic headlines;
+// Readex Pro sets everything else — Arabic and English text, English headlines,
+// UI and prices. Both are variable fonts, so no weight list is needed.
+const readex = Readex_Pro({
   subsets: ['arabic', 'latin'],
-  variable: '--font-tajawal',
+  variable: '--font-readex',
   display: 'swap',
-  weight: ['400', '500', '700'],
+});
+
+const reemKufi = Reem_Kufi({
+  subsets: ['arabic', 'latin'],
+  variable: '--font-reem-kufi',
+  display: 'swap',
 });
 
 export const dynamicParams = false;
@@ -113,7 +104,7 @@ export default async function RootLayout({
       lang={l}
       dir={isRTL ? 'rtl' : 'ltr'}
       suppressHydrationWarning
-      className={`${fraunces.variable} ${inter.variable} ${tajawal.variable}${isRTL ? ' rtl' : ''}`}
+      className={`${readex.variable} ${reemKufi.variable}${isRTL ? ' rtl' : ''}`}
     >
       <body
         suppressHydrationWarning

@@ -14,9 +14,13 @@
   --color-error: #A3492F;
   --color-warning: #B8862B;
 
-  --font-serif: var(--font-fraunces), Georgia, serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-arabic: var(--font-tajawal), "Tajawal", system-ui, sans-serif;
+  /* Brand typography (BRAND_GUIDELINES.md). `font-serif` is kept as the
+     display/headline utility so existing classes keep working; in English it
+     is Readex Pro, in Arabic the RTL rules below swap it to Reem Kufi. */
+  --font-serif: var(--font-readex), system-ui, sans-serif;
+  --font-sans: var(--font-readex), system-ui, sans-serif;
+  --font-arabic: var(--font-readex), system-ui, sans-serif;
+  --font-arabic-display: var(--font-reem-kufi), var(--font-readex), system-ui, sans-serif;
 
   /* Clean, natural aesthetic — squared corners, not modern-SaaS rounded.
      All rounded-* utilities collapse to 0. rounded-full is intentionally
@@ -81,7 +85,7 @@ body {
 
 /* RTL and Arabic Typography */
 html[dir="rtl"] body {
-  font-family: var(--font-tajawal), "Tajawal", var(--font-sans);
+  font-family: var(--font-arabic);
   letter-spacing: 0;
 }
 
@@ -90,11 +94,11 @@ html[dir="rtl"] h2,
 html[dir="rtl"] h3,
 html[dir="rtl"] h4,
 html[dir="rtl"] .font-serif {
-  font-family: var(--font-tajawal), "Tajawal", var(--font-serif);
+  font-family: var(--font-arabic-display);
 }
 
 .font-arabic {
-  font-family: var(--font-tajawal), "Tajawal", sans-serif;
+  font-family: var(--font-arabic);
 }
 
 /* Custom Scrollbar */
