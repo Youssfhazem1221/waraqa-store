@@ -9,6 +9,7 @@ import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import MobileMenu from '@/components/layout/MobileMenu';
+import GuideMenu from '@/components/layout/GuideMenu';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -22,6 +23,8 @@ export default function Navbar() {
     () => [
       { href: lp('/'), label: t.nav.home },
       { href: lp('/shop'), label: t.nav.shop },
+      { href: lp('/paper-guide'), label: t.nav.paperGuide },
+      { href: lp('/blog'), label: t.nav.blog },
       { href: lp('/about'), label: t.nav.about },
     ],
     [t, lp]
@@ -40,8 +43,11 @@ export default function Navbar() {
             >
               <Icon name="menu" size={22} />
             </button>
-            <nav className="hidden md:flex items-center gap-7 text-sm">
+            <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm">
               {navLinks.map((link) => {
+                // The guide gets a dropdown on desktop; the mobile drawer keeps
+                // it as a plain link.
+                if (link.href === lp('/paper-guide')) return <GuideMenu key={link.href} />;
                 const isActive =
                   pathname === link.href ||
                   (link.href !== lp('/') && pathname.startsWith(link.href));

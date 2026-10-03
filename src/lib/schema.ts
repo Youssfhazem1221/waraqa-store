@@ -193,3 +193,37 @@ export function faqSchema(items: { q: string; a: string }[], locale: Locale) {
     })),
   };
 }
+
+/**
+ * Editorial pages (paper guide, blog posts). Authored by the organisation —
+ * there is no named author yet, and inventing one would be the kind of
+ * unbacked E-E-A-T claim the audit warns against.
+ */
+export function articleSchema(
+  locale: Locale,
+  a: {
+    type: 'Article' | 'BlogPosting';
+    path: string;
+    headline: string;
+    description: string;
+    image: string;
+    datePublished: string;
+    dateModified?: string;
+  }
+) {
+  const url = absoluteUrl(locale, a.path);
+  return {
+    '@context': 'https://schema.org',
+    '@type': a.type,
+    '@id': `${url}#article`,
+    mainEntityOfPage: url,
+    headline: a.headline,
+    description: a.description,
+    image: `${SITE_URL}${a.image}`,
+    inLanguage: locale === 'ar' ? 'ar-EG' : 'en',
+    datePublished: a.datePublished,
+    dateModified: a.dateModified || a.datePublished,
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+  };
+}

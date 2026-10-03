@@ -5,16 +5,16 @@
 (no Lighthouse run), no GSC/CrUX field data, no backlink data — those sections
 are marked *unmeasured*, not *passing*.
 
-**SEO Health Score: 76 / 100**
+**SEO Health Score: 79 / 100** *(re-scored 2026-10-04, see §4)*
 
 | Category | Weight | Score |
 |---|---|---|
 | Technical SEO | 22% | 85 |
-| Content Quality | 23% | 58 |
+| Content Quality | 23% | 68 |
 | On-Page SEO | 20% | 82 |
 | Schema / Structured Data | 10% | 90 |
 | Performance (CWV) | 10% | 80 *(lab-unmeasured)* |
-| AI Search Readiness | 10% | 58 |
+| AI Search Readiness | 10% | 64 |
 | Images | 5% | 90 |
 
 Business type: **e-commerce**, bilingual EN/AR, Egypt-only shipping, 8 products,
@@ -134,14 +134,14 @@ signal, and a two-line change.
 
 | # | Action | Effort | Sequence |
 |---|---|---|---|
-| 1 | Register real domain; migrate with 301s (C1) | M | First — blocks all |
+| 1 | ~~Register real domain; migrate with 301s (C1)~~ — live on waraqa.art; vercel.app mirror canonicalises to it (301 still preferable) | M | Done 2026-10-03 |
 | 2 | Homepage title + default OG image (H1, H2) | S | Same deploy as #1 |
 | 3 | `sameAs` + `ContactPoint` on Organization (M4) | S | Week 1 |
 | 4 | `hasMerchantReturnPolicy` + `shippingDetails` (H3) | S | Week 1 |
 | 5 | Security headers in `next.config.ts` (M1) | S | Week 1 |
 | 6 | Founder / process content + photos on `/about` (H4) | M | Week 2 |
 | 7 | Verify in GSC + Bing, submit sitemap | S | After #1 |
-| 8 | Paper-weight guide, EN + AR (H4) | L | Week 3–4 |
+| 8 | ~~Paper-weight guide, EN + AR (H4)~~ — `/paper-guide` + blog | L | Done 2026-10-04 |
 | 9 | Expand each product page to 400+ unique words (H4) | L | Month 2 |
 
 **Leading indicators — watch these instead of re-running the audit:**
@@ -152,6 +152,23 @@ signal, and a two-line change.
 ---
 
 ## 4. Changelog
+
+- **2026-10-04** — C1: store is live on `https://waraqa.art` (Cloudflare Workers,
+  since 2026-10-03); `SITE_URL` points there and the `waraqastore.vercel.app`
+  mirror (Vercel still builds `main`) emits `canonical` → waraqa.art. A host-level
+  301 from vercel.app would be cleaner — open item. H4/#8: shipped `/paper-guide`
+  (EN + AR, ~900 words each, gsm table, three medium sections linking to the
+  matching live products, kraft vs white, sizes, quick answers) and `/blog` with
+  four posts written separately in EN and AR (choosing a first sketchbook,
+  drawing on kraft, watercolour without buckling, 30 things to draw in Cairo).
+  `Article`/`BlogPosting` JSON-LD authored by the `#organization` node (no named
+  author — none exists yet), `BreadcrumbList` on every new page, all new routes
+  in `sitemap.ts`, `CONTENT_REVISION` bumped. Internal links: navbar "Paper
+  guide" menu (per-medium anchors) + "Blog", home hero CTA and home guide cards
+  → `/paper-guide`, blog posts → guide + products. No `FAQPage`/`HowTo` added.
+  Re-scored: Content 58→68 (founder/process content and longer product copy
+  still missing), AI Search Readiness 58→64. **New score: 79/100.** Rankings and
+  CWV for the new pages are unmeasured.
 
 - **2026-09-06** — Fixed H1 (homepage title now brand+product), H2 (default
   OG image + `twitter:card: summary_large_image`), H3 (`hasMerchantReturnPolicy`

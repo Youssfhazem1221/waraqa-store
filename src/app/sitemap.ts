@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import type { Product } from '@/types';
 import productsData from '@/data/products.json';
+import { POSTS } from '@/data/blog';
 import { SITE_URL, LOCALES, DEFAULT_LOCALE } from '@/lib/seo';
 
 const products = productsData as Product[];
@@ -13,7 +14,7 @@ const products = productsData as Product[];
  * Crawlers discount a lastmod that moves without the content moving, which costs
  * us the signal exactly when we do ship a real content update.
  */
-const CONTENT_REVISION = new Date('2026-10-03T00:00:00.000Z');
+const CONTENT_REVISION = new Date('2026-10-04T00:00:00.000Z');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths: {
@@ -23,6 +24,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }[] = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/shop', priority: 0.9, changeFrequency: 'weekly' },
+    { path: '/paper-guide', priority: 0.8, changeFrequency: 'monthly' },
+    { path: '/blog', priority: 0.6, changeFrequency: 'weekly' },
+    ...POSTS.map((p) => ({
+      path: `/blog/${p.slug}`,
+      priority: 0.6,
+      changeFrequency: 'monthly' as const,
+    })),
     { path: '/about', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/shipping', priority: 0.4, changeFrequency: 'monthly' },
     { path: '/returns', priority: 0.4, changeFrequency: 'monthly' },
