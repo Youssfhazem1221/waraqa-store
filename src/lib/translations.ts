@@ -188,6 +188,11 @@ export const translations = {
       qtyReduced: 'is limited to what we have left in stock.',
       outOfStockLine: 'Sold out — remove to continue',
       checkingStock: 'Checking availability...',
+      drawerAdded: 'Added to your bag',
+      drawerTitle: 'Your bag',
+      viewBag: 'View bag',
+      remove: 'Remove',
+      closeBag: 'Close bag',
     },
     checkout: {
       pickGovernorateForFee: 'Pick your governorate above and we’ll show the exact delivery fee.',
@@ -496,6 +501,11 @@ export const translations = {
       qtyReduced: 'الكمية اتعدلت على حسب اللي متاح في المخزن.',
       outOfStockLine: 'خلص من المخزن — شيله عشان تكمل',
       checkingStock: 'بنتأكد من التوفر...',
+      drawerAdded: 'اتضاف للسلة',
+      drawerTitle: 'سلتك',
+      viewBag: 'شوف السلة',
+      remove: 'شيل',
+      closeBag: 'اقفل السلة',
     },
     checkout: {
       pickGovernorateForFee: 'اختار محافظتك فوق وهنوريك مصاريف الشحن بالظبط.',
@@ -659,6 +669,5 @@ export const SIZE_NAMES_AR: Record<string, string> = {
   A5: 'سكتش A5',
   'Mini (10.5×15)': 'ميني جيب (١٠.٥×١٥)',
   '25×35cm': 'كبير استوديو ٢٥×٣٥ سم',
-  '25×25cm': 'مربع فني ٢٥×٢٥ سم',
   A4: 'استوديو A4',
 };

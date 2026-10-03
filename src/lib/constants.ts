@@ -152,7 +152,7 @@ export const GOVERNORATES = [
 ] as const;
 
 /** Product size options for filters */
-export const SIZE_OPTIONS = ['All', 'A5', 'Mini (10.5×15)', '25×35cm', '25×25cm', 'A4'] as const;
+export const SIZE_OPTIONS = ['All', 'A5', 'Mini (10.5×15)', '25×35cm', 'A4'] as const;
 
 /** Sort options for the shop */
 export const SORT_OPTIONS = [

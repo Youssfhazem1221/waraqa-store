@@ -10,6 +10,7 @@ import { PostHogProvider } from '@/providers/PostHogProvider';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import CartDrawer from '@/components/cart/CartDrawer';
 import { Analytics } from '@vercel/analytics/next';
 
 const fraunces = Fraunces({
@@ -125,6 +126,7 @@ export default async function RootLayout({
               <Navbar />
               <main className="flex-1">{children}</main>
               <Footer />
+              <CartDrawer />
             </CartProvider>
           </PostHogProvider>
         </LanguageProvider>

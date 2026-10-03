@@ -12,7 +12,7 @@ import MobileMenu from '@/components/layout/MobileMenu';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { itemCount } = useCart();
+  const { itemCount, openDrawer } = useCart();
   const { t, lp } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -65,15 +65,24 @@ export default function Navbar() {
 
           <div className="flex items-center justify-end gap-5 text-char/80">
             <LanguageToggle className="hidden sm:inline-flex" />
-            <Link
-              href={lp('/cart')}
-              className="inline-flex items-center gap-1.5 text-sm hover:text-maroon transition-colors py-2"
-              aria-label={`${t.nav.bag} with ${itemCount} items`}
+            <button
+              type="button"
+              onClick={openDrawer}
+              className="relative inline-flex items-center gap-2 text-sm hover:text-maroon transition-colors py-2 cursor-pointer"
+              aria-label={`${t.nav.bag}, ${itemCount}`}
             >
-              <Icon name="bag" size={19} />
+              <Icon name="bag" size={20} />
               <span className="hidden sm:inline">{t.nav.bag}</span>
-              <span className="tabular-nums">({itemCount})</span>
-            </Link>
+              {/* Filled once there is something in it, so a full bag is never
+                  mistaken for an empty one. */}
+              <span
+                className={`min-w-5 h-5 px-1.5 inline-flex items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
+                  itemCount > 0 ? 'bg-maroon text-cream' : 'border border-char/30 text-char/70'
+                }`}
+              >
+                {itemCount}
+              </span>
+            </button>
           </div>
         </div>
       </header>

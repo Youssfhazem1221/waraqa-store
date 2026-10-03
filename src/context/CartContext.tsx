@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useState,
 } from 'react';
 import type { CartItem, CartAction, Product } from '@/types';
 import { quoteShipping, type ShippingQuote } from '@/lib/constants';
@@ -169,6 +170,13 @@ interface CartContextValue {
   updateQty: (sku: string, qty: number) => void;
   clearCart: () => void;
   replaceItems: (items: CartItem[]) => void;
+  /** The slide-in bag panel. Adding an item opens it, so a shopper always
+   *  sees that the add worked and where to check out. */
+  drawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
+  /** SKU of the most recent add, highlighted in the panel. */
+  lastAddedSku: string | null;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -178,6 +186,8 @@ const STORAGE_KEY = 'waraqa-cart';
 // ---- Provider ----
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [lastAddedSku, setLastAddedSku] = useState<string | null>(null);
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -251,7 +261,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Actions
   const addItem = useCallback((product: Product, qty = 1) => {
     dispatch({ type: 'ADD_ITEM', product, qty });
+    setLastAddedSku(product.sku);
+    setDrawerOpen(true);
   }, []);
+
+  const openDrawer = useCallback(() => {
+    setLastAddedSku(null);
+    setDrawerOpen(true);
+  }, []);
+
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const removeItem = useCallback((sku: string) => {
     dispatch({ type: 'REMOVE_ITEM', sku });
@@ -287,6 +306,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       updateQty,
       clearCart,
       replaceItems,
+      drawerOpen,
+      openDrawer,
+      closeDrawer,
+      lastAddedSku,
     }),
     [
       state.items,
@@ -303,6 +326,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       updateQty,
       clearCart,
       replaceItems,
+      drawerOpen,
+      openDrawer,
+      closeDrawer,
+      lastAddedSku,
     ]
   );
 

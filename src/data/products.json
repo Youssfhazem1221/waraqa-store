@@ -133,10 +133,10 @@
   },
   {
     "sku": "WRQ-SQ-250",
-    "name": "Square Sketchbook 25×25 — 20 Sheets, 250gsm",
-    "nameAr": "سكتش بوك مربع ٢٥×٢٥ — ٢٠ ورقة",
+    "name": "Large Mixed Media Sketchbook 25×35 — 20 Sheets, 250gsm",
+    "nameAr": "سكتش بوك ميكسد ميديا كبير ٢٥×٣٥ — ٢٠ ورقة",
     "category": "Sketchbooks",
-    "size": "25×25cm",
+    "size": "25×35cm",
     "sheets": 20,
     "gsm": 250,
     "paperType": "Mixed Media",
@@ -144,14 +144,14 @@
     "compareAt": 0,
     "stock": 6,
     "status": "Active",
-    "image": "/products/studio/wrq-sq-250.jpg",
+    "image": "/products/studio/wrq-sq-250-25x35.jpg",
     "images": [
-      "/products/studio/wrq-sq-250.jpg"
+      "/products/studio/wrq-sq-250-25x35.jpg"
     ],
-    "description": "Unique square format — 20 sheets of heavy 250gsm mixed media paper in a 25×25cm size. Ideal for composition studies, illustration, and creative layouts.",
-    "descriptionAr": "شكل مربع مميز — ٢٠ ورقة ميكسد ميديا ثقيلة ٢٥٠ جرام بمقاس ٢٥×٢٥ سم. مثالي لدراسات التكوين والرسم التوضيحي والتخطيطات الإبداعية.",
+    "description": "Large 25×35cm format with 20 sheets of heavy 250gsm mixed media paper — takes ink, markers and light watercolour washes. Good for illustration, studies and project work. Top spiral binding with a vintage-illustrated cover.",
+    "descriptionAr": "مقاس كبير ٢٥×٣٥ سم فيه ٢٠ ورقة ميكسد ميديا تقيلة ٢٥٠ جرام — بتستحمل الحبر والماركرز والألوان المائية الخفيفة. مناسب للرسم التوضيحي والدراسات وشغل المشاريع. سلك حلزوني علوي وغلاف برسومات كلاسيكية.",
     "featured": false,
-    "slug": "square-sketchbook-25x25-250gsm"
+    "slug": "large-mixed-media-sketchbook-25x35-250gsm"
   },
   {
     "sku": "WRQ-A4-320",

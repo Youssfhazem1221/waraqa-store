@@ -30,6 +30,23 @@ const nextConfig: NextConfig = {
   // Do not advertise the framework version to every visitor.
   poweredByHeader: false,
 
+  async redirects() {
+    return [
+      // WRQ-SQ-250 was listed as a 25×25 "square" book; it is 25×35. Keep the
+      // old URL alive for anyone who bookmarked or indexed it.
+      {
+        source: '/:locale(en|ar)/product/square-sketchbook-25x25-250gsm',
+        destination: '/:locale/product/large-mixed-media-sketchbook-25x35-250gsm',
+        permanent: true,
+      },
+      {
+        source: '/product/square-sketchbook-25x25-250gsm',
+        destination: '/en/product/large-mixed-media-sketchbook-25x35-250gsm',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
