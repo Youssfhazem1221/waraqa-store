@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 const nextConfig: NextConfig = {
   images: {
@@ -63,3 +64,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Lets `next dev` reach Cloudflare bindings (KV, Images) the same way the
+// deployed Worker does. No effect on `next build` or on Vercel.
+initOpenNextCloudflareForDev();

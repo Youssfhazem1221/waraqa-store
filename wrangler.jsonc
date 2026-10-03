@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "waraqa-store",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "waraqa-store"
+    }
+  ],
+  // Incremental (ISR) cache. KV rather than R2: R2 needs a payment method on
+  // the account even for its free tier, KV does not. Create the namespace with
+  //   npx wrangler kv namespace create NEXT_INC_CACHE_KV
+  // and paste the id it prints below.
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ],
+  // next/image resizing via Cloudflare Images (free plan: 5,000 unique
+  // transformations a month; over that, new sizes error instead of billing).
+  "images": {
+    "binding": "IMAGES"
+  },
+  "routes": [
+    { "pattern": "waraqa.art", "custom_domain": true },
+    { "pattern": "www.waraqa.art", "custom_domain": true }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
