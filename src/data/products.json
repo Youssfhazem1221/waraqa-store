@@ -1,8 +1,8 @@
 [
   {
     "sku": "WRQ-A5-320",
-    "name": "A5 Mixed Media Sketchbook — 25 Sheets, 320gsm",
-    "nameAr": "سكتش بوك ميكسد ميديا A5 — ٢٥ ورقة",
+    "name": "A5 Mixed Media Sketchbook, 25 Sheets, 320gsm",
+    "nameAr": "سكتش بوك ميكسد ميديا A5، ٢٥ ورقة",
     "category": "Sketchbooks",
     "size": "A5",
     "sheets": 25,
@@ -16,15 +16,15 @@
     "images": [
       "/products/studio/wrq-a5-320.jpg"
     ],
-    "description": "Heavy 320gsm mixed media paper — perfect for watercolour, gouache, ink, and markers. 25 sheets of premium acid-free paper with a kraft cover and sturdy spiral binding.",
-    "descriptionAr": "ورق ميكسد ميديا ثقيل ٣٢٠ جرام — مثالي للألوان المائية والجواش والحبر والماركرز. ٢٥ ورقة من ورق بريميوم خالي من الحمض بغلاف كرافت وسلك حلزوني متين.",
+    "description": "Heavy 320gsm mixed media paper, perfect for watercolour, gouache, ink and markers. 25 sheets of premium acid-free paper with a kraft cover and sturdy spiral binding.",
+    "descriptionAr": "ورق ميكسد ميديا ثقيل ٣٢٠ جرام، مثالي للألوان المائية والجواش والحبر والماركرز. ٢٥ ورقة من ورق بريميوم خالي من الحمض بغلاف كرافت وسلك حلزوني متين.",
     "featured": false,
     "slug": "a5-mixed-media-sketchbook-320gsm"
   },
   {
     "sku": "WRQ-A5-KFT",
-    "name": "A5 Kraft Sketchbook — 40 Sheets, 180gsm",
-    "nameAr": "سكتش بوك كرافت A5 — ٤٠ ورقة",
+    "name": "A5 Kraft Sketchbook, 40 Sheets, 180gsm",
+    "nameAr": "سكتش بوك كرافت A5، ٤٠ ورقة",
     "category": "Sketchbooks",
     "size": "A5",
     "sheets": 40,
@@ -45,8 +45,8 @@
   },
   {
     "sku": "WRQ-A5-150",
-    "name": "A5 Drawing Sketchbook — 50 Sheets, 150gsm",
-    "nameAr": "سكتش بوك رسم A5 — ٥٠ ورقة",
+    "name": "A5 Drawing Sketchbook, 50 Sheets, 150gsm",
+    "nameAr": "سكتش بوك رسم A5، ٥٠ ورقة",
     "category": "Sketchbooks",
     "size": "A5",
     "sheets": 50,
@@ -60,15 +60,15 @@
     "images": [
       "/products/studio/wrq-a5-150.jpg"
     ],
-    "description": "Your everyday drawing companion — 50 sheets of smooth 150gsm paper for pencil, pen, and light marker work. Kraft cover with spiral binding.",
-    "descriptionAr": "رفيقك اليومي للرسم — ٥٠ ورقة من ورق ناعم ١٥٠ جرام للرسم بالرصاص والقلم والماركرز الخفيفة. غلاف كرافت بسلك حلزوني.",
+    "description": "Your everyday drawing companion: 50 sheets of smooth 150gsm paper for pencil, pen, and light marker work. Kraft cover with spiral binding.",
+    "descriptionAr": "رفيقك اليومي للرسم: ٥٠ ورقة من ورق ناعم ١٥٠ جرام للرسم بالرصاص والقلم والماركرز الخفيفة. غلاف كرافت بسلك حلزوني.",
     "featured": true,
     "slug": "a5-drawing-sketchbook-150gsm"
   },
   {
     "sku": "WRQ-A5-250",
-    "name": "A5 Sketchbook — 35 Sheets, 250gsm",
-    "nameAr": "سكتش بوك A5 — ٣٥ ورقة",
+    "name": "A5 Sketchbook, 35 Sheets, 250gsm",
+    "nameAr": "سكتش بوك A5، ٣٥ ورقة",
     "category": "Sketchbooks",
     "size": "A5",
     "sheets": 35,
@@ -89,8 +89,8 @@
   },
   {
     "sku": "WRQ-MINI",
-    "name": "Mini Sketchbook — 40 Sheets, 200gsm",
-    "nameAr": "سكتش بوك ميني — ٤٠ ورقة",
+    "name": "Mini Sketchbook, 40 Sheets, 200gsm",
+    "nameAr": "سكتش بوك ميني، ٤٠ ورقة",
     "category": "Sketchbooks",
     "size": "Mini (10.5×15)",
     "sheets": 40,
@@ -104,15 +104,15 @@
     "images": [
       "/products/studio/wrq-mini.jpg"
     ],
-    "description": "Pocket-sized creativity — 40 sheets of 200gsm mixed media paper in a compact 10.5×15cm format. Top spiral binding, perfect for sketching on the go.",
-    "descriptionAr": "إبداع بحجم الجيب — ٤٠ ورقة ميكسد ميديا ٢٠٠ جرام بمقاس صغير ١٠٫٥×١٥ سم. سلك حلزوني علوي، مثالي للرسم أثناء التنقل.",
+    "description": "Pocket-sized: 40 sheets of 200gsm mixed media paper in a compact 10.5×15cm format. Top spiral binding, perfect for sketching on the go.",
+    "descriptionAr": "إبداع بحجم الجيب: ٤٠ ورقة ميكسد ميديا ٢٠٠ جرام بمقاس صغير ١٠٫٥×١٥ سم. سلك حلزوني علوي، مثالي للرسم أثناء التنقل.",
     "featured": true,
     "slug": "mini-sketchbook-200gsm"
   },
   {
     "sku": "WRQ-LG-150",
-    "name": "Large Sketchbook 25×35 — 20 Sheets, 150gsm",
-    "nameAr": "سكتش بوك كبير ٢٥×٣٥ — ٢٠ ورقة",
+    "name": "Large Sketchbook 25×35, 20 Sheets, 150gsm",
+    "nameAr": "سكتش بوك كبير ٢٥×٣٥، ٢٠ ورقة",
     "category": "Sketchbooks",
     "size": "25×35cm",
     "sheets": 20,
@@ -126,15 +126,15 @@
     "images": [
       "/products/studio/wrq-lg-150.jpg"
     ],
-    "description": "Large 25×35cm format for expansive sketches — 20 sheets of 150gsm dry media paper. Top spiral binding with a vintage-illustrated kraft cover.",
-    "descriptionAr": "مقاس كبير ٢٥×٣٥ سم للرسومات الواسعة — ٢٠ ورقة ١٥٠ جرام للميديا الجافة. سلك حلزوني علوي بغلاف كرافت برسومات كلاسيكية.",
+    "description": "Large 25×35cm format for expansive sketches, with 20 sheets of 150gsm dry media paper. Top spiral binding with a vintage-illustrated kraft cover.",
+    "descriptionAr": "مقاس كبير ٢٥×٣٥ سم للرسومات الواسعة، فيه ٢٠ ورقة ١٥٠ جرام للميديا الجافة. سلك حلزوني علوي بغلاف كرافت برسومات كلاسيكية.",
     "featured": true,
     "slug": "large-sketchbook-25x35-150gsm"
   },
   {
     "sku": "WRQ-SQ-250",
-    "name": "Large Mixed Media Sketchbook 25×35 — 20 Sheets, 250gsm",
-    "nameAr": "سكتش بوك ميكسد ميديا كبير ٢٥×٣٥ — ٢٠ ورقة",
+    "name": "Large Mixed Media Sketchbook 25×35, 20 Sheets, 250gsm",
+    "nameAr": "سكتش بوك ميكسد ميديا كبير ٢٥×٣٥، ٢٠ ورقة",
     "category": "Sketchbooks",
     "size": "25×35cm",
     "sheets": 20,
@@ -148,15 +148,15 @@
     "images": [
       "/products/studio/wrq-sq-250-25x35.jpg"
     ],
-    "description": "Large 25×35cm format with 20 sheets of heavy 250gsm mixed media paper — takes ink, markers and light watercolour washes. Good for illustration, studies and project work. Top spiral binding with a vintage-illustrated cover.",
-    "descriptionAr": "مقاس كبير ٢٥×٣٥ سم فيه ٢٠ ورقة ميكسد ميديا تقيلة ٢٥٠ جرام — بتستحمل الحبر والماركرز والألوان المائية الخفيفة. مناسب للرسم التوضيحي والدراسات وشغل المشاريع. سلك حلزوني علوي وغلاف برسومات كلاسيكية.",
+    "description": "Large 25×35cm format with 20 sheets of heavy 250gsm mixed media paper that takes ink, markers and light watercolour washes. Good for illustration, studies and project work. Top spiral binding with a vintage-illustrated cover.",
+    "descriptionAr": "مقاس كبير ٢٥×٣٥ سم فيه ٢٠ ورقة ميكسد ميديا تقيلة ٢٥٠ جرام، بتستحمل الحبر والماركرز والألوان المائية الخفيفة. مناسب للرسم التوضيحي والدراسات وشغل المشاريع. سلك حلزوني علوي وغلاف برسومات كلاسيكية.",
     "featured": false,
     "slug": "large-mixed-media-sketchbook-25x35-250gsm"
   },
   {
     "sku": "WRQ-A4-320",
-    "name": "A4 Mixed Media Sketchbook — 20 Sheets, 320gsm",
-    "nameAr": "سكتش بوك ميكسد ميديا A4 — ٢٠ ورقة",
+    "name": "A4 Mixed Media Sketchbook, 20 Sheets, 320gsm",
+    "nameAr": "سكتش بوك ميكسد ميديا A4، ٢٠ ورقة",
     "category": "Sketchbooks",
     "size": "A4",
     "sheets": 20,
@@ -170,8 +170,8 @@
     "images": [
       "/products/studio/wrq-a4-320.jpg"
     ],
-    "description": "Studio-grade A4 format — 20 sheets of ultra-heavy 320gsm mixed media paper. Handles watercolour, acrylic, ink, and heavy media with ease. Top spiral binding.",
-    "descriptionAr": "مقاس A4 بجودة استوديو — ٢٠ ورقة ميكسد ميديا فائقة الثقل ٣٢٠ جرام. يتحمل الألوان المائية والأكريليك والحبر والميديا الثقيلة بسهولة. سلك حلزوني علوي.",
+    "description": "Studio-grade A4 format with 20 sheets of ultra-heavy 320gsm mixed media paper. Handles watercolour, acrylic, ink, and heavy media with ease. Top spiral binding.",
+    "descriptionAr": "مقاس A4 بجودة استوديو، فيه ٢٠ ورقة ميكسد ميديا فائقة الثقل ٣٢٠ جرام. يتحمل الألوان المائية والأكريليك والحبر والميديا الثقيلة بسهولة. سلك حلزوني علوي.",
     "featured": false,
     "slug": "a4-mixed-media-sketchbook-320gsm"
   }

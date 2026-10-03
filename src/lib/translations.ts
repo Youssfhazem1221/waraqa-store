@@ -49,7 +49,7 @@ export const translations = {
       titleLine2: 'Mess up often.',
       subtitle: 'Thick, acid-free sketchbooks for hobbyists and art students.',
       description:
-        'Paper from 150 to 320gsm that takes pencil, ink, markers and watercolour — priced so you actually fill it, instead of saving it for something “good enough”.',
+        'Paper from 150 to 320gsm that takes pencil, ink, markers and watercolour, priced so you actually fill it instead of saving it for something “good enough”.',
       shopCta: 'Shop sketchbooks',
       storyCta: 'Which paper do I need?',
       fromPrice: 'From',
@@ -150,7 +150,7 @@ export const translations = {
       specsTitle: 'Specifications',
       deliveryTitle: 'Delivery & payment',
       deliveryBody:
-        'Delivery is 60 EGP in Cairo & Giza and 75 EGP to other governorates — free in Cairo & Giza on orders over 800 EGP. It arrives in 3–7 working days, and you pay the courier in cash after checking your order.',
+        'Delivery is 60 EGP in Cairo & Giza and 75 EGP to other governorates. It’s free in Cairo & Giza on orders over 800 EGP. It arrives in 3–7 working days, and you pay the courier in cash after checking your order.',
       checkedNote: 'Checked by hand before it ships',
       added: 'Added',
       sizeLabel: 'Size',
@@ -186,7 +186,7 @@ export const translations = {
       removedSoldOut: 'sold out and was removed from your bag.',
       priceChanged: 'changed price since you added it.',
       qtyReduced: 'is limited to what we have left in stock.',
-      outOfStockLine: 'Sold out — remove to continue',
+      outOfStockLine: 'Sold out. Remove it to continue',
       checkingStock: 'Checking availability...',
       drawerAdded: 'Added to your bag',
       drawerTitle: 'Your bag',
@@ -251,7 +251,7 @@ export const translations = {
       orderNum: 'Order Reference #',
       inboxTitle: 'Check your inbox',
       inboxDesc:
-        'We’ve emailed a receipt of your order. Our team will confirm your order shortly by email and WhatsApp — to go over your details, delivery, and timing (SLA).',
+        'We’ve emailed a receipt of your order. Our team will confirm your order shortly by email and WhatsApp to go over your details, delivery and timing.',
       receiptSentTo: 'Receipt sent to',
       summaryTitle: 'Order Details',
       deliveryTo: 'Shipping to:',
@@ -261,19 +261,19 @@ export const translations = {
       loadingOrder: 'Getting your order confirmation ready...',
       noOrderTitle: 'No order to show yet',
       noOrderDesc:
-        'This page shows a receipt right after you place an order. Yours may have been opened in another tab or session — check your email for the confirmation, or start a new bag.',
+        'This page shows a receipt right after you place an order. Yours may have been opened in another tab or session. Check your email for the confirmation, or start a new bag.',
     },
     about: {
       badge: 'About Waraqa',
       title: 'Sketchbooks you’re allowed to ruin.',
-      subtitle: 'Made in Cairo for people who draw — whether it’s your first sketchbook or your fortieth.',
+      subtitle: 'Made in Cairo for people who draw, whether it’s your first sketchbook or your fortieth.',
       sec1Num: '01',
       sec1Title: 'Why we started',
       sec2Num: '02',
       sec2Title: 'How each book is made',
       voice1Title: 'Made to be used.',
       voice1Desc:
-        'A sketchbook should get you drawing, not make you scared of the first page. Test new pens, spill coffee, tear a sheet out — that’s what it’s for.',
+        'A sketchbook should get you drawing, not make you scared of the first page. Test new pens, spill coffee, tear a sheet out. That’s what it’s for.',
       voice2Title: 'Real paper, fair price.',
       voice2Desc:
         'We use 150–320gsm paper that handles watercolour, gouache and heavy ink without curling or tearing, and we price it for people buying with their own money.',
@@ -291,12 +291,12 @@ export const translations = {
     faq: {
       title: 'Questions, answered',
       items: [
-        { q: 'Do you deliver across Egypt?', a: 'Yes — we ship to all 27 Egyptian governorates via express courier.' },
+        { q: 'Do you deliver across Egypt?', a: 'Yes, we ship to all 27 Egyptian governorates by express courier.' },
         { q: 'How much is delivery and when does it arrive?', a: 'Delivery is 60 EGP inside Cairo and Giza, or 75 EGP everywhere else. Orders over 800 EGP qualify for free delivery in the Cairo zone. Expect 3–7 business days depending on your governorate.' },
-        { q: 'How do I pay?', a: 'Cash on delivery only — you pay the courier when your order arrives, after you inspect it.' },
+        { q: 'How do I pay?', a: 'Cash on delivery only. You pay the courier when your order arrives, after you inspect it.' },
         { q: 'What does gsm mean and which weight should I pick?', a: 'GSM (grams per square metre) measures paper thickness. Our range runs from 150gsm (good for pencil, pen and light ink) through 250gsm (multi-purpose drawing) up to 320gsm (heavy enough for watercolour, gouache and wet media without buckling).' },
         { q: 'Which sketchbook suits watercolour or markers?', a: 'Pick one of the 320gsm Mixed Media sketchbooks (available in A5 and A4). The heavy, acid-free paper handles water-based media, gouache, ink and alcohol markers without bleeding through.' },
-        { q: 'Is the paper acid-free?', a: "Yes — every Waraqa sketchbook uses acid-free paper, so your work won't yellow or deteriorate over time." },
+        { q: 'Is the paper acid-free?', a: "Yes. Every Waraqa sketchbook uses acid-free paper, so your work won't yellow or deteriorate over time." },
       ],
     },
     notFound: {
@@ -311,7 +311,7 @@ export const translations = {
       navigation: 'Shop',
       customerCare: 'Delivery',
       deliveriesInfo: 'Delivery to all 27 governorates in 3–7 working days',
-      codInfo: 'Cash on delivery — check it, then pay',
+      codInfo: 'Cash on delivery: check it, then pay',
       inspectedInfo: 'Every book is checked by hand before it ships',
       rights: 'All rights reserved.',
       madeWith: 'Made in Cairo',
@@ -362,7 +362,7 @@ export const translations = {
       titleLine2: 'وماتخافش تغلط.',
       subtitle: 'سكتش بوك ورقه تقيل وخالي من الأحماض، للهواة وطلبة الفنون.',
       description:
-        'ورق من ١٥٠ لـ ٣٢٠ جرام بيستحمل الرصاص والحبر والماركرز والألوان المائية — وبسعر يخليك تملاه فعلاً، مش تشيله لحد ما ترسم حاجة «تستاهل».',
+        'ورق من ١٥٠ لـ ٣٢٠ جرام بيستحمل الرصاص والحبر والماركرز والألوان المائية، وبسعر يخليك تملاه فعلاً، مش تشيله لحد ما ترسم حاجة «تستاهل».',
       shopCta: 'تسوق السكتشات',
       storyCta: 'أختار ورق إيه؟',
       fromPrice: 'يبدأ من',
@@ -463,7 +463,7 @@ export const translations = {
       specsTitle: 'المواصفات',
       deliveryTitle: 'التوصيل والدفع',
       deliveryBody:
-        'التوصيل ٦٠ جنيه في القاهرة والجيزة و٧٥ جنيه لباقي المحافظات — ومجاني في القاهرة والجيزة للطلبات فوق ٨٠٠ جنيه. بيوصل في ٣–٧ أيام عمل، وبتدفع للمندوب كاش بعد ما تعاين طلبك.',
+        'التوصيل ٦٠ جنيه في القاهرة والجيزة و٧٥ جنيه لباقي المحافظات، ومجاني في القاهرة والجيزة للطلبات فوق ٨٠٠ جنيه. بيوصل في ٣–٧ أيام عمل، وبتدفع للمندوب كاش بعد ما تعاين طلبك.',
       checkedNote: 'بيتراجع بالإيد قبل الشحن',
       added: 'اتضاف',
       sizeLabel: 'المقاس',
@@ -499,7 +499,7 @@ export const translations = {
       removedSoldOut: 'خلص من المخزن واتشال من سلتك.',
       priceChanged: 'سعره اتغير بعد ما ضفته.',
       qtyReduced: 'الكمية اتعدلت على حسب اللي متاح في المخزن.',
-      outOfStockLine: 'خلص من المخزن — شيله عشان تكمل',
+      outOfStockLine: 'خلص من المخزن. شيله عشان تكمل',
       checkingStock: 'بنتأكد من التوفر...',
       drawerAdded: 'اتضاف للسلة',
       drawerTitle: 'سلتك',
@@ -563,7 +563,7 @@ export const translations = {
       orderNum: 'رقم الطلب #',
       inboxTitle: 'شوف إيميلك',
       inboxDesc:
-        'بعتنالك إيصال بطلبك على الإيميل. فريقنا هيأكد طلبك قريب على الإيميل وعلى واتساب — عشان نراجع معاك التفاصيل، والتوصيل، وميعاد التسليم (SLA).',
+        'بعتنالك إيصال بطلبك على الإيميل. فريقنا هيأكد طلبك قريب على الإيميل وعلى واتساب عشان نراجع معاك التفاصيل والتوصيل وميعاد التسليم.',
       receiptSentTo: 'اتبعت الإيصال على',
       summaryTitle: 'ملخص طلبك',
       deliveryTo: 'الشحن إلى:',
@@ -573,19 +573,19 @@ export const translations = {
       loadingOrder: 'بنجهزلك تفاصيل طلبك حالا...',
       noOrderTitle: 'مفيش طلب نعرضه دلوقتي',
       noOrderDesc:
-        'الصفحة دي بتعرض إيصال طلبك بعد ما تكمله. يمكن طلبك اتفتح في تاب أو جلسة تانية — راجع إيميلك للتأكيد، أو ابدأ سلة جديدة.',
+        'الصفحة دي بتعرض إيصال طلبك بعد ما تكمله. يمكن طلبك اتفتح في تاب أو جلسة تانية. راجع إيميلك للتأكيد، أو ابدأ سلة جديدة.',
     },
     about: {
       badge: 'عن ورقة',
       title: 'سكتشات مسموح لك تبوظها.',
-      subtitle: 'معمولة في القاهرة لأي حد بيرسم — سواء ده أول سكتش ليك أو الأربعين.',
+      subtitle: 'معمولة في القاهرة لأي حد بيرسم، سواء ده أول سكتش ليك أو الأربعين.',
       sec1Num: '٠١',
       sec1Title: 'ليه بدأنا',
       sec2Num: '٠٢',
       sec2Title: 'إزاي بيتعمل كل سكتش',
       voice1Title: 'معمول عشان يتستخدم.',
       voice1Desc:
-        'السكتش بوك المفروض يخليك ترسم، مش يخوفك من أول صفحة. جرب أقلام جديدة، اندلق عليه قهوة، اقطع ورقة — هو معمول لكده.',
+        'السكتش بوك المفروض يخليك ترسم، مش يخوفك من أول صفحة. جرب أقلام جديدة، اندلق عليه قهوة، اقطع ورقة. هو معمول لكده.',
       voice2Title: 'ورق حقيقي، وسعر عادل.',
       voice2Desc:
         'بنستخدم ورق من ١٥٠ لـ ٣٢٠ جرام يستحمل الألوان المائية والجواش والحبر التقيل من غير ما يتكرمش أو يتقطع، وبنسعّره لناس بتشتري من فلوسها.',
@@ -603,12 +603,12 @@ export const translations = {
     faq: {
       title: 'أسئلة شائعة',
       items: [
-        { q: 'بتوصّلوا لكل مصر؟', a: 'أيوه — بنشحن لكل الـ ٢٧ محافظة في مصر بشحن سريع.' },
+        { q: 'بتوصّلوا لكل مصر؟', a: 'أيوه، بنشحن لكل الـ ٢٧ محافظة في مصر بشحن سريع.' },
         { q: 'الشحن بكام وبيوصل في قد إيه؟', a: 'الشحن ٦٠ جنيه للقاهرة والجيزة، و٧٥ جنيه لباقي المحافظات. الطلبات اللي فوق ٨٠٠ جنيه الشحن مجاني في القاهرة والجيزة. التوصيل من ٣ لـ ٧ أيام عمل حسب المحافظة.' },
-        { q: 'بتدفعوا إزاي؟', a: 'الدفع عند الاستلام بس — بتدفع للمندوب كاش لما الطلب يوصلك وبعد ما تعاينه.' },
+        { q: 'بتدفعوا إزاي؟', a: 'الدفع عند الاستلام بس. بتدفع للمندوب كاش لما الطلب يوصلك وبعد ما تعاينه.' },
         { q: 'يعني إيه gsm وأختار وزن كام؟', a: 'الـ gsm (جرام لكل متر مربع) بيقيس سمك الورق. عندنا من ١٥٠ gsm (مناسب للرصاص والقلم والحبر الخفيف) لـ ٢٥٠ gsm (رسم متعدد الخامات) لغاية ٣٢٠ gsm (بيستحمل ألوان ميّه وجواش ووسائط رطبة من غير ما يتعوّج).' },
         { q: 'أنهي سكتش بوك يناسب ألوان الميّه أو الماركرز؟', a: 'اختار سكتش بوك الـ Mixed Media وزن ٣٢٠ gsm (متوفر A5 و A4). الورق السميك الخالي من الأحماض بيستحمل ألوان الميّه والجواش والحبر وماركرز الكحول من غير ما ينفذ للوش التاني.' },
-        { q: 'الورق acid-free؟', a: 'أيوه — كل سكتشات ورقة بتستخدم ورق خالي من الأحماض، فشغلك مش هيصفّر ولا يتلف مع الوقت.' },
+        { q: 'الورق acid-free؟', a: 'أيوه، كل سكتشات ورقة بتستخدم ورق خالي من الأحماض، فشغلك مش هيصفّر ولا يتلف مع الوقت.' },
       ],
     },
     notFound: {

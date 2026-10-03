@@ -57,12 +57,12 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title: {
       default: isAr
-        ? 'ورقة — سكتش بوك وورق رسم فاخر'
-        : 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
+        ? 'ورقة | سكتش بوك وورق رسم فاخر'
+        : 'Waraqa (ورقة) | Premium Sketchbooks & Paper Goods',
       template: isAr ? '%s · ورقة' : '%s · Waraqa (ورقة)',
     },
     description: isAr
-      ? 'سكتشات رسم وورق فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ gsm — مكسد ميديا، كرافت، ورسم. توصيل لكل مصر.'
+      ? 'سكتشات رسم وورق فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ gsm: مكسد ميديا، كرافت، ورسم. توصيل لكل مصر.'
       : 'An identity for sketchbooks and paper goods. Warm, hand-made, and quietly confident. High-gsm mixed media, kraft, and drawing sketchbooks in Egypt.',
     keywords: isAr
       ? ['سكتش بوك', 'دفتر رسم', 'ورقة', 'سكتش بوك مصر', 'ورق كانسون', 'ورق رسم', 'مكسد ميديا', 'كرافت', 'أدوات رسم مصر', 'Waraqa']
@@ -75,22 +75,22 @@ export async function generateMetadata({
     alternates: seoAlternates(l, '/'),
     openGraph: {
       title: isAr
-        ? 'ورقة — سكتش بوك وورق رسم فاخر'
-        : 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
+        ? 'ورقة | سكتش بوك وورق رسم فاخر'
+        : 'Waraqa (ورقة) | Premium Sketchbooks & Paper Goods',
       description: isAr
-        ? 'سكتشات رسم وورق فاخر مصنوع يدوي — للفنانين والمبدعين في مصر.'
+        ? 'سكتشات رسم وورق فاخر مصنوع يدوي، للفنانين والمبدعين في مصر.'
         : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
       url: absoluteUrl(l, '/'),
       siteName: 'Waraqa',
       ...ogLocale(l),
       type: 'website',
-      images: [{ url: `${SITE_URL}/lifestyle/hero-fullbleed.jpg`, width: 1200, height: 630, alt: 'Waraqa — Handmade sketchbooks' }],
+      images: [{ url: `${SITE_URL}/lifestyle/hero-fullbleed.jpg`, width: 1200, height: 630, alt: 'Waraqa handmade sketchbooks' }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: isAr ? 'ورقة — سكتش بوك وورق رسم فاخر' : 'Waraqa (ورقة) — Premium Sketchbooks & Paper Goods',
+      title: isAr ? 'ورقة | سكتش بوك وورق رسم فاخر' : 'Waraqa (ورقة) | Premium Sketchbooks & Paper Goods',
       description: isAr
-        ? 'سكتشات رسم وورق فاخر مصنوع يدوي — للفنانين والمبدعين في مصر.'
+        ? 'سكتشات رسم وورق فاخر مصنوع يدوي، للفنانين والمبدعين في مصر.'
         : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
       images: [`${SITE_URL}/lifestyle/hero-fullbleed.jpg`],
     },

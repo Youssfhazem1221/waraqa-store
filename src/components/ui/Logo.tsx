@@ -33,7 +33,7 @@ export default function Logo({
   return (
     <Link
       href={lp('/')}
-      aria-label="Waraqa — home"
+      aria-label="Waraqa home"
       className="inline-flex items-center group select-none"
     >
       <div className={`relative flex items-center justify-center p-1 ${iconSizes[size]}`}>

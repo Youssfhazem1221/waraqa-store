@@ -160,7 +160,7 @@ function ConfirmationContent() {
             <div>{order.customer.name} · {order.customer.phone}</div>
             <div>
               {order.customer.governorate}
-              {order.customer.city ? `, ${order.customer.city}` : ''} — {order.customer.address}
+              {order.customer.city ? `, ${order.customer.city}` : ''}, {order.customer.address}
             </div>
           </div>
         </div>

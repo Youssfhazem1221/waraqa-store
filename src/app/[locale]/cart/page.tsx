@@ -33,15 +33,15 @@ export default function CartPage() {
 
         const messages: string[] = [];
         for (const item of res.removed) {
-          messages.push(`${item.product.name} — ${t.cart.removedSoldOut}`);
+          messages.push(`${item.product.name}: ${t.cart.removedSoldOut}`);
         }
         for (const { item, oldPrice } of res.repriced) {
           messages.push(
-            `${item.product.name} — ${t.cart.priceChanged} ${formatAmount(oldPrice)} → ${formatAmount(item.product.price)} ${t.common.currency}`
+            `${item.product.name}: ${t.cart.priceChanged} ${formatAmount(oldPrice)} → ${formatAmount(item.product.price)} ${t.common.currency}`
           );
         }
         for (const { item } of res.reduced) {
-          messages.push(`${item.product.name} — ${t.cart.qtyReduced}`);
+          messages.push(`${item.product.name}: ${t.cart.qtyReduced}`);
         }
 
         // Only touch cart state when something actually changed, so this never

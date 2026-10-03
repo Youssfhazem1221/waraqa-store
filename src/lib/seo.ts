@@ -12,7 +12,7 @@ import type { Locale } from '@/lib/translations';
  * different hosts. One value, one source.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://waraqastore.vercel.app'
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://waraqa.art'
 ).replace(/\/+$/, '');
 
 export const LOCALES = ['en', 'ar'] as const;

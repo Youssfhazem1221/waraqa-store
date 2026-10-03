@@ -39,7 +39,18 @@ export function slugify(name: string): string {
  * bundled catalog with an em dash.
  */
 export function shortName(name: string): string {
-  return String(name || '').split(/,| — /)[0].trim();
+  return String(name || '').split(/,|،| — /)[0].trim();
+}
+
+/**
+ * The storefront never shows em dashes. The Sheet's names and descriptions are
+ * typed by hand and use them as separators, so soften them on the way in: a
+ * comma in a name, a comma or Arabic comma in running text.
+ */
+function noEmDash(text: string, arabic = false): string {
+  return String(text || '')
+    .replace(/\s*—\s*/g, arabic ? '، ' : ', ')
+    .trim();
 }
 
 /**
@@ -63,8 +74,8 @@ export function mapApiProduct(api: ApiProduct): Product {
 
   return {
     sku: api.sku,
-    name: api.name,
-    nameAr: api.nameAr || fallback?.nameAr || '',
+    name: noEmDash(api.name),
+    nameAr: noEmDash(api.nameAr || fallback?.nameAr || '', true),
     category: api.category || fallback?.category || 'Sketchbooks',
     size: api.size || fallback?.size || 'A5',
     sheets: api.sheets || fallback?.sheets || 0,
@@ -76,8 +87,8 @@ export function mapApiProduct(api: ApiProduct): Product {
     status: (api.status as Product['status']) || 'Active',
     image,
     images: fallback?.images?.length ? fallback.images : [image],
-    description: api.description || fallback?.description || '',
-    descriptionAr: api.descriptionAr || fallback?.descriptionAr || '',
+    description: noEmDash(api.description || fallback?.description || ''),
+    descriptionAr: noEmDash(api.descriptionAr || fallback?.descriptionAr || '', true),
     featured: Boolean(api.featured),
     slug: fallback?.slug || slugify(api.name),
   };
@@ -172,7 +183,7 @@ async function requestProducts(): Promise<Product[]> {
  */
 export async function fetchProducts(): Promise<Product[]> {
   if (!WEB_APP_URL) {
-    console.warn('[Waraqa] WEB_APP_URL not set — using bundled product data');
+    console.warn('[Waraqa] WEB_APP_URL not set, using bundled product data');
     return FALLBACK;
   }
 

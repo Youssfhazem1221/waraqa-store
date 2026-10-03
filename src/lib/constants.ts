@@ -169,9 +169,9 @@ export const BRAND = {
   tagline: 'Fill the blank page.',
   taglineAr: 'اكتب. ارسم. تخيّل.',
   description:
-    'Waraqa (ورقة) is the blank page and the living leaf at once. Sketchbooks and paper goods — warm, hand-made, and quietly confident.',
+    'Waraqa (ورقة) is the blank page and the living leaf at once. Sketchbooks and paper goods: warm, hand-made, and quietly confident.',
   story:
-    'Waraqa (ورقة) is the blank page and the living leaf at once. The mark keeps that duality: bold, rounded Kufi letterforms that feel drawn by hand, sitting like ink pressed into a fresh sheet. Everything in this system — the earthy palette, the paper surfaces, the unhurried type — points back to that feeling: a good sketchbook, waiting to be filled.',
+    'Waraqa (ورقة) is the blank page and the living leaf at once. The mark keeps that duality: bold, rounded Kufi letterforms that feel drawn by hand, sitting like ink pressed into a fresh sheet. Everything in this system (the earthy palette, the paper surfaces, the unhurried type) points back to that feeling: a good sketchbook, waiting to be filled.',
 } as const;
 
 /** Trust row items */
