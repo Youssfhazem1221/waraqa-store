@@ -131,7 +131,9 @@ export default async function RootLayout({
           </PostHogProvider>
         </LanguageProvider>
         <JsonLd data={[organizationSchema(), webSiteSchema(l)]} />
-        <Analytics />
+        {/* Vercel's analytics endpoint only exists on Vercel; on Cloudflare the
+            script 404s. PostHog covers analytics everywhere. */}
+        {process.env.VERCEL && <Analytics />}
       </body>
     </html>
   );
