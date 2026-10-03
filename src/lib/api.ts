@@ -90,7 +90,9 @@ export function mapApiProduct(api: ApiProduct): Product {
 // short-lived cache plus in-flight de-duplication collapses them into a single
 // request per TTL window.
 
-const SESSION_CACHE_KEY = 'waraqa-catalog-v1';
+// Bump when the mapped Product shape or its bundled fields (e.g. images) change,
+// so an open tab does not keep serving the previous mapping from storage.
+const SESSION_CACHE_KEY = 'waraqa-catalog-v2';
 
 interface CacheEntry {
   products: Product[];

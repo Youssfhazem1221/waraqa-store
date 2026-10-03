@@ -41,7 +41,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#EFE5D6]">
+      <div className="relative aspect-square w-full overflow-hidden bg-cream">
         {imageFailed ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
             <Icon name="box" size={40} />

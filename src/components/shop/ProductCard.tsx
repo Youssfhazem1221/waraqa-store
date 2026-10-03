@@ -31,7 +31,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
     <div className="group flex flex-col">
       {/* The photo sits directly on the page colour — product shots are shot on
           the same cream, so there is no card edge to draw. */}
-      <Link href={href} className="relative block aspect-square w-full overflow-hidden bg-[#EFE5D6]" aria-label={displayName}>
+      <Link href={href} className="relative block aspect-square w-full overflow-hidden bg-cream" aria-label={displayName}>
         {imageFailed ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
             <Icon name="box" size={28} />
@@ -45,13 +45,13 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             priority={priority}
             onError={() => setImageFailed(true)}
-            className={`object-cover object-center transition-opacity duration-300 group-hover:opacity-90 ${
+            className={`object-cover object-center transition-transform duration-500 group-hover:scale-[1.03] ${
               isOutOfStock ? 'opacity-50' : ''
             }`}
           />
         )}
         {(isOutOfStock || product.featured) && (
-          <span className="absolute top-3 start-3 bg-cream text-char text-xs px-2 py-1">
+          <span className="absolute top-3 start-3 border border-char/15 text-char text-xs px-2 py-1">
             {isOutOfStock ? t.common.soldOut : t.common.popular}
           </span>
         )}

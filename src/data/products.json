@@ -12,8 +12,9 @@
     "compareAt": 0,
     "stock": 6,
     "status": "Active",
-    "image": "/products/wrq-a5-320.jpeg",
+    "image": "/products/v2/wrq-a5-320.jpg",
     "images": [
+      "/products/v2/wrq-a5-320.jpg",
       "/products/wrq-a5-320.jpeg"
     ],
     "description": "Heavy 320gsm mixed media paper — perfect for watercolour, gouache, ink, and markers. 25 sheets of premium acid-free paper with a kraft cover and sturdy spiral binding.",
@@ -34,8 +35,9 @@
     "compareAt": 0,
     "stock": 17,
     "status": "Active",
-    "image": "/products/wrq-a5-kft.jpeg",
+    "image": "/products/v2/wrq-a5-kft.jpg",
     "images": [
+      "/products/v2/wrq-a5-kft.jpg",
       "/products/wrq-a5-kft.jpeg"
     ],
     "description": "Warm-toned 180gsm kraft paper, ideal for pencil, charcoal, and pastel work. 40 sheets with a natural kraft cover and wire spiral binding.",
@@ -56,8 +58,9 @@
     "compareAt": 0,
     "stock": 5,
     "status": "Active",
-    "image": "/products/wrq-a5-150.jpeg",
+    "image": "/products/v2/wrq-a5-150.jpg",
     "images": [
+      "/products/v2/wrq-a5-150.jpg",
       "/products/wrq-a5-150.jpeg",
       "/products/wrq-a5-150-alt.jpeg"
     ],
@@ -79,8 +82,9 @@
     "compareAt": 0,
     "stock": 7,
     "status": "Active",
-    "image": "/products/wrq-a5-250.jpeg",
+    "image": "/products/v2/wrq-a5-250.jpg",
     "images": [
+      "/products/v2/wrq-a5-250.jpg",
       "/products/wrq-a5-250.jpeg"
     ],
     "description": "Versatile 250gsm paper for mixed media, watercolour, and ink techniques. 35 sheets of acid-free paper with a kraft cover and spiral binding.",
@@ -101,8 +105,9 @@
     "compareAt": 0,
     "stock": 29,
     "status": "Active",
-    "image": "/products/wrq-mini.jpeg",
+    "image": "/products/v2/wrq-mini.jpg",
     "images": [
+      "/products/v2/wrq-mini.jpg",
       "/products/wrq-mini.jpeg"
     ],
     "description": "Pocket-sized creativity — 40 sheets of 200gsm mixed media paper in a compact 10.5×15cm format. Top spiral binding, perfect for sketching on the go.",
@@ -123,8 +128,9 @@
     "compareAt": 0,
     "stock": 4,
     "status": "Active",
-    "image": "/products/wrq-lg-150.jpeg",
+    "image": "/products/v2/wrq-lg-150.jpg",
     "images": [
+      "/products/v2/wrq-lg-150.jpg",
       "/products/wrq-lg-150.jpeg"
     ],
     "description": "Large 25×35cm format for expansive sketches — 20 sheets of 150gsm dry media paper. Top spiral binding with a vintage-illustrated kraft cover.",
@@ -145,8 +151,9 @@
     "compareAt": 0,
     "stock": 6,
     "status": "Active",
-    "image": "/products/wrq-sq-250.jpeg",
+    "image": "/products/v2/wrq-sq-250.jpg",
     "images": [
+      "/products/v2/wrq-sq-250.jpg",
       "/products/wrq-sq-250.jpeg"
     ],
     "description": "Unique square format — 20 sheets of heavy 250gsm mixed media paper in a 25×25cm size. Ideal for composition studies, illustration, and creative layouts.",
@@ -167,8 +174,9 @@
     "compareAt": 0,
     "stock": 0,
     "status": "Out of stock",
-    "image": "/products/wrq-a4-320.jpeg",
+    "image": "/products/v2/wrq-a4-320.jpg",
     "images": [
+      "/products/v2/wrq-a4-320.jpg",
       "/products/wrq-a4-320.jpeg"
     ],
     "description": "Studio-grade A4 format — 20 sheets of ultra-heavy 320gsm mixed media paper. Handles watercolour, acrylic, ink, and heavy media with ease. Top spiral binding.",

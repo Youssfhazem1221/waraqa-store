@@ -13,7 +13,7 @@ const products = productsData as Product[];
  * Crawlers discount a lastmod that moves without the content moving, which costs
  * us the signal exactly when we do ship a real content update.
  */
-const CONTENT_REVISION = new Date('2026-10-02T00:00:00.000Z');
+const CONTENT_REVISION = new Date('2026-10-03T00:00:00.000Z');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths: {
