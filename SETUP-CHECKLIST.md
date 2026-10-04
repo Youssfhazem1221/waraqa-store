@@ -16,7 +16,11 @@ Follow these 5 simple steps to get your online store live and receiving customer
 - [ ] In your Google Sheet, click **Extensions ▸ Apps Script**.
 - [ ] Paste the code from `waraqa-apps-script.gs`.
 - [ ] Paste your Sheet ID in `const SHEET_ID = '...'`.
-- [ ] Type a password of your choice in `const ADMIN_TOKEN = '...'`.
+- [ ] Create the admin token. **Do not type it into the code**: this repo is public.
+  - Generate one on your computer: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`
+  - In the Apps Script editor: **⚙ Project Settings ▸ Script Properties ▸ Add script property**, name `ADMIN_TOKEN`, value = what you just generated. Keep a copy in your password manager.
+  - It must be at least 32 characters; anything shorter and every admin call is refused.
+  - If the CRM ever says admin is locked, run `resetAdminLockout` from the editor. If it keeps happening, someone is guessing: replace `ADMIN_TOKEN` with a new value.
 - [ ] Click **Deploy ▸ New deployment ▸ Type: Web app**.
 - [ ] Set **Who has access: Anyone** and click **Deploy**.
 - [ ] Copy the generated Web App URL ending in `/exec`.
@@ -43,5 +47,6 @@ Follow these 5 simple steps to get your online store live and receiving customer
 
 ### Step 5: Manage Orders in the Waraqa CRM
 - [ ] Open the `waraqa-crm` app.
-- [ ] In Settings, paste your Apps Script Web App URL and your `ADMIN_TOKEN` password.
+- [ ] In Settings, paste your Apps Script Web App URL and your `ADMIN_TOKEN` value.
+  The CRM keeps the token only until you close the tab, so you sign in once per session.
 - [ ] Update stock levels or mark orders as Confirmed/Shipped/Delivered right from your phone!

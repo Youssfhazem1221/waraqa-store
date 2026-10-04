@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { translations } from '@/lib/translations';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale, localePath } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, localePath } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/schema';
 import { POSTS, formatDate } from '@/data/blog';
 import JsonLd from '@/components/seo/JsonLd';
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: t.blog.metaTitle,
       description: t.blog.description,
       url: absoluteUrl(l, '/blog'),
-      ...ogLocale(l),
+      ...ogDefaults(l),
     },
   };
 }
@@ -53,7 +53,7 @@ export default async function BlogIndex({ params }: Params) {
                       alt=""
                       aria-hidden
                       fill
-                      priority={i < 2}
+                      loading={i < 2 ? 'eager' : undefined}
                       sizes="(max-width: 640px) 100vw, 50vw"
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />

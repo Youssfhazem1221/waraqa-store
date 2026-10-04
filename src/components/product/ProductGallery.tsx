@@ -52,7 +52,8 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
             src={activeImage}
             alt={productName}
             fill
-            priority
+            fetchPriority="high"
+            loading="eager"
             sizes="(max-width: 1024px) 100vw, 45vw"
             onError={() => setImageFailed(true)}
             className="object-cover object-center"

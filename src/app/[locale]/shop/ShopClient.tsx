@@ -122,6 +122,10 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         totalCount={filteredProducts.length}
       />
 
+      {/* The cards are h3s; without an h2 the outline jumped straight from the
+          page h1 to them. Hidden because the filter bar already labels the grid. */}
+      <h2 className="sr-only">{t.shop.gridHeading}</h2>
+
       {/* Grid or Empty */}
       {filteredProducts.length > 0 ? (
         <ProductGrid products={filteredProducts} />

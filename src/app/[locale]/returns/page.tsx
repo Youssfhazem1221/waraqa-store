@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { translations } from '@/lib/translations';
 import { getLegalDoc } from '@/lib/legal';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import LegalDocument from '@/components/legal/LegalDocument';
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: doc.title,
       description: doc.description,
       url: absoluteUrl(l, '/returns'),
-      ...ogLocale(l),
+      ...ogDefaults(l),
     },
   };
 }

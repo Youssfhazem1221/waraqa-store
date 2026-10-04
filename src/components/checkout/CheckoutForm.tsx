@@ -3,7 +3,7 @@
 import React from 'react';
 import type { CustomerInfo } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
-import { GOVERNORATES } from '@/lib/constants';
+import { GOVERNORATES, FIELD_MAX } from '@/lib/constants';
 import { GOVERNORATES_AR } from '@/lib/translations';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -55,6 +55,8 @@ export default function CheckoutForm({
           label={t.checkout.fullName}
           required
           placeholder={t.checkout.fullNamePlaceholder}
+          maxLength={FIELD_MAX.name}
+          autoComplete="name"
           value={customer.name}
           onChange={(e) => onChange('name', e.target.value)}
           error={errors.name}
@@ -67,6 +69,8 @@ export default function CheckoutForm({
             required
             type="tel"
             placeholder={t.checkout.phonePlaceholder}
+            maxLength={FIELD_MAX.phone}
+            autoComplete="tel"
             hint={t.checkout.phoneHint}
             value={customer.phone}
             onChange={(e) => onChange('phone', e.target.value)}
@@ -78,6 +82,8 @@ export default function CheckoutForm({
             required
             type="email"
             placeholder={t.checkout.emailPlaceholder}
+            maxLength={FIELD_MAX.email}
+            autoComplete="email"
             hint={t.checkout.emailHint}
             value={customer.email}
             onChange={(e) => onChange('email', e.target.value)}
@@ -99,6 +105,7 @@ export default function CheckoutForm({
           <Input
             label={t.checkout.city}
             placeholder={t.checkout.cityPlaceholder}
+            maxLength={FIELD_MAX.city}
             value={customer.city}
             onChange={(e) => onChange('city', e.target.value)}
           />
@@ -109,6 +116,8 @@ export default function CheckoutForm({
           label={t.checkout.address}
           required
           placeholder={t.checkout.addressPlaceholder}
+          maxLength={FIELD_MAX.address}
+          autoComplete="street-address"
           value={customer.address}
           onChange={(e) => onChange('address', e.target.value)}
           error={errors.address}
@@ -122,6 +131,7 @@ export default function CheckoutForm({
           <textarea
             rows={2}
             placeholder={t.checkout.notesPlaceholder}
+            maxLength={FIELD_MAX.notes}
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
             className="w-full bg-white text-char border border-line rounded-xl p-3 text-sm transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none"

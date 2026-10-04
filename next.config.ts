@@ -1,6 +1,32 @@
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
+/**
+ * Where the storefront may load from or talk to. Everything is first-party
+ * except PostHog (analytics, plus the scripts it lazy-loads from its asset
+ * host) and the Apps Script order endpoint, which answers from
+ * script.googleusercontent.com after a redirect.
+ *
+ * Inline scripts stay allowed: Next's App Router bootstraps with inline
+ * <script> tags, and nonces would force every page to render per request. The
+ * policy still blocks scripts from any other origin, plugins, framing, and
+ * <base>/form hijacking. `unsafe-eval` is dev-only (React Refresh needs it).
+ */
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://*.posthog.com`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.posthog.com",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.posthog.com https://script.google.com https://script.googleusercontent.com",
+  "worker-src 'self' blob:",
+  "frame-src 'none'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
 const nextConfig: NextConfig = {
   images: {
     // Optimization was switched off, so every product card downloaded the full
@@ -57,6 +83,10 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // Vercel added HSTS at its edge; the move to Cloudflare dropped it.
+          // Same value as before, so the preload eligibility carries over.
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'Content-Security-Policy', value: CONTENT_SECURITY_POLICY },
         ],
       },
     ];

@@ -31,7 +31,8 @@ export default function AboutClient() {
           src="/lifestyle/lifestyle-3.jpeg"
           alt="Hands holding three Waraqa kraft sketchbooks"
           fill
-          priority
+          fetchPriority="high"
+          loading="eager"
           sizes="(max-width: 1152px) 100vw, 1152px"
           className="object-cover object-center"
         />

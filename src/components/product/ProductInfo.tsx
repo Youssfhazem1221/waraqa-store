@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -17,7 +18,7 @@ interface ProductInfoProps {
 
 export default function ProductInfo({ product }: ProductInfoProps) {
   const { addItem } = useCart();
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, lp } = useLanguage();
   const [requestedQty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -35,6 +36,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const description = isRTL ? (product.descriptionAr || product.description) : product.description;
   const medium = mediumFor(product.gsm);
   const goodFor = t.guide[`${medium}Title`].split(/[,،]\s*/);
+  // The paper guide's section for this weight band (its section ids).
+  const guideAnchor = medium === 'wet' ? 'watercolour' : medium === 'ink' ? 'ink' : 'pencil';
 
   // Held in a ref so rapid clicks restart one timer instead of stacking
   // several, and so an unmount (navigating away) cancels it rather than
@@ -138,6 +141,14 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             </li>
           ))}
         </ul>
+        {/* Product pages linked out to nothing editorial; this sends a buyer
+            who is unsure about the weight to the guide section for it. */}
+        <Link
+          href={`${lp('/paper-guide')}#${guideAnchor}`}
+          className="mt-3 inline-block text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2"
+        >
+          {t.product.guideLink}
+        </Link>
       </div>
 
       <dl className="mt-6 grid grid-cols-3 border border-line divide-x divide-line rtl:divide-x-reverse text-center">

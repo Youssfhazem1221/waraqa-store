@@ -25,6 +25,8 @@ export default function Footer() {
             <h3 className="text-cream font-medium mb-3">{t.footer.navigation}</h3>
             <ul className="text-sm space-y-2">
               <li><Link href={lp('/shop')} className={linkClass}>{t.nav.allSketchbooks}</Link></li>
+              <li><Link href={lp('/paper-guide')} className={linkClass}>{t.nav.paperGuide}</Link></li>
+              <li><Link href={lp('/blog')} className={linkClass}>{t.nav.blog}</Link></li>
               <li><Link href={lp('/about')} className={linkClass}>{t.nav.ourStory}</Link></li>
               <li><Link href={lp('/cart')} className={linkClass}>{t.nav.shoppingBag}</Link></li>
             </ul>

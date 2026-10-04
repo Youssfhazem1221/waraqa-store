@@ -20,6 +20,8 @@ export interface Post {
   date: string; // ISO, first published
   updated?: string;
   image: string;
+  /** describes the cover photo; it is the post's hero and LCP image */
+  imageAlt: Record<Locale, string>;
   /** product slugs to suggest at the end of the post */
   products: string[];
   minutes: number;
@@ -32,6 +34,10 @@ export const POSTS: Post[] = [
     slug: 'how-to-choose-a-sketchbook',
     date: '2026-10-04',
     image: '/lifestyle/hero-brand.jpg',
+    imageAlt: {
+      en: 'A kraft Waraqa sketchbook beside an open sketchbook of botanical pencil drawings, two pencils and a sharpener',
+      ar: 'سكتش بوك ورقة كرافت جنب سكتش بوك مفتوح فيه رسومات نباتات بالرصاص، وقلمين رصاص وبرّاية',
+    },
     products: ['a5-drawing-sketchbook-150gsm', 'a5-sketchbook-250gsm', 'mini-sketchbook-200gsm'],
     minutes: 5,
     en: {
@@ -93,6 +99,10 @@ export const POSTS: Post[] = [
     slug: 'drawing-on-kraft-paper',
     date: '2026-10-04',
     image: '/lifestyle/lifestyle-1.jpeg',
+    imageAlt: {
+      en: 'Hands resting on a spiral-bound Waraqa kraft sketchbook on a wooden table',
+      ar: 'إيدين على سكتش بوك ورقة كرافت سلك على ترابيزة خشب',
+    },
     products: ['a5-kraft-sketchbook-180gsm'],
     minutes: 4,
     en: {
@@ -156,6 +166,10 @@ export const POSTS: Post[] = [
     slug: 'watercolour-in-a-sketchbook',
     date: '2026-10-04',
     image: '/guide/wash.jpg',
+    imageAlt: {
+      en: 'Watercolour washes in green, rose and ochre blooming across textured paper',
+      ar: 'ألوان مائية أخضر ووردي وأوكر منتشرة على ورق خشن',
+    },
     products: ['a5-mixed-media-sketchbook-320gsm', 'a4-mixed-media-sketchbook-320gsm'],
     minutes: 4,
     en: {
@@ -213,6 +227,10 @@ export const POSTS: Post[] = [
     slug: 'what-to-draw-in-cairo',
     date: '2026-10-04',
     image: '/blog/cairo-desk.jpg',
+    imageAlt: {
+      en: 'An open sketchbook with a watercolour sketch of a Cairo mosque, next to tea, pencils and a paint palette',
+      ar: 'سكتش بوك مفتوح فيه رسمة ألوان مائية لجامع في القاهرة، جنب كوباية شاي وأقلام رصاص وعلبة ألوان',
+    },
     products: ['mini-sketchbook-200gsm', 'a5-drawing-sketchbook-150gsm'],
     minutes: 4,
     en: {

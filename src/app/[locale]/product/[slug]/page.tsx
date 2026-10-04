@@ -10,9 +10,10 @@ import ProductBreadcrumb from '@/components/product/ProductBreadcrumb';
 import JsonLd from '@/components/seo/JsonLd';
 import { productSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
-import { isLocale, seoAlternates } from '@/lib/seo';
+import { isLocale, seoAlternates, absoluteUrl, ogDefaults, metaDescription } from '@/lib/seo';
 
 const products = productsData as Product[];
+const OG_SLUGS = new Set(products.map((p) => p.slug));
 
 // Rendered per request so prices are never older than the catalog cache
 // (lib/catalog.ts). ISR left the deploy-time prices up on Cloudflare.
@@ -34,14 +35,26 @@ export async function generateMetadata({
   const name = l === 'ar' ? (product.nameAr || product.name) : product.name;
   const desc = l === 'ar' ? (product.descriptionAr || product.description) : product.description;
 
+  const description = metaDescription(desc);
+
   return {
     title: name,
-    description: desc,
+    description,
     alternates: seoAlternates(l, `/product/${product.slug}`),
     openGraph: {
+      ...ogDefaults(l),
       title: `${name} · Waraqa (ورقة)`,
-      description: desc,
-      images: [{ url: product.image }],
+      description,
+      url: absoluteUrl(l, `/product/${product.slug}`),
+      // 1200×630 cards (public/og/) for the bundled catalog: the 1600×2000
+      // studio shots are ~300–360 kB, past WhatsApp's preview limit, and
+      // portrait, so share cards cropped the book. A product added later in the
+      // Sheet falls back to its photo.
+      images: [
+        OG_SLUGS.has(product.slug)
+          ? { url: `/og/product-${product.slug}.jpg`, width: 1200, height: 630, alt: name }
+          : { url: product.image, alt: name },
+      ],
     },
   };
 }

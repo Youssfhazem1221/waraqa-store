@@ -80,7 +80,7 @@ export default function HeroSection({ products }: { products: Product[] }) {
                       src={p.image}
                       alt={name}
                       fill
-                      priority={i < 2}
+                      loading={i < 2 ? 'eager' : undefined}
                       sizes="(max-width: 640px) 128px, 176px"
                       className="object-contain"
                     />

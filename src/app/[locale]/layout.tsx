@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Readex_Pro, Reem_Kufi } from 'next/font/google';
 import '../globals.css';
-import { SITE_URL, LOCALES, isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { SITE_URL, LOCALES, isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from '@/lib/seo';
 import { organizationSchema, webSiteSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -72,18 +72,19 @@ export async function generateMetadata({
         ? 'سكتشات رسم وورق فاخر مصنوع يدوي، للفنانين والمبدعين في مصر.'
         : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
       url: absoluteUrl(l, '/'),
-      siteName: 'Waraqa',
-      ...ogLocale(l),
-      type: 'website',
-      images: [{ url: `${SITE_URL}/lifestyle/hero-fullbleed.jpg`, width: 1200, height: 630, alt: 'Waraqa handmade sketchbooks' }],
+      ...ogDefaults(l),
     },
+    // Card type only. A title, description or image here is inherited by every
+    // page that does not set its own `twitter` (none do), so every shared link
+    // showed the homepage's text; without them, X falls back to each page's og:*.
     twitter: {
       card: 'summary_large_image',
-      title: isAr ? 'ورقة | سكتش بوك وورق رسم فاخر' : 'Waraqa (ورقة) | Premium Sketchbooks & Paper Goods',
-      description: isAr
-        ? 'سكتشات رسم وورق فاخر مصنوع يدوي، للفنانين والمبدعين في مصر.'
-        : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
-      images: [`${SITE_URL}/lifestyle/hero-fullbleed.jpg`],
+    },
+    // Search Console / Bing ownership tokens, if set. DNS verification of the
+    // waraqa.art domain property in Cloudflare is preferred and needs neither.
+    verification: {
+      ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }),
+      ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION && { other: { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } }),
     },
   };
 }

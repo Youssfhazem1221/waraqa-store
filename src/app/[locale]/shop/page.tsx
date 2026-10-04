@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import type { Product } from '@/types';
 import productsData from '@/data/products.json';
 import { translations } from '@/lib/translations';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from '@/lib/seo';
 import { itemListSchema, breadcrumbSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import { getCatalog } from '@/lib/catalog';
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: t.shop.title,
       description: t.shop.description,
       url: absoluteUrl(l, '/shop'),
-      ...ogLocale(l),
+      ...ogDefaults(l),
     },
   };
 }

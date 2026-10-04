@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from '@/lib/seo';
 import { getCatalog } from '@/lib/catalog';
 import HomeClient from './HomeClient';
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
         ? 'سكتش بوك وورق رسم فاخر مصنوع يدوي، للفنانين والمبدعين في مصر.'
         : 'Warm, hand-made sketchbooks and paper goods built for artists and thinkers.',
       url: absoluteUrl(l, '/'),
-      ...ogLocale(l),
+      ...ogDefaults(l),
     },
   };
 }

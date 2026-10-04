@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { translations } from '@/lib/translations';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from '@/lib/seo';
 import { faqSchema, breadcrumbSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import AboutClient from './AboutClient';
@@ -14,13 +14,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const t = translations[l];
   return {
     title: t.about.title,
-    description: t.about.subtitle,
+    description: t.about.metaDescription,
     alternates: seoAlternates(l, '/about'),
     openGraph: {
       title: t.about.title,
-      description: t.about.subtitle,
+      description: t.about.metaDescription,
       url: absoluteUrl(l, '/about'),
-      ...ogLocale(l),
+      ...ogDefaults(l),
     },
   };
 }

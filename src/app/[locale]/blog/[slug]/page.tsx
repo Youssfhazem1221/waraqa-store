@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { translations } from '@/lib/translations';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale, localePath } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, localePath } from '@/lib/seo';
 import { articleSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
 import { shortName } from '@/lib/api';
@@ -25,17 +25,23 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const c = post[l];
   const path = `/blog/${post.slug}`;
   return {
-    title: c.title,
+    // Post titles are already long and specific; the layout's " · Waraqa (ورقة)"
+    // suffix pushed every English one past 70 characters, where Google cuts it.
+    title: c.title.length > 44 ? { absolute: c.title } : c.title,
     description: c.description,
     alternates: seoAlternates(l, path),
     openGraph: {
+      ...ogDefaults(l),
       title: c.title,
       description: c.description,
       url: absoluteUrl(l, path),
       type: 'article',
       publishedTime: post.date,
-      images: [{ url: post.image }],
-      ...ogLocale(l),
+      ...(post.updated && { modifiedTime: post.updated }),
+      authors: ['Waraqa'],
+      // A 1200×630 crop of the cover (public/og/). The covers
+      // themselves are up to 800 kB and portrait, which share previews crop badly.
+      images: [{ url: `/og/blog-${post.slug}.jpg`, width: 1200, height: 630, alt: post.imageAlt[l] }],
     },
   };
 }
@@ -81,7 +87,7 @@ export default async function BlogPost({ params }: Params) {
         </header>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
           <div className="relative aspect-16/9 overflow-hidden bg-kraft/30">
-            <Image src={post.image} alt="" aria-hidden fill priority sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
+            <Image src={post.image} alt={post.imageAlt[l]} fill fetchPriority="high" loading="eager" sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
           </div>
         </div>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 text-lg leading-relaxed text-char/90">

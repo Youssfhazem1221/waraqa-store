@@ -123,7 +123,13 @@ export function productSchema(product: Product, locale: Locale) {
         '@type': 'MerchantReturnPolicy',
         '@id': RETURN_POLICY_ID,
         applicableCountry: 'EG',
-        returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+        // Mirrors /returns (src/lib/legal.ts): 14 days from delivery, collected
+        // by courier. This said "returns not permitted", contradicting the
+        // policy page and the Consumer Protection Law it cites.
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        merchantReturnLink: absoluteUrl(locale, '/returns'),
       },
       shippingDetails: [
         {

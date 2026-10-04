@@ -68,6 +68,20 @@ export const FREE_SHIP_OVER = numEnv(process.env.NEXT_PUBLIC_FREE_SHIP_OVER, 800
  */
 export const CAIRO_ZONE_GOVERNORATES = ['Cairo', 'Giza'] as const;
 
+/**
+ * Longest value each checkout field accepts. Must match FIELD_MAX in
+ * waraqa-apps-script.gs, which rejects anything longer — the inputs cap typing
+ * here so a real customer can never hit that rejection.
+ */
+export const FIELD_MAX = {
+  name: 100,
+  phone: 20,
+  email: 254,
+  city: 80,
+  address: 300,
+  notes: 1000,
+} as const;
+
 /** Business-day delivery window quoted to customers. */
 export const DELIVERY_DAYS_MIN = 3;
 export const DELIVERY_DAYS_MAX = 7;

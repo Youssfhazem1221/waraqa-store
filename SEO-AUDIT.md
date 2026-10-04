@@ -5,17 +5,17 @@
 (no Lighthouse run), no GSC/CrUX field data, no backlink data — those sections
 are marked *unmeasured*, not *passing*.
 
-**SEO Health Score: 79 / 100** *(re-scored 2026-10-04, see §4)*
+**SEO Health Score: 82 / 100** *(re-scored 2026-10-05, see §4)*
 
 | Category | Weight | Score |
 |---|---|---|
-| Technical SEO | 22% | 85 |
+| Technical SEO | 22% | 90 |
 | Content Quality | 23% | 68 |
-| On-Page SEO | 20% | 82 |
-| Schema / Structured Data | 10% | 90 |
+| On-Page SEO | 20% | 88 |
+| Schema / Structured Data | 10% | 92 |
 | Performance (CWV) | 10% | 80 *(lab-unmeasured)* |
-| AI Search Readiness | 10% | 64 |
-| Images | 5% | 90 |
+| AI Search Readiness | 10% | 68 |
+| Images | 5% | 94 |
 
 Business type: **e-commerce**, bilingual EN/AR, Egypt-only shipping, 8 products,
 22 indexable URLs (11 pages × 2 locales).
@@ -152,6 +152,48 @@ signal, and a two-line change.
 ---
 
 ## 4. Changelog
+
+- **2026-10-05** — Post-migration sweep (live crawl of all 42 sitemap URLs, then
+  a local production build re-crawled and checked in a browser).
+  *Regressions from the Vercel → Cloudflare move, fixed:* HSTS was no longer
+  sent (Vercel had added it at its edge) — restored in `next.config.ts` and
+  `public/_headers`; plain `http://` answered 200 — middleware now 308s to
+  https when Cloudflare's `CF-Visitor` says the visitor used http (never on a
+  missing header, so it cannot loop); `www.waraqa.art` and the production
+  `*.vercel.app` mirror served full copies — both 308 to the canonical
+  origin, in the same hop as the locale redirect. **Still turn on Cloudflare ▸
+  SSL/TLS ▸ Edge Certificates ▸ Always Use HTTPS**: it also covers static files,
+  which the Worker never sees.
+  *On-page:* 26 of 42 pages emitted no `og:image` — every page that set its own
+  `openGraph` replaced the layout's wholesale. New `ogDefaults()` in
+  `lib/seo.ts`; a 1200×630, 92 kB default card (`/og-image.jpg`; the old one
+  was the 816 kB hero, past WhatsApp's ~300 kB preview limit, and not really
+  1200×630), 1200×630 cards per blog post and per product (`public/og/`).
+  Layout `twitter` now sets only the card type, so X uses each page's og:*
+  instead of the homepage text. English blog titles (75–79 chars) drop the
+  brand suffix; product descriptions are trimmed to 155 at a word boundary; the
+  About page has a real meta description in both languages; shop gained an
+  `sr-only` h2 (cards are h3 under the h1). Blog post heroes have descriptive
+  alt text (EN + AR). All other alt="" images were checked and are decorative.
+  *Schema:* `hasMerchantReturnPolicy` said `MerchantReturnNotPermitted` while
+  `/returns` grants 14 days — now `MerchantReturnFiniteReturnWindow`, 14
+  days, `ReturnByMail`, `merchantReturnLink`. `JsonLd` escapes `<`, `>`, `&`
+  (Sheet text reaches it via the live catalog).
+  *Links:* footer → paper guide + blog on every page; each product page →
+  the paper-guide section for its weight. No broken internal links (46 checked).
+  *AI:* `/llms.txt`, generated from the catalog, posts and policy copy.
+  *Images:* JPEG originals recompressed in place, same dimensions (9.6 → 5.4 MB).
+  *Performance:* catalog reads are stale-while-revalidate (`lib/catalog.ts`):
+  homepage TTFB 3.45 s → 0.04 s locally once the 60 s cache has lapsed; LCP
+  images use `fetchPriority="high"` (`priority` is deprecated in Next 16).
+  Local Lighthouse mobile, 3 runs: product LCP 5.5 s → 3.4–3.7 s; homepage
+  perf 55–71 (high variance, LCP is the h1 waiting on web fonts + JS; PostHog's
+  recorder and surveys add ~56 kB). No field data: CrUX has none for this
+  traffic level and the PSI API quota was exhausted — CWV remains *unmeasured*
+  in production. Security headers: CSP added (first-party + PostHog + Apps
+  Script; inline scripts allowed for the App Router).
+  Re-scored: Technical 85→90, On-Page 82→88, Schema 90→92, AI 64→68, Images
+  90→94. **New score: 82/100.** Still open: #6, #7 (verify by DNS), #9.
 
 - **2026-10-04** — C1: store is live on `https://waraqa.art` (Cloudflare Workers,
   since 2026-10-03); `SITE_URL` points there and the `waraqastore.vercel.app`

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { translations } from '@/lib/translations';
-import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogLocale, localePath } from '@/lib/seo';
+import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, localePath } from '@/lib/seo';
 import { articleSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
 import { shortName } from '@/lib/api';
@@ -28,12 +28,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description: c.description,
     alternates: seoAlternates(l, '/paper-guide'),
     openGraph: {
+      ...ogDefaults(l),
       title: c.title,
       description: c.description,
       url: absoluteUrl(l, '/paper-guide'),
       type: 'article',
       images: [{ url: '/guide/wash.jpg', width: 1600, height: 893 }],
-      ...ogLocale(l),
     },
   };
 }
@@ -117,7 +117,8 @@ export default async function PaperGuidePage({ params }: Params) {
                 alt=""
                 aria-hidden
                 fill
-                priority={si === 0}
+                fetchPriority={si === 0 ? 'high' : undefined}
+                loading={si === 0 ? 'eager' : undefined}
                 sizes="100vw"
                 className={`-z-10 object-cover object-right ${isAr ? '-scale-x-100' : ''}`}
               />

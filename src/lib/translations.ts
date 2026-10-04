@@ -141,6 +141,7 @@ export const translations = {
     shop: {
       tag: '',
       title: 'Sketchbooks',
+      gridHeading: 'All sketchbooks',
       description:
         'From a pocket-sized mini to 25×35 for bigger work. Filter by size, or search for a weight like “320”.',
       searchPlaceholder: 'Search: A5, 320gsm, kraft…',
@@ -171,6 +172,7 @@ export const translations = {
       relatedTitle: 'You might also like',
       quantity: 'Quantity',
       bestFor: 'Good for',
+      guideLink: 'Not sure this is the right weight? Compare papers in the guide',
       detailsTitle: 'Details',
       specsTitle: 'Specifications',
       deliveryTitle: 'Delivery & payment',
@@ -292,6 +294,7 @@ export const translations = {
       badge: 'About Waraqa',
       title: 'Sketchbooks you’re allowed to ruin.',
       subtitle: 'Made in Cairo for people who draw, whether it’s your first sketchbook or your fortieth.',
+      metaDescription: 'Waraqa makes sketchbooks in Cairo for people who draw, on heavy 150–320gsm paper with delivery across Egypt. Your first sketchbook or your fortieth.',
       sec1Num: '01',
       sec1Title: 'Why we started',
       sec2Num: '02',
@@ -493,6 +496,7 @@ export const translations = {
     shop: {
       tag: '',
       title: 'السكتشات',
+      gridHeading: 'كل السكتشات',
       description:
         'من الميني اللي بيدخل في الجيب لحد ٢٥×٣٥ للشغل الكبير. فلتر بالمقاس، أو دوّر بالجرام زي «320».',
       searchPlaceholder: 'دوّر: A5، 320، كرافت…',
@@ -523,6 +527,7 @@ export const translations = {
       relatedTitle: 'ممكن يعجبك كمان',
       quantity: 'الكمية',
       bestFor: 'مناسب لـ',
+      guideLink: 'مش متأكد إن ده الوزن المناسب؟ قارن الورق في الدليل',
       detailsTitle: 'التفاصيل',
       specsTitle: 'المواصفات',
       deliveryTitle: 'التوصيل والدفع',
@@ -643,6 +648,7 @@ export const translations = {
       badge: 'عن ورقة',
       title: 'سكتشات مسموح لك تبوظها.',
       subtitle: 'معمولة في القاهرة لأي حد بيرسم، سواء ده أول سكتش ليك أو الأربعين.',
+      metaDescription: 'ورقة بتعمل سكتشات رسم في القاهرة لأي حد بيرسم، على ورق تقيل من ١٥٠ لـ ٣٢٠ جرام وتوصيل لكل مصر. سواء ده أول سكتش ليك أو الأربعين.',
       sec1Num: '٠١',
       sec1Title: 'ليه بدأنا',
       sec2Num: '٠٢',
