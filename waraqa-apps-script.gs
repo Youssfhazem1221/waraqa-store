@@ -50,6 +50,10 @@ const MAX_LINE_QTY    = 50;
 
 /* ------------------------- STORE & NOTIFICATION CONFIG ------------------------- */
 const OWNER_EMAIL = 'youssf.hazem1221@gmail.com'; // where new order alerts are sent
+/* More people who should get the same new-order alert: add a script property
+ * NOTIFY_EMAILS (⚙ Project Settings ▸ Script Properties), comma-separated.
+ * Kept out of this file because the repo is public. Each extra address costs
+ * one send from the daily email quota per order. */
 const STORE_NAME  = 'Waraqa';                     // email sender name
 const REPLY_TO    = 'youssf.hazem1221@gmail.com'; // customer replies land here
 const CURRENCY    = 'EGP';
@@ -1173,6 +1177,15 @@ function orderTablesHtml(o){
     + '</div>';
 }
 
+/* OWNER_EMAIL plus any valid addresses in the NOTIFY_EMAILS script property. */
+function ownerRecipients(){
+  var extra = String(PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAILS') || '')
+    .split(',')
+    .map(function(e){ return e.trim(); })
+    .filter(function(e){ return /^[^\s@,]+@[^\s@,]+\.[^\s@,]{2,}$/.test(e) && e.toLowerCase() !== OWNER_EMAIL.toLowerCase(); });
+  return [OWNER_EMAIL].concat(extra).join(',');
+}
+
 function sendOwnerEmail(o){
   var subject = 'New order ' + o.orderId + ' — ' + o.c.name + ' — ' + money(o.total);
   var html = ''
@@ -1183,7 +1196,7 @@ function sendOwnerEmail(o){
     +   '<p style="margin:18px 0 0;font-size:13px;color:#6B5D50;">Confirm with the customer by WhatsApp or Phone within 24h.</p>'
     + '</div>';
   MailApp.sendEmail({
-    to: OWNER_EMAIL,
+    to: ownerRecipients(),
     replyTo: o.to || REPLY_TO,
     name: STORE_NAME,
     subject: subject,
