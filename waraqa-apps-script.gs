@@ -10,7 +10,7 @@
  *    in place. Safe to run again any time — it never creates duplicates.
  *    View ▸ Logs (or "Execution log") shows what it changed.
  * 3b. ONE TIME: ⚙ Project Settings ▸ Script Properties ▸ Add script property:
- *    ADMIN_TOKEN = a random string of 32+ characters. The CRM is locked out
+ *    ADMIN_TOKEN = your admin PIN or password. The CRM is locked out
  *    until this exists (see ADMIN TOKEN below). Use the same value to sign in
  *    to the CRM.
  * 4. Deploy ▸ Manage deployments ▸ ✏️ (Edit) ▸ Version: "New version" ▸ Deploy.
@@ -22,16 +22,20 @@ const SHEET_ID    = '1eeCP8SSIWg2V-gjzCjPpQOiPQelYnIXXOvNcjZPfSP0';   // from th
 
 /* ADMIN TOKEN — deliberately NOT in this file. The repo is public, and this
  * endpoint's URL ships in the storefront's JavaScript, so anyone can call it.
- * A short token here (it was a 4-digit PIN) can be guessed in minutes and
- * opens every customer's name, phone and address.
  *
  * Set it once in the Apps Script editor: ⚙ Project Settings ▸ Script
- * Properties ▸ Add script property ▸ name ADMIN_TOKEN, value = a random string
- * of at least 32 characters (see SETUP-CHECKLIST.md for a one-line generator).
- * Type the same value into the CRM. Admin calls are refused until it is set. */
-const ADMIN_TOKEN_MIN_LENGTH = 32;
-const AUTH_MAX_FAILURES      = 10;        // wrong tokens allowed, across all callers...
-const AUTH_LOCK_SECONDS      = 15 * 60;   // ...within this window, before admin locks
+ * Properties ▸ Add script property ▸ name ADMIN_TOKEN. Type the same value
+ * into the CRM. Admin calls are refused until it is set.
+ *
+ * The owner chose to keep a short PIN (decided 2026-10-05, after being told a
+ * 4-digit PIN can be found by trying all 10,000). The lockout below is what
+ * slows that down: 5 wrong tokens lock admin for an hour, so working through
+ * the space takes weeks rather than minutes. A random 32+ character token
+ * (see SETUP-CHECKLIST.md) would make guessing impossible — switching back
+ * needs only the property changed, no code. */
+const ADMIN_TOKEN_MIN_LENGTH = 4;
+const AUTH_MAX_FAILURES      = 5;         // wrong tokens allowed, across all callers...
+const AUTH_LOCK_SECONDS      = 60 * 60;   // ...within this window, before admin locks
 
 /* Abuse limits for the two public actions. Apps Script cannot see a caller's
  * IP, so these are store-wide ceilings, set far above real traffic. Their job
@@ -200,7 +204,7 @@ function adminAuthError(token){
   var cache = CacheService.getScriptCache();
   var failures = Number(cache.get('auth_failures') || 0);
   if (failures >= AUTH_MAX_FAILURES) {
-    return 'Too many wrong tokens. Admin is locked for 15 minutes.';
+    return 'Too many wrong tokens. Admin is locked for an hour.';
   }
   if (typeof token === 'string' && token && tokenMatches(token, expected)) return null;
   cache.put('auth_failures', String(failures + 1), AUTH_LOCK_SECONDS);

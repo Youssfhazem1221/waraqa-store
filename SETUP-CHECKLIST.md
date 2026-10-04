@@ -19,7 +19,7 @@ Follow these 5 simple steps to get your online store live and receiving customer
 - [ ] Create the admin token. **Do not type it into the code**: this repo is public.
   - Generate one on your computer: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`
   - In the Apps Script editor: **⚙ Project Settings ▸ Script Properties ▸ Add script property**, name `ADMIN_TOKEN`, value = what you just generated. Keep a copy in your password manager.
-  - It must be at least 32 characters; anything shorter and every admin call is refused.
+  - A random 32+ character token cannot be guessed. A short PIN works too (minimum 4 characters), but 5 wrong tries lock admin for an hour, and a PIN can still be found by an attacker over a few weeks.
   - If the CRM ever says admin is locked, run `resetAdminLockout` from the editor. If it keeps happening, someone is guessing: replace `ADMIN_TOKEN` with a new value.
 - [ ] Click **Deploy ▸ New deployment ▸ Type: Web app**.
 - [ ] Set **Who has access: Anyone** and click **Deploy**.
