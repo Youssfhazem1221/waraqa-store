@@ -4,7 +4,9 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 /**
  * Where the storefront may load from or talk to. Everything is first-party
  * except PostHog (analytics, plus the scripts it lazy-loads from its asset
- * host) and the Apps Script order endpoint, which answers from
+ * host), Cloudflare Web Analytics (the beacon Cloudflare injects into every
+ * page while Web Analytics is on for the zone; blocked, it only logged a CSP
+ * error on every page) and the Apps Script order endpoint, which answers from
  * script.googleusercontent.com after a redirect.
  *
  * Inline scripts stay allowed: Next's App Router bootstraps with inline
@@ -14,11 +16,11 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
  */
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://*.posthog.com`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://*.posthog.com https://static.cloudflareinsights.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.posthog.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.posthog.com https://script.google.com https://script.googleusercontent.com",
+  "connect-src 'self' https://*.posthog.com https://cloudflareinsights.com https://script.google.com https://script.googleusercontent.com",
   "worker-src 'self' blob:",
   "frame-src 'none'",
   "frame-ancestors 'none'",

@@ -5,15 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@/types';
 import { buttonClasses } from '@/components/ui/Button';
+import Price from '@/components/ui/Price';
 import { useLanguage } from '@/context/LanguageContext';
-import { formatAmount } from '@/lib/money';
 import { shortName } from '@/lib/api';
 
 // Alternating tilt so the row reads as books set down by hand, not a grid.
 const TILT = ['-rotate-3', 'rotate-2', '-rotate-1', 'rotate-3', '-rotate-2'];
 
 export default function HeroSection({ products }: { products: Product[] }) {
-  const { t, lp, isRTL } = useLanguage();
+  const { t, lp, isRTL, locale } = useLanguage();
 
   // Derived from the live catalog rather than written into the copy, so a
   // price change in the Sheet can never leave the hero quoting an old number.
@@ -39,7 +39,7 @@ export default function HeroSection({ products }: { products: Product[] }) {
         <p className="text-sm text-muted">{t.hero.badge}</p>
         <h1
           id="hero-title"
-          className="mt-3 font-serif font-semibold text-maroon text-5xl sm:text-6xl lg:text-7xl leading-[1] tracking-tight text-balance"
+          className="mt-3 font-serif font-semibold text-maroon text-5xl sm:text-6xl lg:text-7xl leading-[1] rtl:leading-[1.2] tracking-tight text-balance"
         >
           {t.hero.titleLine1} <span className="font-light text-char">{t.hero.titleLine2}</span>
         </h1>
@@ -49,7 +49,7 @@ export default function HeroSection({ products }: { products: Product[] }) {
             {t.hero.shopCta}
             {fromPrice > 0 && (
               <span className="font-normal text-cream/75">
-                · {t.hero.fromPrice} {formatAmount(fromPrice)} {t.common.currency}
+                · {t.hero.fromPrice} <Price value={fromPrice} locale={locale} />
               </span>
             )}
           </Link>
@@ -85,12 +85,12 @@ export default function HeroSection({ products }: { products: Product[] }) {
                       className="object-contain"
                     />
                   </div>
-                  <span className="mt-2 block text-[13px] leading-snug text-char line-clamp-1 group-hover:text-maroon">
+                  {/* No `block` here: it overrode line-clamp's display, so long
+                      names wrapped and knocked the prices out of line. */}
+                  <span className="mt-2 text-[13px] leading-snug text-char line-clamp-1 group-hover:text-maroon">
                     {shortName(name)}
                   </span>
-                  <span className="block text-[13px] font-semibold text-maroon tabular-nums">
-                    {formatAmount(p.price)} {t.common.currency}
-                  </span>
+                  <Price value={p.price} locale={locale} className="block text-[13px] font-semibold text-maroon" />
                 </Link>
               </li>
             );

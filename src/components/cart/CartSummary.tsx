@@ -4,17 +4,21 @@ import React from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
-import Button from '@/components/ui/Button';
+import { buttonClasses } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
+import Price from '@/components/ui/Price';
+import FreeShipMeter from '@/components/cart/FreeShipMeter';
 import { FREE_SHIP_OVER } from '@/lib/constants';
-import { formatAmount } from '@/lib/money';
+import { plural, RANGE_DASH } from '@/lib/format';
 
-export default function CartSummary() {
+interface CartSummaryProps {
+  /** Wraps the checkout button, so the phone bar can step aside while it is on screen. */
+  ctaRef?: React.Ref<HTMLDivElement>;
+}
+
+export default function CartSummary({ ctaRef }: CartSummaryProps) {
   const { subtotal, shippingQuote, total, itemCount } = useCart();
-  const { t, lp } = useLanguage();
-
-  const qualifiesForFreeShipping = subtotal >= FREE_SHIP_OVER;
-  const remainingForFreeShipping = Math.max(0, FREE_SHIP_OVER - subtotal);
+  const { t, lp, locale } = useLanguage();
 
   return (
     <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs sticky top-24">
@@ -22,39 +26,21 @@ export default function CartSummary() {
         {t.cart.orderSummary}
       </h2>
 
-      {/* Free shipping progress bar */}
-      <div className="bg-cream/80 border border-line rounded-2xl p-4 space-y-2 text-xs">
-        {qualifiesForFreeShipping ? (
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-success font-semibold">
-              <Icon name="check" size={16} />
-              <span>{t.cart.qualifyFreeShip}</span>
-            </div>
-            <p className="text-[11px] text-muted leading-relaxed">{t.cart.freeShipZoneNote}</p>
-          </div>
-        ) : (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between font-medium text-char">
-              <span>{t.cart.progressPrefix}</span>
-              <span className="text-maroon font-bold">
-                {formatAmount(remainingForFreeShipping)} {t.common.currency} {t.cart.toFreeShip}
-              </span>
-            </div>
-            <div className="w-full bg-line rounded-full h-1.5 overflow-hidden">
-              <div
-                className="bg-maroon h-full rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, (subtotal / FREE_SHIP_OVER) * 100)}%` }}
-              />
-            </div>
-          </div>
+      {/* Free delivery: the same sentence and bar as the slide-in bag */}
+      <div className="bg-cream/80 border border-line rounded-2xl p-4 space-y-2">
+        <FreeShipMeter />
+        {subtotal >= FREE_SHIP_OVER && (
+          <p className="text-xs text-muted leading-relaxed text-pretty">{t.cart.freeShipZoneNote}</p>
         )}
       </div>
 
       {/* Line item amounts */}
       <div className="space-y-3 text-sm">
         <div className="flex justify-between text-char/80">
-          <span>{t.cart.subtotal} ({itemCount} {t.cart.items})</span>
-          <span className="font-medium text-char">{formatAmount(subtotal)} {t.common.currency}</span>
+          <span>
+            {t.cart.subtotal} ({plural(locale, itemCount, t.cart.itemCount)})
+          </span>
+          <Price value={subtotal} locale={locale} className="font-medium text-char" />
         </div>
 
         <div className="space-y-1">
@@ -65,44 +51,43 @@ export default function CartSummary() {
                 shippingQuote.free ? (
                   <span className="text-success font-semibold">{t.common.freeShippingTag}</span>
                 ) : (
-                  `${formatAmount(shippingQuote.amount)} ${t.common.currency}`
+                  <Price value={shippingQuote.amount} locale={locale} />
                 )
               ) : shippingQuote.low === 0 ? (
                 // Past the free threshold the cheap end is 0. "0–75" reads like
                 // a glitch; name it.
-                <>
+                <span className="whitespace-nowrap">
                   <span className="text-success font-semibold">{t.common.freeShippingTag}</span>
-                  <span>–{formatAmount(shippingQuote.high)} {t.common.currency}</span>
-                </>
+                  {RANGE_DASH}
+                  <Price value={shippingQuote.high} locale={locale} />
+                </span>
               ) : (
-                `${formatAmount(shippingQuote.low)}–${formatAmount(shippingQuote.high)} ${t.common.currency}`
+                <Price value={shippingQuote.low} to={shippingQuote.high} locale={locale} />
               )}
             </span>
           </div>
-          <p className="text-[11px] text-muted leading-relaxed">
+          <p className="text-xs text-muted leading-relaxed text-pretty">
             {shippingQuote.low === 0
               ? t.cart.shippingEstimateNoteFree
               : t.cart.shippingEstimateNote}
           </p>
         </div>
 
-        <div className="pt-3 border-t border-line flex justify-between items-baseline font-serif text-lg sm:text-xl font-bold text-maroon">
+        <div className="pt-3 border-t border-line flex justify-between items-baseline text-lg sm:text-xl font-bold text-maroon">
           <span>{shippingQuote.exact ? t.cart.total : t.checkout.totalFrom}</span>
-          <span>{formatAmount(total)} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span></span>
+          <Price value={total} locale={locale} currencyClassName="text-xs font-normal text-muted" />
         </div>
 
-        <p className="text-[11px] text-muted text-start leading-relaxed">
+        <p className="text-xs text-muted text-start leading-relaxed text-pretty">
           {t.cart.taxNote}
         </p>
       </div>
 
       {/* Proceed to Checkout CTA */}
-      <div className="space-y-3 pt-2">
-        <Link href={lp('/checkout')} className="block">
-          <Button size="lg" fullWidth className="shadow-md">
-            <Icon name="lock" size={18} />
-            <span>{t.cart.proceedCheckout}</span>
-          </Button>
+      <div ref={ctaRef} className="space-y-3 pt-2">
+        <Link href={lp('/checkout')} className={buttonClasses({ size: 'lg', fullWidth: true })}>
+          <Icon name="lock" size={18} />
+          <span>{t.cart.proceedCheckout}</span>
         </Link>
 
         <Link
@@ -114,7 +99,7 @@ export default function CartSummary() {
       </div>
 
       {/* Trust reassurance */}
-      <div className="pt-4 border-t border-line text-[11px] text-muted space-y-1.5">
+      <div className="pt-4 border-t border-line text-xs text-muted space-y-1.5">
         <div className="flex items-center gap-2">
           <Icon name="shield" size={14} className="text-sage" />
           <span>{t.cart.trustCod}</span>

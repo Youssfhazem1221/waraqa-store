@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useId } from 'react';
+import { withIdentifiers } from '@/components/ui/Identifiers';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -43,7 +44,7 @@ export default function Input({
         >
           {label}{' '}
           {required && (
-            <span className="text-terra" aria-hidden="true">
+            <span className="text-error" aria-hidden="true">
               *
             </span>
           )}
@@ -62,7 +63,15 @@ export default function Input({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={description}
-          className={`w-full bg-white text-char placeholder:text-muted/60 border border-line rounded-xl px-3.5 py-2.5 text-sm sm:text-base transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none ${
+          // Never under 16px: iOS Safari zooms the whole page into a smaller
+          // field on focus, and 14px on phones did exactly that at checkout.
+          // Chrome sets a placeholder at the font's own line height (it
+          // ignores line-height there) and clips it to that box, cutting the
+          // dots off a final ي («المعادى»); the placeholders are short enough
+          // to fit without the clip. A left-to-right field (phone, email) on
+          // an Arabic page reads its Arabic placeholder from the right until
+          // something is typed.
+          className={`w-full bg-white text-char placeholder:text-muted/60 placeholder:overflow-visible rtl:placeholder-shown:[direction:rtl] rtl:placeholder-shown:text-right border border-line rounded-xl px-3.5 py-2.5 text-base transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none ${
             icon ? 'ps-10' : ''
           } ${error ? 'border-error ring-1 ring-error' : ''} ${className}`}
           {...props}
@@ -70,12 +79,12 @@ export default function Input({
       </div>
       {error && (
         <p id={errorId} role="alert" className="mt-1 text-xs text-error font-medium">
-          {error}
+          {withIdentifiers(error)}
         </p>
       )}
       {hint && !error && (
         <p id={hintId} className="mt-1 text-xs text-muted">
-          {hint}
+          {withIdentifiers(hint)}
         </p>
       )}
     </div>

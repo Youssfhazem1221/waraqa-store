@@ -53,8 +53,8 @@ export async function generateMetadata({
       template: isAr ? '%s · ورقة' : '%s · Waraqa (ورقة)',
     },
     description: isAr
-      ? 'سكتشات رسم وورق فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ gsm: مكسد ميديا، كرافت، ورسم. توصيل لكل مصر.'
-      : 'An identity for sketchbooks and paper goods. Warm, hand-made, and quietly confident. High-gsm mixed media, kraft, and drawing sketchbooks in Egypt.',
+      ? 'سكتشات رسم وورق فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ جرام: مكسد ميديا، كرافت، ورسم. توصيل لكل مصر والدفع عند الاستلام.'
+      : 'Handmade sketchbooks from Cairo on heavy 150–320gsm paper: mixed media, kraft and drawing. Cash on delivery to all 27 governorates in Egypt.',
     keywords: isAr
       ? ['سكتش بوك', 'دفتر رسم', 'ورقة', 'سكتش بوك مصر', 'ورق كانسون', 'ورق رسم', 'مكسد ميديا', 'كرافت', 'أدوات رسم مصر', 'Waraqa']
       : ['sketchbook', 'sketchbooks Egypt', 'Waraqa', 'ورقة', 'دفتر رسم', 'سكتش بوك', 'mixed media paper', 'kraft sketchbook', 'art supplies Egypt', 'watercolor paper'],

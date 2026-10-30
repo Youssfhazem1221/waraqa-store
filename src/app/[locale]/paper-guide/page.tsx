@@ -7,10 +7,12 @@ import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, local
 import { articleSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
 import { shortName } from '@/lib/api';
-import { formatAmount } from '@/lib/money';
+import { formatNumber } from '@/lib/format';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { PAPER_GUIDE } from '@/data/paperGuide';
 import JsonLd from '@/components/seo/JsonLd';
+import Price from '@/components/ui/Price';
+import SpecLine from '@/components/ui/SpecLine';
 
 type Params = { params: Promise<{ locale: string }> };
 
@@ -58,8 +60,8 @@ export default async function PaperGuidePage({ params }: Params) {
     <>
       <article className="border-b border-line">
         <header className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-10">
-          <p className="text-sm text-terra font-semibold">{c.eyebrow}</p>
-          <h1 className="mt-3 font-serif font-semibold text-maroon text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-3xl text-balance">
+          <p className="text-sm text-maroon font-semibold">{c.eyebrow}</p>
+          <h1 className="mt-3 font-serif font-semibold text-maroon text-4xl sm:text-5xl lg:text-6xl leading-[1.05] rtl:leading-[1.2] tracking-tight max-w-3xl text-balance">
             {c.h1}
           </h1>
           <div className="mt-6 max-w-2xl space-y-4 text-lg leading-relaxed text-char">
@@ -83,7 +85,26 @@ export default async function PaperGuidePage({ params }: Params) {
         <section aria-labelledby="gsm-title" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
           <h2 id="gsm-title" className="font-serif text-2xl sm:text-3xl font-semibold text-char">{c.gsmHeading}</h2>
           <p className="mt-2 text-muted max-w-2xl">{c.gsmIntro}</p>
-          <div className="mt-6 overflow-x-auto border border-line bg-white/50">
+          {/* Phones: one card per weight. The table needs 560 px, so in a 356 px
+              box "Best for" sat off screen behind a sideways scroll. */}
+          <ul className="mt-6 sm:hidden border border-line bg-white/50 divide-y divide-line">
+            {c.gsmTable.map((r) => (
+              <li key={r.gsm} className="px-4 py-4">
+                <p className="font-semibold text-maroon">{r.gsm}</p>
+                <dl className="mt-2 space-y-2 text-sm">
+                  <div>
+                    <dt className="text-xs text-muted">{c.gsmCols.feel}</dt>
+                    <dd className="text-char">{r.feel}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted">{c.gsmCols.bestFor}</dt>
+                    <dd className="text-char">{r.bestFor}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 hidden sm:block overflow-x-auto border border-line bg-white/50">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
                 <tr className="text-start text-muted">
@@ -125,7 +146,7 @@ export default async function PaperGuidePage({ params }: Params) {
               <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r rtl:bg-gradient-to-l from-cream via-cream/90 to-cream/20" />
               <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 grid lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-7">
-                  <p className="font-serif text-maroon text-3xl font-semibold">{s.weight}</p>
+                  <p className="text-maroon text-3xl font-semibold">{s.weight}</p>
                   <h2 id={`${s.key}-title`} className="mt-1 font-serif text-3xl sm:text-4xl font-semibold text-char">{s.title}</h2>
                   <p className="mt-3 text-lg text-char">{s.lede}</p>
                   <div className="mt-4 space-y-4 leading-relaxed text-char/90">
@@ -154,10 +175,18 @@ export default async function PaperGuidePage({ params }: Params) {
                               </span>
                               <span className="flex-1 text-sm text-char group-hover:text-maroon group-hover:underline underline-offset-4">
                                 {shortName(name)}
-                                <span className="block text-xs text-muted">{p.gsm} {isAr ? 'جرام' : 'gsm'} · {p.sheets} {isAr ? 'ورقة' : 'sheets'}</span>
+                                <span className="block text-xs text-muted">
+                                  <SpecLine
+                                    parts={[
+                                      `${formatNumber(p.gsm, l)} ${isAr ? 'جرام' : 'gsm'}`,
+                                      `${formatNumber(p.sheets, l)} ${isAr ? 'ورقة' : 'sheets'}`,
+                                    ]}
+                                    locale={l}
+                                  />
+                                </span>
                               </span>
                               <span className={`text-sm tabular-nums ${soldOut ? 'text-muted' : 'text-maroon font-semibold'}`}>
-                                {soldOut ? t.common.soldOut : `${formatAmount(p.price)} ${t.common.currency}`}
+                                {soldOut ? t.common.soldOut : <Price value={p.price} locale={l} />}
                               </span>
                             </Link>
                           </li>

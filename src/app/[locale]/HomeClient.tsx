@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { Product } from '@/types';
-import { fetchProducts } from '@/lib/api';
+import { fetchLiveProducts } from '@/lib/api';
 import HeroSection from '@/components/home/HeroSection';
 import PaperGuide from '@/components/home/PaperGuide';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
@@ -13,17 +13,13 @@ import NewsletterCapture from '@/components/home/NewsletterCapture';
 export default function HomeClient({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
 
+  // Only a successful read replaces the server-rendered list; a slow or failed
+  // one leaves it alone (see fetchLiveProducts).
   useEffect(() => {
     let isMounted = true;
-    async function load() {
-      try {
-        const live = await fetchProducts();
-        if (isMounted) setProducts(live);
-      } catch (err) {
-        console.warn('Home: using fallback products', err);
-      }
-    }
-    load();
+    fetchLiveProducts().then((live) => {
+      if (isMounted && live) setProducts(live);
+    });
     return () => {
       isMounted = false;
     };

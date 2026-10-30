@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react';
 import type { CartItem, CartAction, Product } from '@/types';
-import { quoteShipping, type ShippingQuote } from '@/lib/constants';
+import { quoteShipping, MAX_LINE_QTY, type ShippingQuote } from '@/lib/constants';
 
 // ---- State ----
 interface CartState {
@@ -20,11 +20,9 @@ interface CartState {
 
 const initialState: CartState = { items: [], isHydrated: false };
 
-/** Largest quantity of one SKU a single order may contain. */
-const MAX_LINE_QTY = 99;
-
-/** Stock ceiling for a line. Products with an unknown/absent stock count fall
- *  back to the order cap rather than to 0, which would make them unbuyable. */
+/** Stock ceiling for a line, never above the per-order cap. A product with no
+ *  stock count reads as 0 and cannot be added, the same rule the order
+ *  endpoint applies. */
 function lineCap(product: Product): number {
   const stock = Number(product.stock);
   if (!Number.isFinite(stock) || stock <= 0) return 0;

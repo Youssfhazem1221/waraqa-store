@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { formatNumber } from '@/lib/format';
 
 export default function Audience() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   const rows = [
-    { n: '01', title: t.audience.beginnerTitle, desc: t.audience.beginnerDesc },
-    { n: '02', title: t.audience.studentTitle, desc: t.audience.studentDesc },
+    { n: 1, title: t.audience.beginnerTitle, desc: t.audience.beginnerDesc },
+    { n: 2, title: t.audience.studentTitle, desc: t.audience.studentDesc },
   ];
 
   return (
@@ -20,7 +21,7 @@ export default function Audience() {
         <div className="lg:col-span-8 divide-y divide-line border-y border-line">
           {rows.map((r) => (
             <div key={r.n} className="py-6 grid sm:grid-cols-[3rem_1fr] gap-2">
-              <span className="font-serif text-maroon text-lg tabular-nums">{r.n}</span>
+              <span className="text-maroon text-lg tabular-nums">{formatNumber(r.n, locale, 2)}</span>
               <div>
                 <h3 className="font-semibold text-char text-lg">{r.title}</h3>
                 <p className="mt-1.5 text-muted leading-relaxed">{r.desc}</p>

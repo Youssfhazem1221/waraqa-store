@@ -1,18 +1,62 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { Product } from '@/types';
-import { fetchProducts } from '@/lib/api';
+import { fetchLiveProducts } from '@/lib/api';
 import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { mediumFor } from '@/lib/paper';
+import { paperTypeLabel, sizeLabel } from '@/lib/format';
+import { SIZE_SLUGS } from '@/lib/constants';
 import FilterBar from '@/components/shop/FilterBar';
 import ProductGrid from '@/components/shop/ProductGrid';
 import EmptyState from '@/components/shop/EmptyState';
 
+/**
+ * Fold the differences a shopper should not have to match exactly: case,
+ * spacing, Arabic-Indic digits (٣٢٠ = 320), US/UK spelling ("watercolor" found
+ * nothing, the copy says "watercolour") and the Arabic letters people type
+ * interchangeably (الوان مائيه = ألوان مائية).
+ */
+function normalizeSearch(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/colour/g, 'color')
+    .replace(/[\u064B-\u0652\u0640]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي');
+}
+
+/** The size a ?size= value names; a missing or unknown one is All. */
+function sizeFromSlug(slug: string | null): string {
+  const value = (slug || '').trim().toLowerCase();
+  return Object.keys(SIZE_SLUGS).find((size) => SIZE_SLUGS[size] === value) ?? 'All';
+}
+
 export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
   const { t, locale, isRTL } = useLanguage();
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [selectedSize, setSelectedSize] = useState('All');
   const [selectedSort, setSelectedSort] = useState('featured');
+
+  // The size lives in the URL (/shop?size=a5), so a filtered shelf can be
+  // shared, survives a reload and the language switch, and Back undoes it.
+  // This page renders per request, so the server's HTML already has it.
+  // pushState goes through Next's router: useSearchParams follows it with no
+  // server round trip.
+  const searchParams = useSearchParams();
+  const selectedSize = sizeFromSlug(searchParams.get('size'));
+  const setSelectedSize = useCallback((size: string) => {
+    const params = new URLSearchParams(window.location.search);
+    if (sizeFromSlug(params.get('size')) === size) return;
+    if (size === 'All') params.delete('size');
+    else params.set('size', SIZE_SLUGS[size]);
+    const query = params.toString();
+    window.history.pushState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Typing filters a small list, but deferring keeps the input responsive as
@@ -25,11 +69,9 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   // second or more of blank screen for data we already had.
   useEffect(() => {
     let active = true;
-    fetchProducts()
-      .then((live) => {
-        if (active && live.length > 0) setProducts(live);
-      })
-      .catch((err) => console.warn('Using bundled products fallback', err));
+    fetchLiveProducts().then((live) => {
+      if (active && live) setProducts(live);
+    });
     return () => {
       active = false;
     };
@@ -50,25 +92,33 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
       result = result.filter((p) => p.size === selectedSize);
     }
 
-    const q = deferredQuery.trim().toLowerCase();
+    const q = normalizeSearch(deferredQuery.trim());
     if (q) {
       result = result.filter((p) => {
-        const haystack = [
-          p.name,
-          p.nameAr,
-          p.sku,
-          p.description,
-          p.descriptionAr,
-          p.paperType,
-          p.size,
-          p.category,
-          `${p.gsm}gsm`,
-          `${p.gsm} gsm`,
-          `${p.sheets} sheets`,
-          `${p.sheets}`,
-        ]
-          .join(' ')
-          .toLowerCase();
+        const medium = mediumFor(p.gsm);
+        const haystack = normalizeSearch(
+          [
+            p.name,
+            p.nameAr,
+            p.sku,
+            p.description,
+            p.descriptionAr,
+            p.paperType,
+            p.size,
+            // The labels the cards show, so «خامات جافة» or «سم» finds them.
+            paperTypeLabel(p.paperType, 'ar'),
+            sizeLabel(p.size, 'ar'),
+            p.category,
+            `${p.gsm}gsm`,
+            `${p.gsm} gsm`,
+            `${p.sheets} sheets`,
+            `${p.sheets}`,
+            // What the paper is for, in both languages, so "markers" or
+            // "ألوان مائية" find books whose names never say it.
+            translations.en.guide[`${medium}Title`],
+            translations.ar.guide[`${medium}Title`],
+          ].join(' ')
+        );
         return haystack.includes(q);
       });
     }
@@ -105,10 +155,13 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   }, [products, selectedSize, selectedSort, deferredQuery, isRTL, collator]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      <div className="mb-8 pb-8 border-b border-line max-w-2xl">
+    // A short header, so the first screen reaches the first prices: the title,
+    // intro, rule and two filter rows took ~450 px on desktop and ~520 px on
+    // phones before the first card. Phones skip the intro.
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 sm:pt-8 sm:pb-14">
+      <div className="mb-5 pb-5 sm:mb-6 sm:pb-6 border-b border-line max-w-2xl">
         <h1 className="font-serif text-4xl sm:text-5xl font-semibold text-maroon">{t.shop.title}</h1>
-        <p className="mt-3 text-muted leading-relaxed">{t.shop.description}</p>
+        <p className="hidden sm:block mt-2 text-muted leading-relaxed">{t.shop.description}</p>
       </div>
 
       {/* Filter Bar */}

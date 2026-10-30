@@ -41,7 +41,7 @@ export default function Select({
         >
           {label}{' '}
           {required && (
-            <span className="text-terra" aria-hidden="true">
+            <span className="text-error" aria-hidden="true">
               *
             </span>
           )}
@@ -53,7 +53,8 @@ export default function Select({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={description}
-          className={`w-full bg-white text-char border border-line rounded-xl px-3.5 py-2.5 text-sm sm:text-base appearance-none transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none pe-10 cursor-pointer ${
+          // 16px for the same iOS focus-zoom reason as Input.
+          className={`w-full bg-white text-char border border-line rounded-xl px-3.5 py-2.5 text-base appearance-none transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none pe-10 cursor-pointer ${
             error ? 'border-error ring-1 ring-error' : ''
           } ${className}`}
           {...props}

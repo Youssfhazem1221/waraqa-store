@@ -4,12 +4,12 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@/types';
+import Price from '@/components/ui/Price';
 import { useLanguage } from '@/context/LanguageContext';
-import { formatAmount } from '@/lib/money';
 import { shortName } from '@/lib/api';
 
 export default function PaperGuide({ products }: { products: Product[] }) {
-  const { t, isRTL, lp } = useLanguage();
+  const { t, isRTL, lp, locale } = useLanguage();
 
   const groups = useMemo(() => {
     const available = products.filter((p) => p.status !== 'Hidden');
@@ -49,7 +49,7 @@ export default function PaperGuide({ products }: { products: Product[] }) {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cream/10 to-cream" />
               </div>
               <div className="px-6 pb-6 -mt-6">
-              <p className="font-serif text-maroon text-2xl">{g.weight}</p>
+              <p className="text-maroon text-2xl">{g.weight}</p>
               <h3 className="mt-1 font-semibold text-char">{g.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{g.desc}</p>
 
@@ -68,7 +68,7 @@ export default function PaperGuide({ products }: { products: Product[] }) {
                           {shortName(name)}
                         </span>
                         <span className={`tabular-nums shrink-0 ${soldOut ? 'text-muted' : 'text-char'}`}>
-                          {soldOut ? t.common.soldOut : `${formatAmount(p.price)} ${t.common.currency}`}
+                          {soldOut ? t.common.soldOut : <Price value={p.price} locale={locale} />}
                         </span>
                       </Link>
                     </li>
@@ -77,7 +77,7 @@ export default function PaperGuide({ products }: { products: Product[] }) {
               </ul>
               <Link
                 href={lp(`/paper-guide#${g.anchor}`)}
-                className="mt-4 inline-block text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2"
+                className="mt-3.5 inline-flex items-center min-h-6 text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2"
               >
                 {t.guide.fullGuide}
               </Link>

@@ -6,11 +6,14 @@ import Logo from '@/components/ui/Logo';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { WHATSAPP_NUMBER, INSTAGRAM_URL } from '@/lib/constants';
+import { formatNumber } from '@/lib/format';
 
 export default function Footer() {
-  const { t, lp } = useLanguage();
+  const { t, lp, locale } = useLanguage();
 
-  const linkClass = 'hover:text-cream underline-offset-4 hover:underline';
+  // 24px tall: as bare text they were 18px tap targets on phones. The lists'
+  // gaps shrink by the same 4px, so the lines keep their spacing.
+  const linkClass = 'inline-flex items-center min-h-6 hover:text-cream underline-offset-4 hover:underline';
 
   return (
     <footer className="bg-esp text-cream/70 mt-auto">
@@ -23,7 +26,7 @@ export default function Footer() {
 
           <div className="md:col-span-2">
             <h3 className="text-cream font-medium mb-3">{t.footer.navigation}</h3>
-            <ul className="text-sm space-y-2">
+            <ul className="text-sm space-y-1">
               <li><Link href={lp('/shop')} className={linkClass}>{t.nav.allSketchbooks}</Link></li>
               <li><Link href={lp('/paper-guide')} className={linkClass}>{t.nav.paperGuide}</Link></li>
               <li><Link href={lp('/blog')} className={linkClass}>{t.nav.blog}</Link></li>
@@ -34,7 +37,7 @@ export default function Footer() {
 
           <div className="md:col-span-3">
             <h3 className="text-cream font-medium mb-3">{t.footer.help}</h3>
-            <ul className="text-sm space-y-2">
+            <ul className="text-sm space-y-1">
               <li><Link href={lp('/shipping')} className={linkClass}>{t.footer.shippingLink}</Link></li>
               <li><Link href={lp('/returns')} className={linkClass}>{t.footer.returnsLink}</Link></li>
               <li><Link href={lp('/privacy')} className={linkClass}>{t.footer.privacyLink}</Link></li>
@@ -44,16 +47,16 @@ export default function Footer() {
 
           <div className="md:col-span-3">
             <h3 className="text-cream font-medium mb-3">{t.footer.customerCare}</h3>
-            <ul className="text-sm space-y-2">
+            <ul className="text-sm space-y-2 text-pretty">
               <li>{t.footer.deliveriesInfo}</li>
               <li>{t.footer.codInfo}</li>
               <li>
                 <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                  WhatsApp
+                  {t.footer.whatsapp}
                 </a>
                 {' · '}
                 <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                  Instagram
+                  {t.footer.instagram}
                 </a>
               </li>
             </ul>
@@ -62,7 +65,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-cream/10 flex flex-wrap items-center justify-between gap-4 text-xs text-cream/50">
           <span>
-            © {new Date().getFullYear()} {t.common.brandName} ({t.common.brandNameAr}) · {t.footer.madeWith}
+            © {formatNumber(new Date().getFullYear(), locale)} {t.common.brandName} ({t.common.brandNameAr}) · {t.footer.madeWith}
           </span>
           <LanguageToggle className="text-cream text-xs" />
         </div>

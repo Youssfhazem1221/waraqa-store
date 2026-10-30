@@ -8,7 +8,12 @@ import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Icon from '@/components/ui/Icon';
 import QuantityStepper from '@/components/product/QuantityStepper';
-import { formatAmount, lineTotal } from '@/lib/money';
+import Price from '@/components/ui/Price';
+import SpecLine from '@/components/ui/SpecLine';
+import { lineTotal } from '@/lib/money';
+import { formatNumber, sizeLabel } from '@/lib/format';
+import { shortName } from '@/lib/api';
+import { MAX_LINE_QTY } from '@/lib/constants';
 
 interface CartItemProps {
   item: CartItemType;
@@ -16,83 +21,95 @@ interface CartItemProps {
 
 export default function CartItem({ item }: CartItemProps) {
   const { updateQty, removeItem } = useCart();
-  const { t, isRTL, lp } = useLanguage();
+  const { t, isRTL, lp, locale } = useLanguage();
   const { product, qty } = item;
 
-  const displayName = isRTL ? (product.nameAr || product.name) : product.name;
+  // Sheets and weight are listed on the line below, so the name drops them;
+  // in full it was clamped to "A5 Kraft…" in the narrow column.
+  const displayName = shortName(isRTL ? (product.nameAr || product.name) : product.name);
 
   // A bag can outlive the stock it was filled from. Flag the line instead of
   // letting it look ordinary all the way to a rejected checkout.
   const isOutOfStock = product.stock <= 0 || product.status !== 'Active';
 
+  // Laid out like a line in the slide-in bag: the name and specs get the whole
+  // middle column, and the stepper and line total share the row under them
+  // (a 64px photo on phones leaves that row room). Side by side with the
+  // stepper, the name had ~120px and wrapped or clipped.
   return (
-    <div
-      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-6 border-b border-line ${
-        isOutOfStock ? 'opacity-70' : ''
-      }`}
-    >
-      {/* Product Image & Info */}
-      <div className="flex items-center gap-4 flex-1">
-        <Link
-          href={lp(`/product/${product.slug}`)}
-          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white border border-line shrink-0 shadow-xs"
-        >
-          <Image
-            src={product.image}
-            alt={displayName}
-            fill
-            sizes="96px"
-            className="object-cover object-center"
-          />
-        </Link>
-
-        <div className="space-y-1">
-          <Link
-            href={lp(`/product/${product.slug}`)}
-            className="font-semibold text-char text-base hover:text-maroon transition-colors line-clamp-1"
-          >
-            {displayName}
-          </Link>
-          <div className="text-xs text-muted">
-            <span>{product.size}</span> · <span>{product.sheets} {t.common.sheets}</span> · <span>{product.gsm} {t.common.gsm}</span>
-          </div>
-          {isOutOfStock && (
-            <div className="text-xs font-semibold text-error">{t.cart.outOfStockLine}</div>
-          )}
-          <div className="text-sm font-semibold text-maroon sm:hidden">
-            {formatAmount(lineTotal(product.price, qty))} {t.common.currency}
-          </div>
-        </div>
-      </div>
-
-      {/* Stepper, Line Total, Remove */}
-      <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-        <QuantityStepper
-          qty={qty}
-          max={Math.max(1, product.stock)}
-          min={1}
-          disabled={isOutOfStock}
-          onChange={(newQty) => updateQty(product.sku, newQty)}
+    <div className={`flex items-start gap-4 py-6 ${isOutOfStock ? 'opacity-70' : ''}`}>
+      <Link
+        href={lp(`/product/${product.slug}`)}
+        className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white border border-line shrink-0 shadow-xs"
+      >
+        <Image
+          src={product.image}
+          alt={displayName}
+          fill
+          sizes="96px"
+          className="object-cover object-center"
         />
+      </Link>
 
-        <div className="hidden sm:block text-right min-w-[90px]">
-          <div className="font-serif font-bold text-maroon text-lg">
-            {formatAmount(lineTotal(product.price, qty))} <span className="text-xs font-sans font-normal text-muted">{t.common.currency}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 space-y-1">
+            <Link
+              href={lp(`/product/${product.slug}`)}
+              className="font-semibold text-char text-base hover:text-maroon transition-colors line-clamp-2"
+            >
+              {displayName}
+            </Link>
+            <div className="text-xs text-muted">
+              <SpecLine
+                parts={[
+                  sizeLabel(product.size, locale),
+                  `${formatNumber(product.sheets, locale)} ${t.common.sheets}`,
+                  `${formatNumber(product.gsm, locale)} ${t.common.gsm}`,
+                ]}
+                locale={locale}
+              />
+            </div>
+            {isOutOfStock && (
+              <div className="text-xs font-semibold text-error">{t.cart.outOfStockLine}</div>
+            )}
           </div>
-          <div className="text-[11px] text-muted">
-            {formatAmount(product.price)} {t.common.currency} {t.cart.each}
-          </div>
+
+          {/* A 44px target, pulled into the corner so the cross lines up with the name. */}
+          <button
+            type="button"
+            onClick={() => removeItem(product.sku)}
+            className="shrink-0 -mt-2.5 -me-2.5 w-11 h-11 inline-flex items-center justify-center text-muted hover:text-error hover:bg-error/5 rounded-xl transition-colors cursor-pointer"
+            aria-label={`${t.cart.remove} ${displayName}`}
+            title={t.cart.remove}
+          >
+            <Icon name="close" size={18} />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => removeItem(product.sku)}
-          className="p-2 text-muted hover:text-error hover:bg-error/5 rounded-xl transition-colors cursor-pointer"
-          aria-label={`Remove ${displayName}`}
-          title={t.cart.clearBag}
-        >
-          <Icon name="close" size={18} />
-        </button>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <QuantityStepper
+            qty={qty}
+            max={Math.max(1, Math.min(MAX_LINE_QTY, product.stock))}
+            min={1}
+            disabled={isOutOfStock}
+            onChange={(newQty) => updateQty(product.sku, newQty)}
+          />
+
+          {/* Wraps under the stepper rather than overflow a narrow phone. */}
+          <div className="ms-auto text-end">
+            <div className="font-bold text-maroon text-lg">
+              <Price
+                value={lineTotal(product.price, qty)}
+                locale={locale}
+                currencyClassName="text-xs font-normal text-muted"
+              />
+            </div>
+            <div className="text-xs text-muted">
+              <Price value={product.price} locale={locale} /> {t.cart.each}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

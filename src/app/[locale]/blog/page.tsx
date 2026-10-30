@@ -6,7 +6,9 @@ import { translations } from '@/lib/translations';
 import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, localePath } from '@/lib/seo';
 import { breadcrumbSchema } from '@/lib/schema';
 import { POSTS, formatDate } from '@/data/blog';
+import { factSeparator, plural } from '@/lib/format';
 import JsonLd from '@/components/seo/JsonLd';
+import HeadingText from '@/components/ui/HeadingText';
 
 type Params = { params: Promise<{ locale: string }> };
 
@@ -59,9 +61,13 @@ export default async function BlogIndex({ params }: Params) {
                     />
                   </div>
                   <p className="mt-4 text-xs text-muted">
-                    <time dateTime={p.date}>{formatDate(p.date, isAr)}</time> · {isAr ? p.minutes.toLocaleString('ar-EG') : p.minutes} {t.blog.minRead}
+                    <time dateTime={p.date}>{formatDate(p.date, isAr)}</time>
+                    {factSeparator(l)}
+                    {plural(l, p.minutes, t.blog.readTime)}
                   </p>
-                  <h2 className="mt-2 font-serif text-2xl font-semibold text-char group-hover:text-maroon leading-snug">{c.title}</h2>
+                  <h2 className="mt-2 font-serif text-2xl font-semibold text-char group-hover:text-maroon leading-snug">
+                    <HeadingText text={c.title} locale={l} />
+                  </h2>
                   <p className="mt-2 text-char/80 leading-relaxed">{c.excerpt}</p>
                   <span className="mt-3 inline-block text-maroon underline underline-offset-4 decoration-1">{t.blog.read}</span>
                 </Link>

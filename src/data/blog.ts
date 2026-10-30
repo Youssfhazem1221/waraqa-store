@@ -1,6 +1,7 @@
 // Blog posts. Each post is written separately in English and Egyptian Arabic;
 // the slug is shared so hreflang pairs /en/blog/x with /ar/blog/x.
 import type { Locale } from '@/lib/translations';
+import { RANGE_DASH } from '@/lib/format';
 
 export type Block =
   | { h2: string }
@@ -49,7 +50,7 @@ export const POSTS: Post[] = [
         { p: 'The best sketchbook is the one you open every day. Most people pick a beautiful, expensive one, then never draw in it because every page feels too precious. So the first rule is simple: choose a sketchbook you are not afraid to ruin.' },
         { p: 'After that, four questions decide almost everything.' },
         { h2: '1. What do you draw with?' },
-        { p: 'This sets the paper weight (gsm). Pencil and charcoal are happy on 150–180gsm. Fineliners and alcohol markers need 200–250gsm so they don’t bleed through. Watercolour and gouache need around 320gsm, or the page will buckle.' },
+        { p: `This sets the paper weight (gsm). Pencil and charcoal are happy on 150${RANGE_DASH}180gsm. Fineliners and alcohol markers need 200${RANGE_DASH}250gsm so they don’t bleed through. Watercolour and gouache need around 320gsm, or the page will buckle.` },
         { p: 'If you use a bit of everything, 250gsm is the safest middle ground: it takes markers and light washes and still feels good under a pencil.' },
         { h2: '2. Where do you draw?' },
         { p: 'If you sketch at home or in class, A5 or A4 gives you room to work. If you draw in cafés, on the metro or while waiting, carry something small enough to live in your bag: a pocket-size mini gets used far more than a big book that stays on the desk.' },
@@ -76,7 +77,7 @@ export const POSTS: Post[] = [
         { p: 'أحسن سكتش بوك هو اللي بتفتحه كل يوم. ناس كتير بتشتري واحد شيك وغالي، وبعدين مابترسمش فيه عشان كل صفحة حاسسها غالية أوي. فأول قاعدة بسيطة: اختار سكتش مش خايف تبوّظه.' },
         { p: 'بعد كده، أربع أسئلة بيحددوا كل حاجة تقريباً.' },
         { h2: '١. بترسم بإيه؟' },
-        { p: 'ده اللي بيحدد الجرام. الرصاص والفحم مبسوطين على ١٥٠–١٨٠ جرام. الفاينلاينر وماركرز الكحول محتاجين ٢٠٠–٢٥٠ جرام عشان مايشفّوش. الألوان المائية والجواش محتاجين حوالي ٣٢٠ جرام، وإلا الصفحة هتتموّج.' },
+        { p: `ده اللي بيحدد الجرام. الرصاص والفحم مبسوطين على ١٥٠${RANGE_DASH}١٨٠ جرام. الفاينلاينر وماركرز الكحول محتاجين ٢٠٠${RANGE_DASH}٢٥٠ جرام عشان مايشفّوش. الألوان المائية والجواش محتاجين حوالي ٣٢٠ جرام، وإلا الصفحة هتتموّج.` },
         { p: 'لو بتستخدم شوية من كل حاجة، الـ٢٥٠ جرام هو الوسط الآمن: بياخد ماركرز وألوان خفيفة، ولسه حلو تحت الرصاص.' },
         { h2: '٢. بترسم فين؟' },
         { p: 'لو بترسم في البيت أو الكلية، A5 أو A4 هيدّوك مساحة تشتغل. لو بترسم في الكافيه أو المترو أو وإنت مستني، خد حاجة صغيرة تعيش في شنطتك: الميني اللي في الجيب بيتملي أكتر بكتير من سكتش كبير قاعد على المكتب.' },

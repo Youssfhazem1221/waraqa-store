@@ -8,6 +8,7 @@ import Icon from '@/components/ui/Icon';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { formatNumber } from '@/lib/format';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -17,8 +18,8 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) {
   const pathname = usePathname();
-  const { itemCount } = useCart();
-  const { t, isRTL, lp } = useLanguage();
+  const { itemCount, isHydrated } = useCart();
+  const { t, isRTL, lp, locale } = useLanguage();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -74,10 +75,10 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 md:hidden animate-fadeIn">
+    <div className="fixed inset-0 z-50 md:hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-esp/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-esp/60 backdrop-blur-xs motion-safe:animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -87,8 +88,8 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={t.nav.allSketchbooks}
-        className={`fixed inset-y-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} w-4/5 max-w-xs bg-cream p-6 flex flex-col justify-between border-line z-10 animate-slideRight overflow-y-auto`}
+        aria-label={t.nav.menu}
+        className={`fixed inset-y-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} w-4/5 max-w-xs bg-cream p-6 flex flex-col justify-between border-line z-10 motion-safe:animate-slide-in overflow-y-auto`}
       >
         <div>
           {/* Header */}
@@ -99,7 +100,7 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
               type="button"
               onClick={onClose}
               className="p-2 -me-2 text-char hover:text-maroon"
-              aria-label="Close menu"
+              aria-label={t.nav.closeMenu}
             >
               <Icon name="close" size={24} />
             </button>
@@ -116,15 +117,17 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
           {/* Links */}
           <nav className="mt-4 flex flex-col">
             {links.map((link) => {
+              // Home is `/en`, not `/`, so a prefix match marked it current on
+              // every page. Same rule as the desktop nav.
               const isActive =
-                pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+                pathname === link.href || (link.href !== lp('/') && pathname.startsWith(link.href));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={onClose}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`py-3.5 border-b border-line font-serif text-xl transition-colors ${
+                  className={`py-3.5 border-b border-line text-xl transition-colors ${
                     isActive ? 'text-maroon' : 'text-char hover:text-maroon'
                   }`}
                 >
@@ -136,10 +139,13 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
             <Link
               href={lp('/cart')}
               onClick={onClose}
-              className="py-3.5 border-b border-line font-serif text-xl text-char hover:text-maroon flex items-center justify-between"
+              className="py-3.5 border-b border-line text-xl text-char hover:text-maroon flex items-center justify-between"
             >
               <span>{t.nav.shoppingBag}</span>
-              <span className="font-sans text-sm tabular-nums text-muted">({itemCount})</span>
+              {/* No «(٠)» for an empty bag: the Arabic zero is a lone dot. */}
+              {isHydrated && itemCount > 0 && (
+                <span className="text-sm tabular-nums text-muted">({formatNumber(itemCount, locale)})</span>
+              )}
             </Link>
           </nav>
         </div>

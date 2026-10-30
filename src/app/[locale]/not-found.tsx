@@ -1,25 +1,19 @@
-'use client';
+import type { Metadata } from 'next';
+import { isLocale, DEFAULT_LOCALE } from '@/lib/seo';
+import { translations } from '@/lib/translations';
+import NotFoundClient from './NotFoundClient';
 
-import React from 'react';
-import Link from 'next/link';
-import { buttonClasses } from '@/components/ui/Button';
-import { useLanguage } from '@/context/LanguageContext';
+type Params = { params: Promise<{ locale: string }> };
+
+// Next answers a 404 here with its error document, whose <head> takes its
+// metadata from this file rather than from the page that called notFound().
+// Without it, every 404 tab showed the site's default title.
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { locale } = await params;
+  const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
+  return { title: translations[l].notFound.eyebrow };
+}
 
 export default function NotFound() {
-  const { t, lp } = useLanguage();
-  return (
-    <div className="max-w-md mx-auto my-24 px-4 text-center">
-      <p className="text-sm text-muted">404 · {t.notFound.eyebrow}</p>
-      <h1 className="mt-3 font-serif text-4xl font-semibold text-char">{t.notFound.title}</h1>
-      <p className="mt-3 text-muted">{t.notFound.desc}</p>
-      <div className="mt-8 flex justify-center items-center gap-6">
-        <Link href={lp('/shop')} className={buttonClasses()}>
-          {t.notFound.shop}
-        </Link>
-        <Link href={lp('/')} className="text-maroon underline underline-offset-4">
-          {t.notFound.home}
-        </Link>
-      </div>
-    </div>
-  );
+  return <NotFoundClient />;
 }

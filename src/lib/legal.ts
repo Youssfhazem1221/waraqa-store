@@ -22,12 +22,13 @@ import {
   INSTAGRAM_URL,
   CONTACT_EMAIL,
 } from './constants';
+import { formatNumber, formatPrice, formatRange, ltr } from './format';
 
 export type LegalSlug = 'privacy' | 'returns' | 'shipping' | 'terms';
 export const LEGAL_SLUGS: LegalSlug[] = ['shipping', 'returns', 'privacy', 'terms'];
 
 /** Shown on every page; bump when a policy's substance changes. */
-export const LEGAL_UPDATED = { en: '3 October 2026', ar: '٣ أكتوبر ٢٠٢٦' };
+export const LEGAL_UPDATED = { en: '30 October 2026', ar: '٣٠ أكتوبر ٢٠٢٦' };
 
 export interface LegalSection {
   heading: string;
@@ -45,6 +46,12 @@ export interface LegalDoc {
 const wa = `+${WHATSAPP_NUMBER}`;
 const ig = INSTAGRAM_URL.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 
+// The Arabic text keeps each of these in one left-to-right run.
+const waAr = ltr(wa);
+const emailAr = ltr(CONTACT_EMAIL);
+const igAr = ltr(ig);
+const inArabic = (n: number) => formatNumber(n, 'ar');
+
 const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
   en: {
     shipping: {
@@ -55,16 +62,16 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'Delivery fees',
           body: [
-            `• Cairo and Giza: ${SHIPPING_CAIRO} EGP.`,
-            `• All other governorates: ${SHIPPING_OUTSIDE} EGP.`,
-            `• Free delivery in Cairo and Giza on orders over ${FREE_SHIP_OVER} EGP. Other governorates always pay the delivery fee.`,
+            `• Cairo and Giza: ${formatPrice(SHIPPING_CAIRO, 'en')}.`,
+            `• All other governorates: ${formatPrice(SHIPPING_OUTSIDE, 'en')}.`,
+            `• Free delivery in Cairo and Giza on orders of ${formatPrice(FREE_SHIP_OVER, 'en')} or more. Other governorates always pay the delivery fee.`,
             'The exact fee is shown at checkout once you choose your governorate, before you place the order.',
           ],
         },
         {
           heading: 'Delivery time',
           body: [
-            `Orders arrive in ${DELIVERY_DAYS_MIN}–${DELIVERY_DAYS_MAX} working days, depending on your governorate. We confirm every order with you on WhatsApp before it ships.`,
+            `Orders arrive in ${formatRange(DELIVERY_DAYS_MIN, DELIVERY_DAYS_MAX, 'en')} working days, depending on your governorate. We confirm every order with you on WhatsApp before it ships.`,
             'If your order has not arrived within 30 days of the order date, or by a date we agreed with you, you may cancel it at no cost and we will refund anything you have paid.',
           ],
         },
@@ -277,16 +284,16 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'مصاريف التوصيل',
           body: [
-            `• القاهرة والجيزة: ${SHIPPING_CAIRO} جنيه.`,
-            `• باقي المحافظات: ${SHIPPING_OUTSIDE} جنيه.`,
-            `• التوصيل مجاني في القاهرة والجيزة للطلبات التي تزيد على ${FREE_SHIP_OVER} جنيه. تُحتسب مصاريف التوصيل دائمًا في باقي المحافظات.`,
+            `• القاهرة والجيزة: ${inArabic(SHIPPING_CAIRO)} جنيه.`,
+            `• باقي المحافظات: ${inArabic(SHIPPING_OUTSIDE)} جنيه.`,
+            `• التوصيل مجاني في القاهرة والجيزة للطلبات التي تبلغ قيمتها ${inArabic(FREE_SHIP_OVER)} جنيه أو أكثر. تُحتسب مصاريف التوصيل دائمًا في باقي المحافظات.`,
             'تظهر مصاريف التوصيل بدقة في صفحة إتمام الطلب بعد اختيار المحافظة، وقبل تأكيد الطلب.',
           ],
         },
         {
           heading: 'مدة التوصيل',
           body: [
-            `يصل الطلب خلال ${DELIVERY_DAYS_MIN} إلى ${DELIVERY_DAYS_MAX} أيام عمل حسب المحافظة، ونؤكد كل طلب معك عبر واتساب قبل شحنه.`,
+            `يصل الطلب خلال ${inArabic(DELIVERY_DAYS_MIN)} إلى ${inArabic(DELIVERY_DAYS_MAX)} أيام عمل حسب المحافظة، ونؤكد كل طلب معك عبر واتساب قبل شحنه.`,
             'إذا لم يصلك الطلب خلال ٣٠ يومًا من تاريخ الطلب، أو في الموعد الذي اتفقنا عليه، يحق لك إلغاؤه دون أي تكلفة واسترداد أي مبلغ دفعته.',
           ],
         },
@@ -327,7 +334,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'طريقة الإرجاع',
           body: [
-            `• راسلنا على واتساب (${wa}) أو رد على إيميل تأكيد الطلب مع رقم الطلب.`,
+            `• راسلنا على واتساب (${waAr}) أو رد على إيميل تأكيد الطلب مع رقم الطلب.`,
             '• نرتب معك استلام المنتج عن طريق مندوب أو نتفق على مكان للتسليم.',
             '• بعد وصول المنتج إلينا وفحصه نؤكد الاسترداد أو نرسل البديل.',
           ],
@@ -355,7 +362,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'من نحن',
           body: [
-            `ورقة (Waraqa) علامة سكتش بوك مقرها القاهرة، مصر، وهي المسؤولة عن بياناتك على هذا الموقع. للتواصل: واتساب (${wa})، أو البريد الإلكتروني (${CONTACT_EMAIL})، أو إنستجرام (${ig}).`,
+            `ورقة (Waraqa) علامة سكتش بوك مقرها القاهرة، مصر، وهي المسؤولة عن بياناتك على هذا الموقع. للتواصل: واتساب (${waAr})، أو البريد الإلكتروني (${emailAr})، أو إنستجرام (${igAr}).`,
           ],
         },
         {
@@ -409,7 +416,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
             '• طلب حذفها، ما لم يُلزمنا القانون بالاحتفاظ بها؛',
             '• سحب موافقتك، أو الاعتراض على معالجتها أو تقييدها؛',
             '• إخطارك بأي خرق يمس بياناتك.',
-            `لممارسة أي من هذه الحقوق راسلنا على واتساب (${wa}) أو عبر البريد الإلكتروني ${CONTACT_EMAIL}. وإذا لم تكن راضيًا عن ردنا يحق لك تقديم شكوى إلى مركز حماية البيانات الشخصية.`,
+            `لممارسة أي من هذه الحقوق راسلنا على واتساب (${waAr}) أو عبر البريد الإلكتروني ${emailAr}. وإذا لم تكن راضيًا عن ردنا يحق لك تقديم شكوى إلى مركز حماية البيانات الشخصية.`,
           ],
         },
         {
@@ -434,7 +441,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'من نحن',
           body: [
-            `ورقة (Waraqa) تبيع السكتش بوك من القاهرة، مصر. واتساب: ${wa}. البريد الإلكتروني: ${CONTACT_EMAIL}. إنستجرام: ${ig}.`,
+            `ورقة (Waraqa) تبيع السكتش بوك من القاهرة، مصر. واتساب: ${waAr}. البريد الإلكتروني: ${emailAr}. إنستجرام: ${igAr}.`,
           ],
         },
         {

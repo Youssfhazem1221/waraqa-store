@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useId } from 'react';
 import type { CustomerInfo } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { GOVERNORATES, FIELD_MAX } from '@/lib/constants';
@@ -24,6 +24,7 @@ export default function CheckoutForm({
   errors,
 }: CheckoutFormProps) {
   const { t, isRTL } = useLanguage();
+  const notesId = useId();
 
   const governorateOptions = [
     { value: '', label: t.checkout.governoratePlaceholder },
@@ -36,7 +37,7 @@ export default function CheckoutForm({
   return (
     <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
       <div className="flex items-center gap-3 pb-4 border-b border-line">
-        <div className="w-8 h-8 rounded-full bg-maroon text-cream flex items-center justify-center text-xs font-serif font-bold shrink-0">
+        <div className="w-8 h-8 rounded-full bg-maroon text-cream flex items-center justify-center text-xs font-bold shrink-0">
           {t.checkout.deliveryStep}
         </div>
         <div>
@@ -62,12 +63,15 @@ export default function CheckoutForm({
           error={errors.name}
         />
 
-        {/* Phone & Email */}
+        {/* Phone & Email: typed left to right on the Arabic page too, so
+            "+20 10…" and an email keep their order. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label={t.checkout.phone}
             required
             type="tel"
+            dir="ltr"
+            inputMode="tel"
             placeholder={t.checkout.phonePlaceholder}
             maxLength={FIELD_MAX.phone}
             autoComplete="tel"
@@ -81,6 +85,8 @@ export default function CheckoutForm({
             label={t.checkout.email}
             required
             type="email"
+            dir="ltr"
+            inputMode="email"
             placeholder={t.checkout.emailPlaceholder}
             maxLength={FIELD_MAX.email}
             autoComplete="email"
@@ -96,6 +102,7 @@ export default function CheckoutForm({
           <Select
             label={t.checkout.governorate}
             required
+            autoComplete="address-level1"
             options={governorateOptions}
             value={customer.governorate}
             onChange={(e) => onChange('governorate', e.target.value)}
@@ -106,6 +113,7 @@ export default function CheckoutForm({
             label={t.checkout.city}
             placeholder={t.checkout.cityPlaceholder}
             maxLength={FIELD_MAX.city}
+            autoComplete="address-level2"
             value={customer.city}
             onChange={(e) => onChange('city', e.target.value)}
           />
@@ -125,16 +133,17 @@ export default function CheckoutForm({
 
         {/* Order Notes */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-char mb-1.5">
+          <label htmlFor={notesId} className="block text-xs font-semibold uppercase tracking-wider text-char mb-1.5">
             {t.checkout.notes}
           </label>
           <textarea
+            id={notesId}
             rows={2}
             placeholder={t.checkout.notesPlaceholder}
             maxLength={FIELD_MAX.notes}
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
-            className="w-full bg-white text-char border border-line rounded-xl p-3 text-sm transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none"
+            className="w-full bg-white text-char border border-line rounded-xl p-3 text-base transition-colors focus:border-maroon focus:ring-2 focus:ring-maroon/15 focus:outline-none"
           />
         </div>
       </div>
@@ -142,7 +151,7 @@ export default function CheckoutForm({
       {/* Payment method selector */}
       <div className="pt-4 border-t border-line space-y-3">
         <div className="flex items-center gap-3 pb-2">
-          <div className="w-8 h-8 rounded-full bg-maroon text-cream flex items-center justify-center text-xs font-serif font-bold shrink-0">
+          <div className="w-8 h-8 rounded-full bg-maroon text-cream flex items-center justify-center text-xs font-bold shrink-0">
             {t.checkout.paymentStep}
           </div>
           <div>
@@ -160,7 +169,7 @@ export default function CheckoutForm({
           <div className="space-y-1 flex-1">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-char text-sm">{t.checkout.codTitle}</span>
-              <span className="bg-sage text-[#20301a] text-[10px] font-bold px-2 py-0.5 rounded-md">
+              <span className="bg-sage text-[#20301a] text-xs font-bold px-2 py-0.5 rounded-md">
                 {t.checkout.codBadge}
               </span>
             </div>
