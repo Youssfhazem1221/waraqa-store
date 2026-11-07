@@ -32,7 +32,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           </h2>
           <Link
             href={lp('/shop')}
-            className="text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2 shrink-0"
+            className="inline-flex items-center min-h-6 text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2 shrink-0"
           >
             {t.featured.viewAll}
           </Link>

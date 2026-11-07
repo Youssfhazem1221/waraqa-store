@@ -5,11 +5,15 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { CustomerInfo, CartItem } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
-import Button from '@/components/ui/Button';
+import { buttonClasses } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Spinner from '@/components/ui/Spinner';
+import Price from '@/components/ui/Price';
 import { useStoredJson } from '@/lib/useStoredValue';
-import { formatAmount, lineTotal } from '@/lib/money';
+import { lineTotal } from '@/lib/money';
+import { formatNumber } from '@/lib/format';
+import { GOVERNORATES_AR } from '@/lib/translations';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 interface StoredOrder {
   orderId: string;
@@ -25,7 +29,7 @@ interface StoredOrder {
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderIdParam = searchParams.get('orderId');
-  const { t, isRTL, lp } = useLanguage();
+  const { t, isRTL, lp, locale } = useLanguage();
 
   // Read the stored order AFTER mount so the first client render matches the
   // server-rendered HTML (reading sessionStorage during render causes a
@@ -57,7 +61,7 @@ function ConfirmationContent() {
     return (
       <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-6">
         <div className="space-y-2">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-char">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-char text-balance">
             {t.confirmation.noOrderTitle}
           </h1>
           <p className="text-sm text-muted leading-relaxed max-w-md mx-auto">
@@ -65,20 +69,25 @@ function ConfirmationContent() {
           </p>
         </div>
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href={lp('/shop')} className="w-full sm:w-auto">
-            <Button variant="secondary" size="md" className="w-full sm:w-auto">
-              <span>{t.confirmation.continueShopping}</span>
-            </Button>
+          <Link href={lp('/shop')} className={buttonClasses({ variant: 'secondary', className: 'w-full sm:w-auto' })}>
+            {t.confirmation.continueShopping}
           </Link>
-          <Link href={lp('/')} className="w-full sm:w-auto">
-            <Button variant="ghost" size="md" className="w-full sm:w-auto text-xs">
-              <span>{t.confirmation.returnHome}</span>
-            </Button>
+          <Link href={lp('/')} className={buttonClasses({ variant: 'ghost', className: 'w-full sm:w-auto text-xs' })}>
+            {t.confirmation.returnHome}
           </Link>
         </div>
       </div>
     );
   }
+
+  const governorate = order?.customer?.governorate || '';
+  const governorateName = isRTL ? GOVERNORATES_AR[governorate] || governorate : governorate;
+
+  // Cash-on-delivery shoppers want a person to confirm with; open WhatsApp
+  // with the order number already typed.
+  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `${t.confirmation.whatsappMessage} ${orderId}`
+  )}`;
 
   return (
     <div className="bg-white border border-line rounded-3xl p-8 sm:p-12 shadow-sm text-center space-y-8">
@@ -88,11 +97,16 @@ function ConfirmationContent() {
         <span className="text-sm text-muted">
           {t.confirmation.badge}
         </span>
-        <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-char">
+        <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-char text-balance">
           {t.confirmation.title}
         </h1>
-        <div className="inline-flex items-center gap-2 bg-cream border border-line px-4 py-1.5 rounded-none mt-2 font-mono text-sm font-bold text-maroon">
-          <span>{t.confirmation.orderNum} {orderId}</span>
+        <div className="inline-flex items-center gap-2 bg-cream border border-line px-4 py-1.5 rounded-none mt-2 text-sm font-bold text-maroon">
+          <span>
+            {t.confirmation.orderNum}{' '}
+            <bdi dir="ltr" data-ident>
+              {orderId}
+            </bdi>
+          </span>
         </div>
       </div>
 
@@ -113,12 +127,23 @@ function ConfirmationContent() {
         </div>
 
         {customerEmail && (
-          <div className="flex items-center gap-2 bg-white border border-line rounded-xl px-4 py-2.5 text-xs sm:text-sm">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 bg-white border border-line rounded-xl px-4 py-2.5 text-xs sm:text-sm">
             <Icon name="check" size={16} className="text-success shrink-0" />
             <span className="text-muted">{t.confirmation.receiptSentTo}</span>
-            <span className="font-medium text-char break-all">{customerEmail}</span>
+            <bdi dir="ltr" data-ident className="font-medium text-char [overflow-wrap:anywhere]">
+              {customerEmail}
+            </bdi>
           </div>
         )}
+
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-sm text-maroon underline underline-offset-4 decoration-1 hover:decoration-2"
+        >
+          {t.confirmation.whatsappCta}
+        </a>
       </div>
 
       {/* Order Details Breakdown (if in session) */}
@@ -134,33 +159,46 @@ function ConfirmationContent() {
               return (
                 <div key={i.product.sku} className="py-2.5 flex justify-between">
                   <span className="text-char/80">
-                    {displayName} <strong className="text-char">×{i.qty}</strong>
+                    {displayName} <strong className="text-char">×{formatNumber(i.qty, locale)}</strong>
                   </span>
-                  <span className="font-medium text-char font-mono">
-                    {formatAmount(lineTotal(i.product.price, i.qty))} {t.common.currency}
-                  </span>
+                  <Price
+                    value={lineTotal(i.product.price, i.qty)}
+                    locale={locale}
+                    className="font-medium text-char"
+                  />
                 </div>
               );
             })}
 
             <div className="pt-3 flex justify-between text-xs text-muted">
-              <span>{t.checkout.deliveryFee} ({order.customer.governorate})</span>
-              <span>{order.shipping === 0 ? t.common.freeShippingTag : `${formatAmount(order.shipping)} ${t.common.currency}`}</span>
+              <span>{t.checkout.deliveryFee} ({governorateName})</span>
+              {order.shipping === 0 ? (
+                <span>{t.common.freeShippingTag}</span>
+              ) : (
+                <Price value={order.shipping} locale={locale} />
+              )}
             </div>
 
-            <div className="pt-3 flex justify-between font-serif text-base font-bold text-maroon">
+            <div className="pt-3 flex justify-between text-base font-bold text-maroon">
               <span>{t.confirmation.totalCod}</span>
-              <span>{formatAmount(order.total)} {t.common.currency}</span>
+              <Price value={order.total} locale={locale} />
             </div>
           </div>
 
           {/* Delivery address snapshot */}
           <div className="text-xs text-muted space-y-1 bg-white border border-line rounded-xl p-4">
             <div className="font-semibold text-char">{t.confirmation.deliveryTo}</div>
-            <div>{order.customer.name} · {order.customer.phone}</div>
             <div>
-              {order.customer.governorate}
-              {order.customer.city ? `, ${order.customer.city}` : ''}, {order.customer.address}
+              <bdi>{order.customer.name}</bdi> ·{' '}
+              <bdi dir="ltr" data-ident>
+                {order.customer.phone}
+              </bdi>
+            </div>
+            <div>
+              {governorateName}
+              {order.customer.city ? `${isRTL ? '، ' : ', '}${order.customer.city}` : ''}
+              {isRTL ? '، ' : ', '}
+              {order.customer.address}
             </div>
           </div>
         </div>
@@ -168,15 +206,11 @@ function ConfirmationContent() {
 
       {/* Continue Shopping */}
       <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <Link href={lp('/shop')} className="w-full sm:w-auto">
-          <Button variant="secondary" size="md" className="w-full sm:w-auto">
-            <span>{t.confirmation.continueShopping}</span>
-          </Button>
+        <Link href={lp('/shop')} className={buttonClasses({ variant: 'secondary', className: 'w-full sm:w-auto' })}>
+          {t.confirmation.continueShopping}
         </Link>
-        <Link href={lp('/')} className="w-full sm:w-auto">
-          <Button variant="ghost" size="md" className="w-full sm:w-auto text-xs">
-            <span>{t.confirmation.returnHome}</span>
-          </Button>
+        <Link href={lp('/')} className={buttonClasses({ variant: 'ghost', className: 'w-full sm:w-auto text-xs' })}>
+          {t.confirmation.returnHome}
         </Link>
       </div>
     </div>
@@ -192,7 +226,7 @@ export default function ConfirmationPage() {
         fallback={
           <div className="bg-white border border-line rounded-3xl p-12 text-center space-y-4">
             <Spinner size="lg" />
-            <p className="font-serif text-lg text-char">{t.confirmation.loadingOrder}</p>
+            <p className="text-lg text-char">{t.confirmation.loadingOrder}</p>
           </div>
         }
       >

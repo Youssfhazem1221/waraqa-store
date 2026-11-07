@@ -47,6 +47,24 @@
   /* Pure white read as a foreign object on cream. "White" surfaces (inputs,
      panels) become a lighter sheet of the same paper. */
   --color-white: #FBF7F1;
+
+  /* The phone menu. Its classes named animations that were never defined, so
+     it appeared with no motion at all. The panel enters from the side the
+     line starts on (--slide-in-from, below), and only with motion-safe. */
+  --animate-fade-in: fade-in 200ms ease-out;
+  --animate-slide-in: slide-in 200ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateX(var(--slide-in-from));
+    }
+  }
 }
 
 :root {
@@ -62,6 +80,11 @@
   --success: #4A6B3A;
   --error: #A3492F;
   --warning: #B8862B;
+  --slide-in-from: -100%;
+}
+
+html[dir="rtl"] {
+  --slide-in-from: 100%;
 }
 
 * {
@@ -89,12 +112,27 @@ html[dir="rtl"] body {
   letter-spacing: 0;
 }
 
+/* Reem Kufi on Arabic headings, for the letters only: a heading whose text can
+   hold a number or a Latin token (A5, a size, a numbered section) renders it
+   through <HeadingText>, which sets those runs in Readex Pro. */
 html[dir="rtl"] h1,
 html[dir="rtl"] h2,
 html[dir="rtl"] h3,
 html[dir="rtl"] h4,
 html[dir="rtl"] .font-serif {
   font-family: var(--font-arabic-display);
+}
+
+/* Arabic is never letter-spaced or set in capitals (BRAND_GUIDELINES.md §4).
+   The tracking-* and uppercase utilities are tuned for the English layout;
+   on Arabic they pulled joined letters apart. Prices and UI never take the
+   display face: <Price> sets font-sans, and only headings use font-serif. */
+html[dir="rtl"] * {
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .uppercase {
+  text-transform: none;
 }
 
 .font-arabic {

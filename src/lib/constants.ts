@@ -82,6 +82,13 @@ export const FIELD_MAX = {
   notes: 1000,
 } as const;
 
+/**
+ * Most copies of one book a single order may hold. Must match MAX_LINE_QTY in
+ * waraqa-apps-script.gs, which refuses the whole order above it; the bag used
+ * to allow 99.
+ */
+export const MAX_LINE_QTY = 50;
+
 /** Business-day delivery window quoted to customers. */
 export const DELIVERY_DAYS_MIN = 3;
 export const DELIVERY_DAYS_MAX = 7;
@@ -143,7 +150,17 @@ export const CATALOG_TTL_MS = 60 * 1000;
  *  starts are slow, so this is generous — but not unbounded, which would hang
  *  the page forever on a dead deployment. */
 export const CATALOG_TIMEOUT_MS = 10_000;
-export const ORDER_TIMEOUT_MS = 20_000;
+
+/** Same read when nobody is waiting on it: the browser correcting a page it
+ *  already shows, or the server refreshing its cache after responding. Reads
+ *  took 2–35 s when measured (2026-10-06), so 10 s often gave up first. Kept
+ *  under the 30 s a Worker may run after its response. */
+export const CATALOG_REFRESH_TIMEOUT_MS = 25_000;
+
+/** An order is written, re-priced and emailed before Apps Script answers, and
+ *  it keeps going after the browser gives up. At 20 s a slow answer could show
+ *  "try again" for an order that had in fact been placed, inviting a duplicate. */
+export const ORDER_TIMEOUT_MS = 60_000;
 
 /** Egyptian governorates for checkout dropdown */
 export const GOVERNORATES = [
@@ -179,6 +196,14 @@ export const GOVERNORATES = [
 /** Product size options for filters */
 export const SIZE_OPTIONS = ['All', 'A5', 'Mini (10.5×15)', '25×35cm', 'A4'] as const;
 
+/** The shop's size filter in the URL (/shop?size=a5); All has none. */
+export const SIZE_SLUGS: Record<string, string> = {
+  A5: 'a5',
+  'Mini (10.5×15)': 'mini',
+  '25×35cm': '25x35',
+  A4: 'a4',
+};
+
 /** Sort options for the shop */
 export const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -204,7 +229,7 @@ export const TRUST_ITEMS = [
   {
     icon: 'truck' as const,
     title: 'Free Shipping',
-    description: `In Cairo & Giza on orders over ${FREE_SHIP_OVER} ${CURRENCY}`,
+    description: `In Cairo & Giza on orders from ${CURRENCY} ${FREE_SHIP_OVER}`,
   },
   {
     icon: 'leaf' as const,

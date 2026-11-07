@@ -1,6 +1,7 @@
 // Long-form copy for /paper-guide. Both locales are written independently;
 // UI labels live in lib/translations.ts with the rest of the site copy.
 import type { Locale } from '@/lib/translations';
+import { RANGE_DASH } from '@/lib/format';
 
 export type MediumKey = 'pencil' | 'ink' | 'watercolour';
 
@@ -47,7 +48,7 @@ const en: PaperGuideCopy = {
   eyebrow: 'Paper guide',
   h1: 'Which sketchbook paper do you need?',
   intro: [
-    'The number on a sketchbook cover — 150gsm, 250gsm, 320gsm — is the single best clue to what the paper can take. GSM means grams per square metre: the heavier the sheet, the thicker it is, and the more water, pressure and erasing it survives.',
+    'The number on a sketchbook cover, like 150gsm, 250gsm or 320gsm, is the single best clue to what the paper can take. GSM means grams per square metre: the heavier the sheet, the thicker it is, and the more water, pressure and erasing it survives.',
     'There is no “best” weight. There is the weight that suits what you draw with. Below is the short version, then each medium in detail, with the Waraqa sketchbooks that fit it.',
   ],
   gsmHeading: 'Paper weight at a glance',
@@ -66,7 +67,7 @@ const en: PaperGuideCopy = {
       min: 0,
       max: 180,
       texture: '/guide/pencil.jpg',
-      weight: '150–180gsm',
+      weight: `150${RANGE_DASH}180gsm`,
       title: 'Pencil, charcoal and pastel',
       lede: 'Dry media need tooth more than thickness.',
       paras: [
@@ -84,11 +85,11 @@ const en: PaperGuideCopy = {
       min: 181,
       max: 299,
       texture: '/guide/ink.jpg',
-      weight: '200–250gsm',
+      weight: `200${RANGE_DASH}250gsm`,
       title: 'Pens, markers and light washes',
       lede: 'Ink needs a sheet that stops it reaching the next page.',
       paras: [
-        'Fineliners are gentle on paper, but alcohol markers soak straight through anything thin. At 200–250gsm the sheet is dense enough that marker colour stays on the page you’re working on, and the back of each page stays usable.',
+        `Fineliners are gentle on paper, but alcohol markers soak straight through anything thin. At 200${RANGE_DASH}250gsm the sheet is dense enough that marker colour stays on the page you’re working on, and the back of each page stays usable.`,
         'This weight also takes a quick wash of watercolour or ink without curling much, which makes it the most versatile choice if you mix tools in one sketchbook: line drawing, marker colour, a light wash on top.',
       ],
       tips: [
@@ -148,7 +149,7 @@ const ar: PaperGuideCopy = {
   eyebrow: 'دليل الورق',
   h1: 'أنهي ورق سكتش بوك يناسبك؟',
   intro: [
-    'الرقم اللي مكتوب على غلاف السكتش بوك — ١٥٠ جرام، ٢٥٠، ٣٢٠ — هو أهم حاجة تعرف منها الورق هيستحمل إيه. الجرام هنا معناه وزن المتر المربع من الورق: كل ما الرقم يعلى، الورقة تبقى أتقل وتستحمل مية وضغط ومساحة أكتر.',
+    'الرقم اللي مكتوب على غلاف السكتش بوك، زي ١٥٠ أو ٢٥٠ أو ٣٢٠ جرام، هو أهم حاجة تعرف منها الورق هيستحمل إيه. الجرام هنا معناه وزن المتر المربع من الورق: كل ما الرقم يعلى، الورقة تبقى أتقل وتستحمل مية وضغط ومساحة أكتر.',
     'مفيش ورق «أحسن» وخلاص. فيه ورق يناسب الأدوات اللي بترسم بيها. تحت هتلاقي الملخص، وبعدين كل خامة بالتفصيل، ومعاها سكتشات ورقة اللي تنفع لها.',
   ],
   gsmHeading: 'الجرام في لمحة',
@@ -167,7 +168,7 @@ const ar: PaperGuideCopy = {
       min: 0,
       max: 180,
       texture: '/guide/pencil.jpg',
-      weight: '١٥٠–١٨٠ جرام',
+      weight: `١٥٠${RANGE_DASH}١٨٠ جرام`,
       title: 'رصاص وفحم وباستيل',
       lede: 'الخامات الناشفة محتاجة خشونة أكتر من التُقل.',
       paras: [
@@ -185,11 +186,11 @@ const ar: PaperGuideCopy = {
       min: 181,
       max: 299,
       texture: '/guide/ink.jpg',
-      weight: '٢٠٠–٢٥٠ جرام',
+      weight: `٢٠٠${RANGE_DASH}٢٥٠ جرام`,
       title: 'أقلام وماركرز وألوان خفيفة',
       lede: 'الحبر محتاج ورقة تمنعه يوصل للصفحة اللي بعدها.',
       paras: [
-        'الفاينلاينر خفيف على الورق، لكن ماركرز الكحول بتعدّي من أي ورق رفيع. في ٢٠٠–٢٥٠ جرام الورقة كثيفة كفاية إن لون الماركر يفضل في الصفحة اللي بتشتغل عليها، وضهر كل صفحة يفضل ينفع ترسم عليه.',
+        `الفاينلاينر خفيف على الورق، لكن ماركرز الكحول بتعدّي من أي ورق رفيع. في ٢٠٠${RANGE_DASH}٢٥٠ جرام الورقة كثيفة كفاية إن لون الماركر يفضل في الصفحة اللي بتشتغل عليها، وضهر كل صفحة يفضل ينفع ترسم عليه.`,
         'الوزن ده كمان بيستحمل طبقة ألوان مائية أو حبر خفيفة من غير ما يتلوي كتير، وده بيخليه أكتر اختيار مرن لو بتخلط أدوات في سكتش واحد: خط، لون ماركر، وطبقة خفيفة فوقهم.',
       ],
       tips: [
@@ -226,9 +227,9 @@ const ar: PaperGuideCopy = {
   ],
   sizesHeading: 'أنهي مقاس؟',
   sizes: [
-    { name: 'ميني (١٠.٥×١٥ سم)', text: 'بيدخل في الجيب أو الشنطة الصغيرة. للرسم اليومي برا، في الكافيه والمواصلات.' },
-    { name: 'A5 (١٤.٨×٢١ سم)', text: 'المقاس اليومي. كبير كفاية للدراسات وصغير كفاية تشيله. أغلب تشكيلتنا A5.' },
-    { name: 'A4 (٢١×٢٩.٧ سم)', text: 'مساحة للوحات الخلصانة والتقييمات ومشاريع كلية الفنون.' },
+    { name: 'ميني (١٠٫٥×١٥ سم)', text: 'بيدخل في الجيب أو الشنطة الصغيرة. للرسم اليومي برا، في الكافيه والمواصلات.' },
+    { name: 'A5 (١٤٫٨×٢١ سم)', text: 'المقاس اليومي. كبير كفاية للدراسات وصغير كفاية تشيله. أغلب تشكيلتنا A5.' },
+    { name: 'A4 (٢١×٢٩٫٧ سم)', text: 'مساحة للوحات الخلصانة والتقييمات ومشاريع كلية الفنون.' },
     { name: '٢٥×٣٥ سم', text: 'مقاس الاستوديو للرسومات الكبيرة والألوان على الصفحة كلها والبورتفوليو.' },
   ],
   quickHeading: 'إجابات سريعة',

@@ -10,7 +10,9 @@ import {
   WEB_APP_URL,
   CATALOG_TTL_MS,
   CATALOG_TIMEOUT_MS,
+  CATALOG_REFRESH_TIMEOUT_MS,
   ORDER_TIMEOUT_MS,
+  MAX_LINE_QTY,
 } from './constants';
 import fallbackProducts from '@/data/products.json';
 
@@ -111,7 +113,7 @@ interface CacheEntry {
 }
 
 let memoryCache: CacheEntry | null = null;
-let inFlight: Promise<Product[]> | null = null;
+let inFlight: Promise<Product[] | null> | null = null;
 
 function readSessionCache(): CacheEntry | null {
   if (typeof window === 'undefined') return null;
@@ -159,9 +161,10 @@ export function invalidateCatalog() {
 }
 
 async function requestProducts(): Promise<Product[]> {
+  // Every browser read corrects data already on screen, so nobody waits on it.
   const res = await fetch(`${WEB_APP_URL}?what=products`, {
     cache: 'no-store',
-    signal: AbortSignal.timeout(CATALOG_TIMEOUT_MS),
+    signal: AbortSignal.timeout(CATALOG_REFRESH_TIMEOUT_MS),
   });
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -178,14 +181,18 @@ async function requestProducts(): Promise<Product[]> {
 }
 
 /**
- * Fetch products from the Apps Script.
- * Falls back to the bundled products.json if the fetch fails.
+ * The catalog as the Sheet has it right now, or `null` when it could not be
+ * read fresh.
+ *
+ * There is deliberately no fallback here. Every caller already holds product
+ * data (a server-rendered page, a cart line) and only wants to correct it.
+ * Falling back to the bundled products.json used to "correct" live prices with
+ * build-time ones: Apps Script often takes 10–30 s to answer, the read timed
+ * out, and the page swapped e.g. 250 EGP for the snapshot's 210 a few seconds
+ * after it loaded, while checkout still charged 250.
  */
-export async function fetchProducts(): Promise<Product[]> {
-  if (!WEB_APP_URL) {
-    console.warn('[Waraqa] WEB_APP_URL not set, using bundled product data');
-    return FALLBACK;
-  }
+export async function fetchLiveProducts(): Promise<Product[] | null> {
+  if (!WEB_APP_URL) return null;
 
   if (isFresh(memoryCache)) return memoryCache!.products;
 
@@ -201,17 +208,15 @@ export async function fetchProducts(): Promise<Product[]> {
 
   inFlight = requestProducts()
     .then((products) => {
-      if (products.length === 0) return FALLBACK;
+      if (products.length === 0) return null;
       const entry: CacheEntry = { products, at: Date.now() };
       memoryCache = entry;
       writeSessionCache(entry);
       return products;
     })
     .catch((err) => {
-      console.warn('[Waraqa] Failed to fetch products, using fallback:', err);
-      // Prefer a stale cache over the bundled snapshot: it is closer to the
-      // truth than a build-time copy.
-      return stored?.products ?? memoryCache?.products ?? FALLBACK;
+      console.warn('[Waraqa] Could not refresh the catalog; keeping what is on screen:', err);
+      return null;
     })
     .finally(() => {
       inFlight = null;
@@ -235,20 +240,23 @@ export interface CartRevalidation {
   reduced: { item: CartItem; oldQty: number }[];
 }
 
-export async function revalidateCart(items: CartItem[]): Promise<CartRevalidation> {
+/**
+ * Compare cart lines with a catalog freshly read from the Sheet (see
+ * fetchLiveProducts). Pure, so the caller can run it against whatever the bag
+ * holds by the time the slow catalog read comes back.
+ */
+export function reconcileCart(items: CartItem[], live: Product[]): CartRevalidation {
   const result: CartRevalidation = { items: [], removed: [], repriced: [], reduced: [] };
-  if (items.length === 0) return result;
-
-  const live = await fetchProducts();
   const bySku = new Map(live.map((p) => [p.sku, p]));
 
   for (const item of items) {
     const current = bySku.get(item.product.sku);
 
-    // Unknown SKU: keep the line rather than silently emptying a bag over a
-    // backend hiccup. The order endpoint re-prices server-side regardless.
+    // Missing from a catalog that was just read successfully: hidden or deleted
+    // in the Sheet, and the order endpoint would refuse the whole order over it.
+    // (A failed read never gets this far, so a backend hiccup cannot empty a bag.)
     if (!current) {
-      result.items.push(item);
+      result.removed.push(item);
       continue;
     }
 
@@ -258,7 +266,7 @@ export async function revalidateCart(items: CartItem[]): Promise<CartRevalidatio
       continue;
     }
 
-    const qty = Math.min(item.qty, current.stock);
+    const qty = Math.min(item.qty, current.stock, MAX_LINE_QTY);
     const next: CartItem = { product: current, qty };
     result.items.push(next);
 
@@ -300,6 +308,12 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     return data as OrderResponse;
   } catch (err) {
     console.error('[Waraqa] Order submission failed:', err);
+    // Running out of patience is not a failure we can report: Apps Script
+    // finishes the order after the browser stops waiting. Flag it so checkout
+    // says "it may have gone through" instead of inviting a second order.
+    if ((err as Error)?.name === 'TimeoutError') {
+      return { ok: false, timedOut: true };
+    }
     return { ok: false, error: 'Failed to submit order. Please try again in a moment.' };
   }
 }

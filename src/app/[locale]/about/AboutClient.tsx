@@ -20,7 +20,7 @@ export default function AboutClient() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       <header className="max-w-3xl">
         <p className="text-sm text-muted">{t.about.badge}</p>
-        <h1 className="mt-3 font-serif text-4xl sm:text-6xl font-semibold text-maroon leading-[1.02]">
+        <h1 className="mt-3 font-serif text-4xl sm:text-6xl font-semibold text-maroon leading-[1.02] rtl:leading-[1.2]">
           {t.about.title}
         </h1>
         <p className="mt-5 text-lg sm:text-xl text-char/80">{t.about.subtitle}</p>
@@ -29,7 +29,7 @@ export default function AboutClient() {
       <div className="mt-12 relative aspect-16/9 overflow-hidden bg-kraft/30">
         <Image
           src="/lifestyle/lifestyle-3.jpeg"
-          alt="Hands holding three Waraqa kraft sketchbooks"
+          alt={t.about.heroAlt}
           fill
           fetchPriority="high"
           loading="eager"
@@ -40,13 +40,13 @@ export default function AboutClient() {
 
       <div className="mt-16 grid md:grid-cols-2 gap-x-16 gap-y-12">
         <section>
-          <p className="font-serif text-maroon text-lg">{t.about.sec1Num}</p>
+          <p className="text-maroon text-lg tabular-nums">{t.about.sec1Num}</p>
           <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-semibold text-char">{t.about.sec1Title}</h2>
           <p className="mt-4 text-char/85 leading-relaxed">{t.story.p1}</p>
         </section>
 
         <section>
-          <p className="font-serif text-maroon text-lg">{t.about.sec2Num}</p>
+          <p className="text-maroon text-lg tabular-nums">{t.about.sec2Num}</p>
           <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-semibold text-char">{t.about.sec2Title}</h2>
           <div className="mt-4 space-y-4 text-char/85 leading-relaxed">
             <p>

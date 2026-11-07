@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       ? 'ورقة | سكتش بوك وورق رسم مصنوع يدوي في مصر'
       : 'Waraqa (ورقة) | Handmade Sketchbooks & Art Paper in Egypt',
     description: isAr
-      ? 'سكتش بوك وورق رسم فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ جرام: مكسد ميديا، كرافت، ورسم. توصيل لكل مصر.'
-      : 'Handmade sketchbooks and art paper in Cairo. Heavy 150–320gsm mixed media, kraft, and drawing paper. Free delivery in Cairo & Giza.',
+      ? 'سكتش بوك وورق رسم فاخر مصنوع يدوي في القاهرة. ورق سميك من ١٥٠ لـ ٣٢٠ جرام: مكسد ميديا، كرافت، ورسم. توصيل لكل مصر، ومجاني للقاهرة والجيزة من ٨٠٠ جنيه.'
+      : 'Handmade sketchbooks and art paper in Cairo. Heavy 150–320gsm mixed media, kraft, and drawing paper. Free delivery in Cairo & Giza from EGP 800.',
     alternates: seoAlternates(l, '/'),
     openGraph: {
       title: isAr

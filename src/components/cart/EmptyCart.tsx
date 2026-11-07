@@ -15,7 +15,7 @@ export default function EmptyCart() {
         <Link href={lp('/shop')} className={buttonClasses({ size: 'lg' })}>
           {t.cart.exploreBtn}
         </Link>
-        <Link href={`${lp('/')}#paper-guide`} className="text-maroon underline underline-offset-4">
+        <Link href={lp('/paper-guide')} className="text-maroon underline underline-offset-4">
           {t.hero.storyCta}
         </Link>
       </div>

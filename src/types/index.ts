@@ -76,6 +76,8 @@ export interface OrderPayload {
   shipping: number;
   payment: string;
   notes: string;
+  /** The site's language: the emailed receipt opens in it. English when missing. */
+  lang?: 'en' | 'ar';
 }
 
 /** Response from createOrder */
@@ -86,6 +88,8 @@ export interface OrderResponse {
   subtotal?: number;
   shipping?: number;
   error?: string;
+  /** No answer in time. The order may still have been placed. */
+  timedOut?: boolean;
 }
 
 /** Cart context actions */

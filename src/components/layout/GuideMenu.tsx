@@ -14,15 +14,25 @@ export default function GuideMenu() {
   const wrap = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const isActive = pathname.startsWith(lp('/paper-guide'));
+  // A mouse opens the menu on hover, and the click that usually follows used
+  // to shut it again. That click now keeps it open; the next one toggles. A
+  // tap has no hover (its emulated mouseenter opened the menu and the click
+  // closed it), so touch and pen only toggle on click.
+  const openedByHover = useRef(false);
 
-  // Close on outside click and Escape; links close it themselves on click.
+  // Close on outside press and Escape; links close it themselves on click.
+  // pointerdown rather than mousedown: iOS sends no mouse events for a tap on
+  // something that isn't clickable.
   useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => { if (!wrap.current?.contains(e.target as Node)) setOpen(false); };
+    if (!open) {
+      openedByHover.current = false;
+      return;
+    }
+    const onDown = (e: PointerEvent) => { if (!wrap.current?.contains(e.target as Node)) setOpen(false); };
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    document.addEventListener('mousedown', onDown);
+    document.addEventListener('pointerdown', onDown);
     document.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('pointerdown', onDown); document.removeEventListener('keydown', onKey); };
   }, [open]);
 
   const items = [
@@ -32,13 +42,23 @@ export default function GuideMenu() {
   ];
 
   return (
-    <div ref={wrap} className="relative" onMouseLeave={() => setOpen(false)}>
+    <div ref={wrap} className="relative" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setOpen(false); }}>
       <button
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((o) => !o)}
-        onMouseEnter={() => setOpen(true)}
+        onClick={() => {
+          if (openedByHover.current) {
+            openedByHover.current = false;
+            return;
+          }
+          setOpen((o) => !o);
+        }}
+        onPointerEnter={(e) => {
+          if (e.pointerType !== 'mouse' || open) return;
+          openedByHover.current = true;
+          setOpen(true);
+        }}
         className={`py-2 inline-flex items-center gap-1 underline-offset-[6px] decoration-1 transition-colors cursor-pointer ${
           isActive ? 'text-maroon underline' : 'text-char/75 hover:text-maroon'
         }`}

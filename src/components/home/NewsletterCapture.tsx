@@ -39,7 +39,7 @@ export default function NewsletterCapture() {
   };
 
   return (
-    <section aria-labelledby="newsletter-title" className="bg-[#EFE5D6]">
+    <section id="newsletter" aria-labelledby="newsletter-title" className="scroll-mt-16 bg-[#EFE5D6]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 grid lg:grid-cols-2 gap-8 items-end">
         <div>
           <h2 id="newsletter-title" className="font-serif text-2xl sm:text-3xl font-semibold text-char">

@@ -5,6 +5,7 @@ import { translations } from '@/lib/translations';
 import { getLegalDoc, LEGAL_SLUGS, LEGAL_UPDATED, type LegalSlug } from '@/lib/legal';
 import { localePath } from '@/lib/seo';
 import { COMMERCIAL_REGISTRATION, TAX_CARD_NUMBER } from '@/lib/constants';
+import { withIdentifiers } from '@/components/ui/Identifiers';
 
 /** Group consecutive "• " paragraphs into one list. */
 function renderBody(body: string[]) {
@@ -15,7 +16,7 @@ function renderBody(body: string[]) {
       out.push(
         <ul key={`ul-${out.length}`} className="list-disc ps-5 space-y-1.5 marker:text-muted">
           {list.map((item) => (
-            <li key={item}>{item}</li>
+            <li key={item}>{withIdentifiers(item)}</li>
           ))}
         </ul>
       );
@@ -27,7 +28,7 @@ function renderBody(body: string[]) {
       list.push(p.slice(2));
     } else {
       flush();
-      out.push(<p key={p}>{p}</p>);
+      out.push(<p key={p}>{withIdentifiers(p)}</p>);
     }
   }
   flush();

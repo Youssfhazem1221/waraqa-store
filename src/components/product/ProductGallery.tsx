@@ -4,14 +4,16 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/ui/Icon';
 import { useLanguage } from '@/context/LanguageContext';
+import { formatNumber } from '@/lib/format';
 
 interface ProductGalleryProps {
   images: string[];
+  /** In the page's language: it is the alt text of every photo. */
   productName: string;
 }
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -78,7 +80,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               >
                 <Image
                   src={img}
-                  alt={`${productName} thumbnail ${idx + 1}`}
+                  alt={t.product.thumbAlt.replace('{name}', productName).replace('{n}', formatNumber(idx + 1, locale))}
                   fill
                   sizes="80px"
                   className="object-cover object-center"

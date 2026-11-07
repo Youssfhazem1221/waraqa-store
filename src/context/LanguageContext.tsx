@@ -42,7 +42,10 @@ export function LanguageProvider({
       // visitor lands in the language they chose.
       document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; samesite=lax`;
       const rest = pathname.replace(/^\/(en|ar)(?=\/|$)/, '');
-      router.push(`/${next}${rest || ''}`);
+      // Keep ?query and #section: switching language on /paper-guide#ink
+      // used to drop the reader back at the top of the page.
+      const { search, hash } = window.location;
+      router.push(`/${next}${rest || ''}${search}${hash}`);
     },
     [locale, pathname, router]
   );

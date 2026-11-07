@@ -14,7 +14,7 @@ export default function BrandStory() {
         <div className="lg:col-span-5 relative aspect-4/5 overflow-hidden bg-kraft/30">
           <Image
             src="/lifestyle/lifestyle-1.jpeg"
-            alt="A Waraqa kraft sketchbook on a wooden table"
+            alt={t.story.photoAlt}
             fill
             sizes="(max-width: 1024px) 100vw, 40vw"
             className="object-cover object-center"

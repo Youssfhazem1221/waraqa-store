@@ -10,11 +10,12 @@ import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import MobileMenu from '@/components/layout/MobileMenu';
 import GuideMenu from '@/components/layout/GuideMenu';
+import { formatNumber } from '@/lib/format';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { itemCount, openDrawer } = useCart();
-  const { t, lp } = useLanguage();
+  const { itemCount, isHydrated, openDrawer } = useCart();
+  const { t, lp, locale } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Rebuilt only when the language changes, so MobileMenu is not handed a new
@@ -39,7 +40,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden p-2 -ms-2 text-char cursor-pointer"
-              aria-label="Open navigation menu"
+              aria-label={t.nav.openMenu}
             >
               <Icon name="menu" size={22} />
             </button>
@@ -70,23 +71,28 @@ export default function Navbar() {
           <Logo variant="maroon" size="md" />
 
           <div className="flex items-center justify-end gap-5 text-char/80">
-            <LanguageToggle className="hidden sm:inline-flex" />
+            {/* On phones too: it was only in the menu, two taps away. */}
+            <LanguageToggle />
             <button
               type="button"
               onClick={openDrawer}
-              className="relative inline-flex items-center gap-2 text-sm hover:text-maroon transition-colors py-2 cursor-pointer"
-              aria-label={`${t.nav.bag}, ${itemCount}`}
+              className="relative inline-flex items-center gap-2 text-sm hover:text-maroon transition-colors min-h-11 cursor-pointer"
+              aria-label={isHydrated ? `${t.nav.bag}, ${formatNumber(itemCount, locale)}` : t.nav.bag}
             >
               <Icon name="bag" size={20} />
               <span className="hidden sm:inline">{t.nav.bag}</span>
               {/* Filled once there is something in it, so a full bag is never
-                  mistaken for an empty one. */}
+                  mistaken for an empty one; an empty bag is a bare ring (in
+                  Readex Pro the Arabic «٠» is a dot, and a dot in a ring did
+                  not read as zero). Blank until the bag is read from this
+                  browser: the server can't know it, and every page flashed
+                  «0» before the real count. */}
               <span
                 className={`min-w-5 h-5 px-1.5 inline-flex items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
                   itemCount > 0 ? 'bg-maroon text-cream' : 'border border-char/30 text-char/70'
                 }`}
               >
-                {itemCount}
+                {isHydrated && itemCount > 0 && formatNumber(itemCount, locale)}
               </span>
             </button>
           </div>

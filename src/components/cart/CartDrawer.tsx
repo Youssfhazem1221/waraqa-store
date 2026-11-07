@@ -9,9 +9,13 @@ import { useLanguage } from '@/context/LanguageContext';
 import { buttonClasses } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import QuantityStepper from '@/components/product/QuantityStepper';
-import { formatAmount, lineTotal } from '@/lib/money';
+import Price from '@/components/ui/Price';
+import SpecLine from '@/components/ui/SpecLine';
+import FreeShipMeter from '@/components/cart/FreeShipMeter';
+import { lineTotal } from '@/lib/money';
+import { formatNumber, plural, sizeLabel } from '@/lib/format';
 import { shortName } from '@/lib/api';
-import { FREE_SHIP_OVER } from '@/lib/constants';
+import { MAX_LINE_QTY } from '@/lib/constants';
 
 /**
  * Slide-in bag. Opens on every add so the shopper sees the item land, what is
@@ -19,7 +23,7 @@ import { FREE_SHIP_OVER } from '@/lib/constants';
  */
 export default function CartDrawer() {
   const { items, subtotal, itemCount, drawerOpen, closeDrawer, lastAddedSku, updateQty, removeItem } = useCart();
-  const { t, isRTL, lp } = useLanguage();
+  const { t, isRTL, lp, locale } = useLanguage();
   const pathname = usePathname();
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -78,8 +82,6 @@ export default function CartDrawer() {
     (a, b) => Number(b.product.sku === lastAddedSku) - Number(a.product.sku === lastAddedSku)
   );
   const justAdded = Boolean(lastAddedSku && items.some((i) => i.product.sku === lastAddedSku));
-  const toFree = Math.max(0, FREE_SHIP_OVER - subtotal);
-  const progress = Math.min(100, Math.round((subtotal / FREE_SHIP_OVER) * 100));
 
   return (
     <div
@@ -113,7 +115,7 @@ export default function CartDrawer() {
               </>
             ) : (
               <>
-                {t.cart.drawerTitle} <span className="text-muted tabular-nums">({itemCount})</span>
+                {t.cart.drawerTitle} <span className="text-muted tabular-nums">({plural(locale, itemCount, t.cart.itemCount)})</span>
               </>
             )}
           </p>
@@ -130,7 +132,7 @@ export default function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-            <p className="font-serif text-2xl text-char">{t.cart.emptyTitle}</p>
+            <h2 className="font-serif text-2xl text-char">{t.cart.emptyTitle}</h2>
             <Link href={lp('/shop')} className={buttonClasses({ className: 'mt-6' })}>
               {t.cart.exploreBtn}
             </Link>
@@ -138,21 +140,7 @@ export default function CartDrawer() {
         ) : (
           <>
             <div className="px-5 py-4 border-b border-line shrink-0">
-              <p className="text-sm text-char">
-                {toFree > 0 ? (
-                  <>
-                    <span className="font-semibold tabular-nums">
-                      {formatAmount(toFree)} {t.common.currency}
-                    </span>{' '}
-                    {t.cart.toFreeShip}
-                  </>
-                ) : (
-                  t.cart.qualifyFreeShip
-                )}
-              </p>
-              <div className="mt-2 h-1 bg-line">
-                <div className="h-full bg-maroon transition-[width] duration-500" style={{ width: `${progress}%` }} />
-              </div>
+              <FreeShipMeter />
             </div>
 
             <ul className="flex-1 overflow-y-auto px-5">
@@ -173,25 +161,34 @@ export default function CartDrawer() {
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between gap-3">
                         <p className="font-medium text-char leading-snug">{name}</p>
-                        <p className="tabular-nums text-char shrink-0">
-                          {formatAmount(lineTotal(product.price, qty))}
+                        <p className="text-char shrink-0">
+                          <Price
+                            value={lineTotal(product.price, qty)}
+                            locale={locale}
+                            currencyClassName="text-xs text-muted"
+                          />
                         </p>
                       </div>
                       <p className="mt-0.5 text-xs text-muted">
-                        {product.size} · {product.gsm}
-                        {isRTL ? ' جرام' : 'gsm'}
+                        <SpecLine
+                          parts={[
+                            sizeLabel(product.size, locale),
+                            isRTL ? `${formatNumber(product.gsm, locale)} جرام` : `${product.gsm}gsm`,
+                          ]}
+                          locale={locale}
+                        />
                       </p>
                       <div className="mt-2 flex items-center justify-between">
                         <QuantityStepper
                           qty={qty}
                           min={1}
-                          max={Math.max(1, Math.min(99, product.stock))}
+                          max={Math.max(1, Math.min(MAX_LINE_QTY, product.stock))}
                           onChange={(n) => updateQty(product.sku, n)}
                         />
                         <button
                           type="button"
                           onClick={() => removeItem(product.sku)}
-                          className="text-xs text-muted underline underline-offset-4 hover:text-char cursor-pointer"
+                          className="inline-flex items-center min-h-11 px-2 -me-2 text-xs text-muted underline underline-offset-4 hover:text-char cursor-pointer"
                         >
                           {t.cart.remove}
                         </button>
@@ -205,9 +202,12 @@ export default function CartDrawer() {
             <footer className="px-5 pt-4 pb-5 border-t border-line shrink-0 bg-cream">
               <div className="flex items-baseline justify-between">
                 <span className="text-char">{t.cart.subtotal}</span>
-                <span className="text-xl font-semibold tabular-nums">
-                  {formatAmount(subtotal)} <span className="text-sm font-normal text-muted">{t.common.currency}</span>
-                </span>
+                <Price
+                  value={subtotal}
+                  locale={locale}
+                  className="text-xl font-semibold"
+                  currencyClassName="text-sm font-normal text-muted"
+                />
               </div>
               <p className="mt-1 text-xs text-muted">{t.cart.taxNote}</p>
               <Link
@@ -216,17 +216,17 @@ export default function CartDrawer() {
               >
                 {t.cart.proceedCheckout}
               </Link>
-              <div className="mt-3 flex items-center justify-between text-sm">
+              <div className="mt-1 flex items-center justify-between text-sm">
                 <Link
                   href={lp('/cart')}
-                  className="text-maroon underline underline-offset-4"
+                  className="inline-flex items-center min-h-11 text-maroon underline underline-offset-4"
                 >
                   {t.cart.viewBag}
                 </Link>
                 <button
                   type="button"
                   onClick={closeDrawer}
-                  className="text-muted hover:text-char cursor-pointer"
+                  className="inline-flex items-center min-h-11 text-muted hover:text-char cursor-pointer"
                 >
                   {t.cart.continueShopping}
                 </button>

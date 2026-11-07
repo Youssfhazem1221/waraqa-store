@@ -46,7 +46,7 @@ export function GET() {
 
 > Waraqa is a sketchbook and art-paper brand from Cairo, Egypt, selling ${products.length} sketchbooks on 150–320 gsm drawing, kraft and mixed media paper. It ships only within Egypt and is paid cash on delivery. Every page exists in English under /en and in Egyptian Arabic under /ar.
 
-- Delivery: Egypt only. Cairo and Giza pay one flat fee (free above a set order value); every other governorate pays a second flat fee. ${DELIVERY_DAYS_MIN}–${DELIVERY_DAYS_MAX} working days after the order is confirmed on WhatsApp.
+- Delivery: Egypt only. Cairo and Giza pay one flat fee (free from a set order value); every other governorate pays a second flat fee. ${DELIVERY_DAYS_MIN}–${DELIVERY_DAYS_MAX} working days after the order is confirmed on WhatsApp.
 - Payment: cash on delivery.
 - Prices are in Egyptian pounds (EGP) and change; read them from the product pages.
 - Contact: WhatsApp +${WHATSAPP_NUMBER} · Instagram ${INSTAGRAM_URL}

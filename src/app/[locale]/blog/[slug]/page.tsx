@@ -3,14 +3,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { translations } from '@/lib/translations';
+import { translations, type Locale } from '@/lib/translations';
 import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults, localePath } from '@/lib/seo';
 import { articleSchema, breadcrumbSchema } from '@/lib/schema';
 import { getCatalog } from '@/lib/catalog';
 import { shortName } from '@/lib/api';
-import { formatAmount } from '@/lib/money';
+import { factSeparator, plural } from '@/lib/format';
 import { POSTS, getPost, formatDate, type Block } from '@/data/blog';
 import JsonLd from '@/components/seo/JsonLd';
+import Price from '@/components/ui/Price';
+import HeadingText from '@/components/ui/HeadingText';
 
 type Params = { params: Promise<{ locale: string; slug: string }> };
 
@@ -21,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, slug } = await params;
   const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const post = getPost(slug);
-  if (!post) return {};
+  if (!post) return { title: translations[l].notFound.eyebrow };
   const c = post[l];
   const path = `/blog/${post.slug}`;
   return {
@@ -46,8 +48,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-function renderBlock(b: Block, i: number) {
-  if ('h2' in b) return <h2 key={i} className="mt-10 font-serif text-2xl sm:text-3xl font-semibold text-char">{b.h2}</h2>;
+function renderBlock(b: Block, i: number, l: Locale) {
+  if ('h2' in b)
+    return (
+      <h2 key={i} className="mt-10 font-serif text-2xl sm:text-3xl font-semibold text-char">
+        <HeadingText text={b.h2} locale={l} />
+      </h2>
+    );
   if ('list' in b)
     return (
       <ul key={i} className="mt-4 space-y-2">
@@ -79,10 +86,14 @@ export default async function BlogPost({ params }: Params) {
     <>
       <article className="border-b border-line">
         <header className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
-          <Link href={localePath(l, '/blog')} className="text-sm text-muted hover:text-maroon">{t.blog.allPosts}</Link>
-          <h1 className="mt-4 font-serif font-semibold text-maroon text-3xl sm:text-5xl leading-[1.1] tracking-tight text-balance">{c.title}</h1>
+          <Link href={localePath(l, '/blog')} className="inline-flex items-center min-h-6 text-sm text-muted hover:text-maroon">{t.blog.allPosts}</Link>
+          <h1 className="mt-4 font-serif font-semibold text-maroon text-3xl sm:text-5xl leading-[1.1] tracking-tight text-balance">
+            <HeadingText text={c.title} locale={l} />
+          </h1>
           <p className="mt-4 text-sm text-muted">
-            {t.blog.published} <time dateTime={post.date}>{formatDate(post.date, isAr)}</time> · {isAr ? post.minutes.toLocaleString('ar-EG') : post.minutes} {t.blog.minRead}
+            {t.blog.published} <time dateTime={post.date}>{formatDate(post.date, isAr)}</time>
+            {factSeparator(l)}
+            {plural(l, post.minutes, t.blog.readTime)}
           </p>
         </header>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
@@ -92,10 +103,10 @@ export default async function BlogPost({ params }: Params) {
         </div>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 text-lg leading-relaxed text-char/90">
           <p className="text-xl text-char">{c.excerpt}</p>
-          {c.body.map(renderBlock)}
+          {c.body.map((b, i) => renderBlock(b, i, l))}
 
           <p className="mt-10">
-            <Link href={localePath(l, '/paper-guide')} className="text-maroon underline underline-offset-4">{t.blog.guideCta}</Link>
+            <Link href={localePath(l, '/paper-guide')} className="inline-flex items-center min-h-6 text-maroon underline underline-offset-4">{t.blog.guideCta}</Link>
           </p>
 
           {related.length > 0 && (
@@ -113,7 +124,7 @@ export default async function BlogPost({ params }: Params) {
                         </span>
                         <span className="flex-1 text-char group-hover:text-maroon group-hover:underline underline-offset-4">{shortName(name)}</span>
                         <span className={`tabular-nums text-sm ${soldOut ? 'text-muted' : 'text-maroon font-semibold'}`}>
-                          {soldOut ? t.common.soldOut : `${formatAmount(p.price)} ${t.common.currency}`}
+                          {soldOut ? t.common.soldOut : <Price value={p.price} locale={l} />}
                         </span>
                       </Link>
                     </li>

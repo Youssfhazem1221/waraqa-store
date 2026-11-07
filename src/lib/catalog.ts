@@ -16,16 +16,19 @@
 // background (`after`, which OpenNext runs on the Worker's waitUntil). Waiting
 // on Apps Script inline cost 1–3 s of server time on most visits — at this
 // store's traffic the 60-second cache was usually cold — and that delay sat in
-// front of every byte of HTML. A copy older than CATALOG_STALE_SECONDS is never
-// served; that visitor waits for a fresh read as before. Checkout re-prices
-// against the Sheet regardless (waraqa-apps-script.gs), so a stale price can
-// only ever be displayed, never charged.
+// front of every byte of HTML. A copy older than CATALOG_STALE_SECONDS is not
+// served up front; that visitor waits for a fresh read, and only if that read
+// fails gets the last good copy, which the edge keeps for EDGE_KEEP_SECONDS.
+// The home and shop pages re-read the live catalog in the browser, the bag and
+// checkout re-check every line, and the order endpoint re-prices against the
+// Sheet regardless (waraqa-apps-script.gs), so a stale price can be displayed
+// but never charged.
 // ============================================================
 
 import { cache } from 'react';
 import { after } from 'next/server';
 import type { Product, ApiProduct } from '@/types';
-import { WEB_APP_URL, CATALOG_TIMEOUT_MS } from './constants';
+import { WEB_APP_URL, CATALOG_TIMEOUT_MS, CATALOG_REFRESH_TIMEOUT_MS } from './constants';
 import { mapApiProduct } from './api';
 import fallbackProducts from '@/data/products.json';
 
@@ -34,8 +37,21 @@ const FALLBACK = fallbackProducts as Product[];
 /** How long a fetched catalog is reused before asking Apps Script again. */
 export const CATALOG_CACHE_SECONDS = 60;
 
-/** Oldest copy that may be shown while a fresh one is fetched in the background. */
-export const CATALOG_STALE_SECONDS = 60 * 60;
+/**
+ * Oldest copy that may be shown while a fresh one is fetched in the background.
+ * A day rather than an hour: the store can easily go an hour without a visitor,
+ * and past this window the next one waited on Apps Script inline (2–35 s when
+ * measured on 2026-10-06) and, if it timed out, was shown the bundled
+ * snapshot's out-of-date prices.
+ */
+export const CATALOG_STALE_SECONDS = 24 * 60 * 60;
+
+/**
+ * How long the edge keeps the last good catalog. Past the stale window it is
+ * only a fallback for when Apps Script fails, and a week-old copy of the Sheet
+ * is still far closer to the truth than the build-time snapshot.
+ */
+const EDGE_KEEP_SECONDS = 7 * 24 * 60 * 60;
 
 const CATALOG_URL = `${WEB_APP_URL}?what=products`;
 const FETCHED_AT = 'x-waraqa-fetched-at';
@@ -81,11 +97,11 @@ async function fromEdge(): Promise<Snapshot | null> {
   }
 }
 
-async function fromNetwork(): Promise<Snapshot> {
+async function fromNetwork(timeoutMs: number): Promise<Snapshot> {
   const res = await fetch(CATALOG_URL, {
     cache: 'no-store',
     // A dead Apps Script deployment must not hang the render forever.
-    signal: AbortSignal.timeout(CATALOG_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
@@ -95,15 +111,16 @@ async function fromNetwork(): Promise<Snapshot> {
   const edge = edgeCache();
   if (edge) {
     // Stored under our own key with our own lifetime: Apps Script answers with
-    // no-store, which the edge cache would otherwise honour. Kept for the
-    // whole stale window; freshness is judged from FETCHED_AT, not max-age.
+    // no-store, which the edge cache would otherwise honour. Kept well past
+    // the stale window as a fallback; freshness is judged from FETCHED_AT,
+    // not max-age.
     await edge
       .put(
         CATALOG_URL,
         new Response(JSON.stringify(data), {
           headers: {
             'Content-Type': 'application/json',
-            'Cache-Control': `public, max-age=${CATALOG_STALE_SECONDS}`,
+            'Cache-Control': `public, max-age=${EDGE_KEEP_SECONDS}`,
             [FETCHED_AT]: String(at),
           },
         })
@@ -115,7 +132,8 @@ async function fromNetwork(): Promise<Snapshot> {
 
 /** Fetch and remember a fresh catalog; never throws (a failed refresh keeps the old copy). */
 function refresh(): Promise<unknown> {
-  refreshing ??= fromNetwork()
+  // Runs after the response has gone out, so it can wait longer than a render.
+  refreshing ??= fromNetwork(CATALOG_REFRESH_TIMEOUT_MS)
     .then((snap) => {
       if (snap.products.length > 0) memory = snap;
     })
@@ -161,7 +179,7 @@ async function readCatalog(): Promise<Product[]> {
   }
 
   try {
-    const snap = await fromNetwork();
+    const snap = await fromNetwork(CATALOG_TIMEOUT_MS);
     if (snap.products.length === 0) return memory?.products ?? FALLBACK;
     memory = snap;
     return snap.products;

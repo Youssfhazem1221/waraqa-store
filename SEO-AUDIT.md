@@ -153,6 +153,30 @@ signal, and a two-line change.
 
 ## 4. Changelog
 
+- **2026-10-30** — Pre-filming fixes (branch `case-study-fixes`, not deployed yet;
+  checked on a local production build). *Titles:* the bag, checkout and order
+  confirmation have their own titles in both languages ("Your bag · Waraqa
+  (ورقة)", «سلتك · ورقة» …), still `noindex, follow`, with canonical and
+  hreflang from `seoAlternates()` instead of the home page's. Every 404 (an
+  unknown /en or /ar path, product or post) is titled "Page not found" /
+  «الصفحة مش موجودة», still a real 404 with `noindex`, and links to the shop,
+  paper guide, home and WhatsApp. Next answers these 404s with its error
+  document, whose head comes from `[locale]/not-found.tsx`, so the title lives
+  there too. *Descriptions:* the layout default (shown on every page without
+  its own) was brand copy, "An identity for…"; it now describes the books for
+  a buyer (EN 140 chars, AR «جرام» for "gsm"). *Copy:* free delivery reads
+  "from EGP 800" / «من ٨٠٠» everywhere, home descriptions included (it said
+  "over", but delivery is free at a subtotal of exactly 800); the shipping
+  policy says "of EGP 800 or more" (policy date 30 October 2026). With the
+  Arabic digit, plural and translation passes, that is a copy change on every
+  page: `CONTENT_REVISION` → 2026-10-30. The CSP that lets Cloudflare Web
+  Analytics load is served (`static.cloudflareinsights.com`,
+  `cloudflareinsights.com`). *Unpublished:* `public/reports/market-deep-dive.html`
+  (internal market research, served at `/reports/market-deep-dive`, never in
+  the sitemap or linked) is out of `public/`, so it 404s after the deploy; if
+  `site:waraqa.art/reports` still lists it then, request removal in Search
+  Console. No re-score: nothing new was measured in production.
+
 - **2026-10-05** — Post-migration sweep (live crawl of all 42 sitemap URLs, then
   a local production build re-crawled and checked in a browser).
   *Regressions from the Vercel → Cloudflare move, fixed:* HSTS was no longer

@@ -15,7 +15,7 @@ export default function Logo({
   variant = 'maroon',
   size = 'md',
 }: LogoProps) {
-  const { lp } = useLanguage();
+  const { t, lp } = useLanguage();
   const iconSizes = {
     sm: 'w-9 h-9',
     md: 'w-11 h-11 sm:w-12 sm:h-12',
@@ -33,7 +33,7 @@ export default function Logo({
   return (
     <Link
       href={lp('/')}
-      aria-label="Waraqa home"
+      aria-label={t.nav.homeLink}
       className="inline-flex items-center group select-none"
     >
       <div className={`relative flex items-center justify-center p-1 ${iconSizes[size]}`}>
