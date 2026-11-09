@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { CartItem, CustomerInfo, OrderPayload } from '@/types';
@@ -18,6 +18,7 @@ import { useStoredJson, writeStored } from '@/lib/useStoredValue';
 import { useCartRevalidation } from '@/lib/useCartRevalidation';
 import { ORDER_ERRORS_AR } from '@/lib/translations';
 import { formatNumber } from '@/lib/format';
+import { track } from '@/lib/analytics';
 
 const EMPTY_CUSTOMER: CustomerInfo = {
   name: '',
@@ -82,6 +83,19 @@ export default function CheckoutPage() {
   // The review's own Place order button; the phone bar hides while it shows.
   const placeOrderRef = useRef<HTMLDivElement>(null);
 
+  // One checkout_started per visit to this page, once the saved bag has loaded
+  // and has something in it.
+  const startTracked = useRef(false);
+  useEffect(() => {
+    if (startTracked.current || !isHydrated || items.length === 0) return;
+    startTracked.current = true;
+    track('checkout_started', {
+      item_count: items.reduce((n, i) => n + i.qty, 0),
+      line_count: items.length,
+      subtotal,
+    });
+  }, [isHydrated, items, subtotal]);
+
   const handleCustomerChange = useCallback(
     (field: keyof CustomerInfo, value: string) => {
       setEdits((prev) => ({ ...prev, [field]: value }));
@@ -114,7 +128,10 @@ export default function CheckoutPage() {
     if (!customer.address.trim()) errs.address = t.checkout.errors.address;
 
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    const invalid = Object.keys(errs);
+    // Field names only, never what was typed.
+    if (invalid.length > 0) track('checkout_invalid', { fields: invalid });
+    return invalid.length === 0;
   };
 
   const handleConfirmAndBuy = async () => {
@@ -167,6 +184,13 @@ export default function CheckoutPage() {
       lang: locale,
     };
 
+    const itemCount = items.reduce((n, i) => n + i.qty, 0);
+    track('order_submitted', {
+      item_count: itemCount,
+      subtotal,
+      governorate: trimmed.governorate,
+    });
+
     try {
       const res = await createOrder(payload);
 
@@ -175,6 +199,10 @@ export default function CheckoutPage() {
       // with their cart intact so they can retry — never fake a success.
       if (!res.ok || !res.orderId) {
         console.error('Order was not logged:', res.error);
+        track('order_failed', {
+          reason: res.timedOut ? 'timeout' : 'rejected',
+          error: res.error ? String(res.error).slice(0, 120) : undefined,
+        });
         // Surface the backend's own message when it has one — "that item just
         // sold out" is far more actionable than a generic failure. The message
         // renders right above the button that was just pressed, so the page
@@ -208,11 +236,25 @@ export default function CheckoutPage() {
         // confirmation page falls back to the orderId in the URL.
       }
 
+      const shippingFee = res.shipping ?? quoteFor(trimmed.governorate).amount;
+      track('order_placed', {
+        order_id: res.orderId,
+        item_count: itemCount,
+        line_count: items.length,
+        skus: items.map((i) => i.product.sku),
+        subtotal: res.subtotal ?? subtotal,
+        shipping: shippingFee,
+        total: res.total ?? subtotal + shippingFee,
+        currency: 'EGP',
+        governorate: trimmed.governorate,
+      });
+
       // Clear the cart and go to confirmation
       clearCart();
       router.push(lp(`/confirmation?orderId=${encodeURIComponent(res.orderId)}`));
     } catch (err) {
       console.error('Order submission error:', err);
+      track('order_failed', { reason: 'network' });
       setSubmitError(t.checkout.submitError);
     } finally {
       inFlight.current = false;

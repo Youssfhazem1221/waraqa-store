@@ -7,10 +7,12 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import type { CartItem, CartAction, Product } from '@/types';
 import { quoteShipping, MAX_LINE_QTY, type ShippingQuote } from '@/lib/constants';
+import { track } from '@/lib/analytics';
 
 // ---- State ----
 interface CartState {
@@ -256,16 +258,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const shipping = shippingQuote.amount;
   const total = subtotal + shipping;
 
+  // The latest bag for the analytics calls below, so addItem and openDrawer
+  // keep stable identities instead of changing on every bag update.
+  const bagRef = useRef({ lines: 0, itemCount: 0, subtotal: 0 });
+  useEffect(() => {
+    bagRef.current = { lines: state.items.length, itemCount, subtotal };
+  }, [state.items.length, itemCount, subtotal]);
+
   // Actions
   const addItem = useCallback((product: Product, qty = 1) => {
     dispatch({ type: 'ADD_ITEM', product, qty });
     setLastAddedSku(product.sku);
     setDrawerOpen(true);
+
+    // Same ceiling the reducer applies: a sold-out book adds nothing.
+    const cap = lineCap(product);
+    if (cap > 0) {
+      track('product_added_to_bag', {
+        sku: product.sku,
+        product: product.name,
+        price: product.price,
+        qty: Math.min(Math.max(1, Math.floor(Number(qty)) || 1), cap),
+        bag_lines_before: bagRef.current.lines,
+      });
+    }
   }, []);
 
   const openDrawer = useCallback(() => {
     setLastAddedSku(null);
     setDrawerOpen(true);
+    track('bag_opened', {
+      item_count: bagRef.current.itemCount,
+      subtotal: bagRef.current.subtotal,
+    });
   }, []);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
