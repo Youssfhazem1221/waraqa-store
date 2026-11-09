@@ -35,11 +35,11 @@ export default async function Page({ params }: Params) {
   const { locale } = await params;
   const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const doc = getLegalDoc(l, 'shipping');
-  const { zones } = await getStorefront();
+  const { zones, shippingUpdatedAt } = await getStorefront();
 
   return (
     <>
-      <LegalDocument locale={l} slug="shipping" zones={zones} />
+      <LegalDocument locale={l} slug="shipping" zones={zones} shippingUpdatedAt={shippingUpdatedAt} />
       <JsonLd
         data={[
           breadcrumbSchema(l, [

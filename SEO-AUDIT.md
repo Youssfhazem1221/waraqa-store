@@ -168,9 +168,15 @@ signal, and a two-line change.
   (60 / 75 / free from 800) every affected render, JSON-LD and meta
   description is byte-for-byte what it was, so `CONTENT_REVISION` and the
   policy date stay put; after a rate change all of them showed the new
-  numbers. Bump both when a real rate change is published. Seen in passing,
-  not changed: the /about `FAQPage` describes questions the page does not
-  show (rule 6); either render the FAQ on /about or drop that markup. No
+  numbers. *Policy date:* the data Worker records the day the customer-facing
+  rates last changed (Settings `shipping_updated_at`; a courier-cost-only edit
+  does not count), and /shipping shows that date when it is newer than
+  `LEGAL_UPDATED`. *Rule 6 fix:* the /about `FAQPage` described questions the
+  page did not show; the FAQ is now a visible section at the end of /about
+  (both locales, same items, live fees), so the markup describes the page.
+  That is new visible copy: `CONTENT_REVISION` → 2026-11-09. A rate change
+  alone still does not move the sitemap date (rule 7: no live data in the
+  sitemap); bump it by hand if a rate change is worth signalling. No
   re-score.
 
 - **2026-10-30** — Pre-filming fixes (branch `case-study-fixes`, not deployed yet;

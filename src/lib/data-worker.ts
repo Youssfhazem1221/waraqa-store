@@ -43,6 +43,8 @@ interface PublicProduct {
 export interface DataCatalog {
   products: PublicProduct[];
   zones: ShippingZone[];
+  /** Cairo date (yyyy-mm-dd) the customer-facing rates last changed; '' if never. */
+  shippingUpdatedAt?: string;
   supportWhatsapp: string;
   readAt: number;
 }

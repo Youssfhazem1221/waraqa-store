@@ -29,6 +29,26 @@ export const LEGAL_SLUGS: LegalSlug[] = ['shipping', 'returns', 'privacy', 'term
 
 /** Shown on every page; bump when a policy's substance changes. */
 export const LEGAL_UPDATED = { en: '30 October 2026', ar: '٣٠ أكتوبر ٢٠٢٦' };
+/** LEGAL_UPDATED as a date, to compare with the shipping rates' change date. */
+const LEGAL_UPDATED_ISO = '2026-10-30';
+
+const MONTHS: Record<Locale, string[]> = {
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+};
+
+/**
+ * The "last updated" date a policy shows. The shipping policy's fees change
+ * when rates are edited in the CRM, without a deploy, so it shows the date the
+ * rates last changed (`shippingUpdatedAt`, yyyy-mm-dd from the data Worker)
+ * when that is newer than LEGAL_UPDATED.
+ */
+export function legalUpdated(locale: Locale, slug: LegalSlug, shippingUpdatedAt = ''): string {
+  const m = shippingUpdatedAt.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (slug !== 'shipping' || !m || shippingUpdatedAt <= LEGAL_UPDATED_ISO) return LEGAL_UPDATED[locale];
+  const [, y, mo, d] = m;
+  return `${formatNumber(Number(d), locale)} ${MONTHS[locale][Number(mo) - 1]} ${formatNumber(Number(y), locale)}`;
+}
 
 export interface LegalSection {
   heading: string;

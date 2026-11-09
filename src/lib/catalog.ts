@@ -31,6 +31,8 @@ const MEMORY_MS = 5_000;
 export interface Storefront {
   products: Product[];
   zones: ShippingZone[];
+  /** yyyy-mm-dd the shipping rates last changed in the CRM; '' when unknown. */
+  shippingUpdatedAt: string;
   /** False when this is the last good copy or the bundled snapshot. */
   live: boolean;
 }
@@ -49,7 +51,13 @@ async function readStorefront(): Promise<Storefront> {
         .map((p) => mapApiProduct(toApiProduct(p)))
         .filter((p) => p.status !== 'Hidden');
       if (products.length) {
-        memory = { products, zones: c.zones.length ? c.zones : DEFAULT_ZONES, live: true, at: Date.now() };
+        memory = {
+          products,
+          zones: c.zones.length ? c.zones : DEFAULT_ZONES,
+          shippingUpdatedAt: c.shippingUpdatedAt ?? '',
+          live: true,
+          at: Date.now(),
+        };
         return memory;
       }
     } catch (err) {
@@ -57,7 +65,7 @@ async function readStorefront(): Promise<Storefront> {
     }
   }
   if (memory) return { ...memory, live: false };
-  return { products: FALLBACK, zones: DEFAULT_ZONES, live: false };
+  return { products: FALLBACK, zones: DEFAULT_ZONES, shippingUpdatedAt: '', live: false };
 }
 
 /** Products and shipping zones for a server component, shared within one request. */

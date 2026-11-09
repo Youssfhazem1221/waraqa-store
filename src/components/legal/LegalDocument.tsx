@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Locale } from '@/lib/translations';
 import { translations } from '@/lib/translations';
-import { getLegalDoc, LEGAL_SLUGS, LEGAL_UPDATED, type LegalSlug } from '@/lib/legal';
+import { getLegalDoc, legalUpdated, LEGAL_SLUGS, type LegalSlug } from '@/lib/legal';
 import { localePath } from '@/lib/seo';
 import { COMMERCIAL_REGISTRATION, TAX_CARD_NUMBER, type ShippingZone } from '@/lib/constants';
 import { withIdentifiers } from '@/components/ui/Identifiers';
@@ -39,11 +39,14 @@ export default function LegalDocument({
   locale,
   slug,
   zones,
+  shippingUpdatedAt,
 }: {
   locale: Locale;
   slug: LegalSlug;
   /** Live shipping zones; only the shipping policy reads them. */
   zones?: ShippingZone[];
+  /** When the live rates last changed (yyyy-mm-dd); only the shipping policy reads it. */
+  shippingUpdatedAt?: string;
 }) {
   const doc = getLegalDoc(locale, slug, zones);
   const t = translations[locale];
@@ -57,7 +60,7 @@ export default function LegalDocument({
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       <header className="pb-8 border-b border-line">
         <p className="text-sm text-muted">
-          {t.legal.updated} {LEGAL_UPDATED[locale]}
+          {t.legal.updated} {legalUpdated(locale, slug, shippingUpdatedAt)}
         </p>
         <h1 className="mt-2 font-serif text-4xl sm:text-5xl font-semibold text-maroon">{doc.title}</h1>
         <p className="mt-4 text-lg text-char/85 leading-relaxed">{doc.intro}</p>
