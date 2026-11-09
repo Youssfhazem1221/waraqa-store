@@ -16,7 +16,9 @@ export const SITE_URL = (
 ).replace(/\/+$/, '');
 
 export const LOCALES = ['en', 'ar'] as const;
-export const DEFAULT_LOCALE: Locale = 'en';
+// Arabic: the store sells only inside Egypt. The middleware sends a visitor
+// with no saved choice here, and `x-default` follows it.
+export const DEFAULT_LOCALE: Locale = 'ar';
 
 export function isLocale(value: string | undefined): value is Locale {
   return value === 'en' || value === 'ar';
@@ -33,8 +35,8 @@ export function absoluteUrl(locale: Locale, path: string = '/'): string {
 }
 
 /**
- * Canonical + hreflang for one page. `x-default` points at English because that
- * is what an unknown-locale visitor gets from the middleware.
+ * Canonical + hreflang for one page. `x-default` points at the default locale
+ * because that is what an unknown-locale visitor gets from the middleware.
  */
 export function seoAlternates(locale: Locale, path: string = '/') {
   return {
@@ -42,7 +44,7 @@ export function seoAlternates(locale: Locale, path: string = '/') {
     languages: {
       en: localePath('en', path),
       ar: localePath('ar', path),
-      'x-default': localePath('en', path),
+      'x-default': localePath(DEFAULT_LOCALE, path),
     },
   };
 }

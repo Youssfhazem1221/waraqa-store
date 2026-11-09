@@ -95,6 +95,14 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Anchor jumps (the paper guide's sections) glided even for visitors who
+   asked their device for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background-color: var(--cream);
   color: var(--char);

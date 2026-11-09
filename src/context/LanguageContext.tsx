@@ -19,8 +19,8 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 /**
  * Locale is now a URL fact passed down from the server layout, not a stored
- * preference. The middleware reads a `NEXT_LOCALE` cookie + Accept-Language to
- * redirect bare paths, and the `[locale]` segment decides what the server
+ * preference. The middleware reads a `NEXT_LOCALE` cookie (Arabic without one)
+ * to redirect bare paths, and the `[locale]` segment decides what the server
  * renders. No `useEffect` needed for dir/lang — they are set on `<html>` at
  * render time.
  */
