@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import type { CartItem, CartAction, Product } from '@/types';
 import { quoteShipping, MAX_LINE_QTY, type ShippingQuote } from '@/lib/constants';
+import { useShippingZones } from '@/context/ShippingContext';
 import { track } from '@/lib/analytics';
 
 // ---- State ----
@@ -243,18 +244,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { itemCount: count, subtotal: Math.round(sum * 100) / 100 };
   }, [state.items]);
 
+  // Live zones from the Sheet (CRM Shipping page); defaults until they load.
+  const zones = useShippingZones();
+
   const quoteFor = useCallback(
-    (governorate?: string) => quoteShipping(subtotal, governorate),
-    [subtotal]
+    (governorate?: string) => quoteShipping(subtotal, governorate, zones),
+    [subtotal, zones]
   );
 
   const totalFor = useCallback(
-    (governorate?: string) => subtotal + quoteShipping(subtotal, governorate).amount,
-    [subtotal]
+    (governorate?: string) => subtotal + quoteShipping(subtotal, governorate, zones).amount,
+    [subtotal, zones]
   );
 
   // Address-less quote, for anything rendered before checkout.
-  const shippingQuote = useMemo(() => quoteShipping(subtotal), [subtotal]);
+  const shippingQuote = useMemo(() => quoteShipping(subtotal, undefined, zones), [subtotal, zones]);
   const shipping = shippingQuote.amount;
   const total = subtotal + shipping;
 

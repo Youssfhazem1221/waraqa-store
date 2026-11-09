@@ -4,7 +4,8 @@ import React from 'react';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
 import Price from '@/components/ui/Price';
-import { FREE_SHIP_OVER } from '@/lib/constants';
+import { freeShipOver } from '@/lib/constants';
+import { useShippingZones } from '@/context/ShippingContext';
 
 /**
  * How far the bag is from free delivery: one sentence with the bar under it.
@@ -15,10 +16,13 @@ export default function FreeShipMeter() {
   const { subtotal } = useCart();
   const { t, locale } = useLanguage();
 
-  const toFree = Math.max(0, FREE_SHIP_OVER - subtotal);
-  const progress = Math.min(100, Math.round((subtotal / FREE_SHIP_OVER) * 100));
+  const threshold = freeShipOver(useShippingZones());
+  const toFree = Math.max(0, threshold - subtotal);
+  const progress = threshold ? Math.min(100, Math.round((subtotal / threshold) * 100)) : 0;
   // The amount sits mid-sentence in Arabic and first in English.
   const [before, after = ''] = t.cart.toFreeShip.split('{amount}');
+  // No zone ships free right now: no meter.
+  if (!threshold) return null;
 
   return (
     <div>

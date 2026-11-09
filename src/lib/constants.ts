@@ -14,11 +14,6 @@ function numEnv(raw: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-/** Google Apps Script Web App URL for dynamic data & order placement */
-export const WEB_APP_URL =
-  process.env.NEXT_PUBLIC_WEB_APP_URL ||
-  'https://script.google.com/macros/s/AKfycbyeMKSS9OBDWPyoyNYLDeauHlL5K9atQSvpFEdTJRfwwEdefRltToOmHbbps3jZxlY/exec';
-
 /** Owner's WhatsApp number in international format (Egypt +20) */
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201069237525';
 
@@ -93,11 +88,49 @@ export const MAX_LINE_QTY = 50;
 export const DELIVERY_DAYS_MIN = 3;
 export const DELIVERY_DAYS_MAX = 7;
 
-/** Is this governorate on the Cairo rate? Tolerates casing/spacing noise. */
-export function isCairoZone(governorate: string): boolean {
-  const g = String(governorate || '').trim().toLowerCase();
-  if (!g) return false;
-  return CAIRO_ZONE_GOVERNORATES.some((z) => z.toLowerCase() === g);
+/**
+ * Live shipping zones come from the Sheet's Shipping tab (edited in the CRM)
+ * and reach the browser through ShippingContext. These are today's rates,
+ * used only until that arrives or if the data Worker is unreachable. The
+ * order endpoint prices shipping itself, so these never decide a charge.
+ */
+export interface ShippingZone {
+  zone: string;
+  /** Lower-case governorate names, English and Arabic. `*` = everywhere else. */
+  governorates: string[];
+  fee: number;
+  /** Subtotal at which this zone ships free; 0 = never. */
+  freeOver: number;
+}
+
+export const DEFAULT_ZONES: ShippingZone[] = [
+  {
+    zone: 'Cairo & Giza',
+    governorates: [...CAIRO_ZONE_GOVERNORATES.map((g) => g.toLowerCase()), 'القاهرة', 'الجيزة'],
+    fee: SHIPPING_CAIRO,
+    freeOver: FREE_SHIP_OVER,
+  },
+  { zone: 'Rest of Egypt', governorates: ['*'], fee: SHIPPING_OUTSIDE, freeOver: 0 },
+];
+
+/** The zone for a governorate: an explicit match first, then the `*` zone. Same rule as the data Worker. */
+export function zoneFor(zones: ShippingZone[], governorate: string): ShippingZone | null {
+  const g = String(governorate || '').split('·')[0].split(',')[0].trim().toLowerCase();
+  if (g) {
+    const hit = zones.find((z) => z.governorates.includes(g));
+    if (hit) return hit;
+  }
+  return zones.find((z) => z.governorates.includes('*')) ?? zones[zones.length - 1] ?? null;
+}
+
+function feeIn(zone: ShippingZone, subtotal: number): number {
+  return zone.freeOver > 0 && subtotal >= zone.freeOver ? 0 : zone.fee;
+}
+
+/** Lowest subtotal that ships free anywhere, or 0 if no zone ever ships free. */
+export function freeShipOver(zones: ShippingZone[]): number {
+  const t = zones.map((z) => z.freeOver).filter((n) => n > 0);
+  return t.length ? Math.min(...t) : 0;
 }
 
 export interface ShippingQuote {
@@ -115,52 +148,36 @@ export interface ShippingQuote {
 /**
  * Price delivery for a subtotal and (optionally) a governorate.
  *
- * With no governorate the result spans both zones, so the UI can say
- * "60–75 EGP" instead of committing to a number that changes at checkout.
+ * With no governorate the result spans every zone, so the UI can say
+ * "60–75 EGP" instead of committing to a number that changes at checkout. The
+ * range is never a bare "free" unless every zone ships free at this subtotal.
  */
-export function quoteShipping(subtotal: number, governorate?: string): ShippingQuote {
-  const qualifies = subtotal >= FREE_SHIP_OVER;
-
+export function quoteShipping(
+  subtotal: number,
+  governorate?: string,
+  zones: ShippingZone[] = DEFAULT_ZONES
+): ShippingQuote {
   if (governorate && governorate.trim()) {
-    const fee = isCairoZone(governorate)
-      ? qualifies
-        ? 0
-        : SHIPPING_CAIRO
-      : SHIPPING_OUTSIDE;
+    const z = zoneFor(zones, governorate);
+    const fee = z ? feeIn(z, subtotal) : 0;
     return { amount: fee, exact: true, low: fee, high: fee, free: fee === 0 };
   }
-
-  // Address unknown. Cairo is the cheap end (possibly free), outside Cairo the
-  // dear end — and the dear end is never free, so a big order still shows a
-  // range rather than a bare "FREE" that later becomes 75.
-  const low = qualifies ? 0 : SHIPPING_CAIRO;
-  const high = SHIPPING_OUTSIDE;
-  return { amount: low, exact: false, low, high, free: false };
+  const fees = zones.map((z) => feeIn(z, subtotal));
+  const low = fees.length ? Math.min(...fees) : 0;
+  const high = fees.length ? Math.max(...fees) : 0;
+  return { amount: low, exact: false, low, high, free: high === 0 };
 }
 
-/** The delivery fee alone. Prefer quoteShipping() where the UI must show it. */
-export function shippingFor(subtotal: number, governorate?: string): number {
-  return quoteShipping(subtotal, governorate).amount;
-}
+/** How long a catalog read in the browser is reused (ms). */
+export const CATALOG_TTL_MS = 30 * 1000;
 
-/** How long a fetched catalog stays fresh before we re-ask the Sheet (ms). */
-export const CATALOG_TTL_MS = 60 * 1000;
-
-/** Give up on the Apps Script backend after this long (ms). Apps Script cold
- *  starts are slow, so this is generous — but not unbounded, which would hang
- *  the page forever on a dead deployment. */
+/** Browser read of /api/catalog. The data Worker answers from memory. */
 export const CATALOG_TIMEOUT_MS = 10_000;
 
-/** Same read when nobody is waiting on it: the browser correcting a page it
- *  already shows, or the server refreshing its cache after responding. Reads
- *  took 2–35 s when measured (2026-10-06), so 10 s often gave up first. Kept
- *  under the 30 s a Worker may run after its response. */
-export const CATALOG_REFRESH_TIMEOUT_MS = 25_000;
-
-/** An order is written, re-priced and emailed before Apps Script answers, and
- *  it keeps going after the browser gives up. At 20 s a slow answer could show
- *  "try again" for an order that had in fact been placed, inviting a duplicate. */
-export const ORDER_TIMEOUT_MS = 60_000;
+/** Placing an order: written, re-priced and stock-checked under the data
+ *  Worker's lock. Usually a second or two; generous so a slow Sheets API call
+ *  never shows "try again" for an order that went through. */
+export const ORDER_TIMEOUT_MS = 30_000;
 
 /** Egyptian governorates for checkout dropdown */
 export const GOVERNORATES = [
