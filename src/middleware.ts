@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { SITE_URL } from '@/lib/seo';
+import { SITE_URL, LOCALES, DEFAULT_LOCALE, isLocale } from '@/lib/seo';
 
-const LOCALES = ['en', 'ar'] as const;
-const DEFAULT_LOCALE = 'en';
 const COOKIE = 'NEXT_LOCALE';
 
 const CANONICAL = new URL(SITE_URL);
@@ -63,6 +61,11 @@ function visitorUsedHttp(request: NextRequest): boolean {
  *
  * A redirect (not a rewrite) is deliberate: each language must settle on one
  * canonical URL, or both end up competing for the same one in the index.
+ *
+ * Arabic unless the visitor picked English with the toggle (the cookie).
+ * Accept-Language is deliberately not consulted: the store sells only inside
+ * Egypt, and a phone whose interface is set to English was being sent to the
+ * English site.
  */
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -76,23 +79,26 @@ export function middleware(request: NextRequest) {
   let target = pathname;
   if (!hasLocale) {
     const cookie = request.cookies.get(COOKIE)?.value;
-    const accept = (request.headers.get('accept-language') || '').toLowerCase();
-    const locale = LOCALES.includes(cookie as (typeof LOCALES)[number])
-      ? cookie
-      : accept.startsWith('ar')
-        ? 'ar'
-        : DEFAULT_LOCALE;
+    const locale = isLocale(cookie) ? cookie : DEFAULT_LOCALE;
     target = `/${locale}${pathname === '/' ? '' : pathname}`;
   }
 
+  // Still a 308, so crawlers consolidate on the prefixed URL, but a redirect
+  // that picked the language must not be stored: browsers keep a 308, so one
+  // that had cached `/` → `/en` went on landing there after the visitor
+  // switched language, and the cookie was never read again.
+  const init: ResponseInit = hasLocale
+    ? { status: 308 }
+    : { status: 308, headers: { 'Cache-Control': 'no-store' } };
+
   // Origin and locale are fixed in the same hop, so http://www.waraqa.art/shop
-  // reaches https://waraqa.art/en/shop with one redirect, not three.
+  // reaches https://waraqa.art/ar/shop with one redirect, not three.
   if (wrongOrigin) {
-    return NextResponse.redirect(new URL(`${target}${search}`, SITE_URL), 308);
+    return NextResponse.redirect(new URL(`${target}${search}`, SITE_URL), init);
   }
   const url = request.nextUrl.clone();
   url.pathname = target;
-  return NextResponse.redirect(url, 308);
+  return NextResponse.redirect(url, init);
 }
 
 export const config = {

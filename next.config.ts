@@ -70,7 +70,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/product/square-sketchbook-25x25-250gsm',
-        destination: '/en/product/large-mixed-media-sketchbook-25x35-250gsm',
+        destination: '/ar/product/large-mixed-media-sketchbook-25x35-250gsm',
         permanent: true,
       },
     ];
