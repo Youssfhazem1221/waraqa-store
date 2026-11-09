@@ -153,6 +153,26 @@ signal, and a two-line change.
 
 ## 4. Changelog
 
+- **2026-11-09** — Delivery fees follow the live shipping zones (branch
+  `shipping-seo-live-zones`, on top of `data-worker-sync`; not deployed).
+  Fees are now edited in the CRM (the Sheet's Shipping tab), so no copy or
+  markup may carry a typed-in amount. *Markup:* each Product offer's
+  `shippingDetails` has one `OfferShippingDetails` per zone, keeping the
+  `#shipping-cairo` / `#shipping-outside` @ids; the `FAQPage` on /about fills
+  its delivery answer from the zones. *Copy:* the shipping policy's fee
+  bullets are written from the zones (`lib/shipping-copy.ts`), as are the
+  trust strip, product delivery note, bag notes and the home description's
+  free-delivery threshold. /shipping and /about now render per request
+  (`force-dynamic`), like the home, shop and product pages, so they cannot
+  freeze build-time rates. Checked locally in both locales: at today's rates
+  (60 / 75 / free from 800) every affected render, JSON-LD and meta
+  description is byte-for-byte what it was, so `CONTENT_REVISION` and the
+  policy date stay put; after a rate change all of them showed the new
+  numbers. Bump both when a real rate change is published. Seen in passing,
+  not changed: the /about `FAQPage` describes questions the page does not
+  show (rule 6); either render the FAQ on /about or drop that markup. No
+  re-score.
+
 - **2026-10-30** — Pre-filming fixes (branch `case-study-fixes`, not deployed yet;
   checked on a local production build). *Titles:* the bag, checkout and order
   confirmation have their own titles in both languages ("Your bag · Waraqa

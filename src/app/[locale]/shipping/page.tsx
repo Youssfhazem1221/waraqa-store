@@ -6,8 +6,13 @@ import { isLocale, DEFAULT_LOCALE, seoAlternates, absoluteUrl, ogDefaults } from
 import { breadcrumbSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import LegalDocument from '@/components/legal/LegalDocument';
+import { getStorefront } from '@/lib/catalog';
 
 type Params = { params: Promise<{ locale: string }> };
+
+// The fees come from the live shipping zones (edited in the CRM), so the page
+// renders per request like the shop, instead of freezing build-time rates.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale } = await params;
@@ -30,10 +35,11 @@ export default async function Page({ params }: Params) {
   const { locale } = await params;
   const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const doc = getLegalDoc(l, 'shipping');
+  const { zones } = await getStorefront();
 
   return (
     <>
-      <LegalDocument locale={l} slug="shipping" />
+      <LegalDocument locale={l} slug="shipping" zones={zones} />
       <JsonLd
         data={[
           breadcrumbSchema(l, [

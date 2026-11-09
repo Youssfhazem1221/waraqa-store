@@ -4,9 +4,11 @@
 // The layout renders with the zones it read on the server; the browser then
 // re-reads them once, so even a pre-rendered page quotes today's rates.
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { DEFAULT_ZONES, type ShippingZone } from '@/lib/constants';
 import { fetchLiveCatalog } from '@/lib/api';
+import { fillRates, homeRates } from '@/lib/shipping-copy';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Ctx = createContext<ShippingZone[]>(DEFAULT_ZONES);
 
@@ -26,4 +28,11 @@ export function ShippingProvider({ zones, children }: { zones: ShippingZone[]; c
 
 export function useShippingZones(): ShippingZone[] {
   return useContext(Ctx);
+}
+
+/** Fills {homeFee} / {restFee} / {freeOver} in a translation with the live fees. */
+export function useRateText(): (text: string) => string {
+  const zones = useShippingZones();
+  const { locale } = useLanguage();
+  return useCallback((text: string) => fillRates(text, homeRates(zones), locale), [zones, locale]);
 }

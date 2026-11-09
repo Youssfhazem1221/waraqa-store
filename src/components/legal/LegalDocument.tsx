@@ -4,7 +4,7 @@ import type { Locale } from '@/lib/translations';
 import { translations } from '@/lib/translations';
 import { getLegalDoc, LEGAL_SLUGS, LEGAL_UPDATED, type LegalSlug } from '@/lib/legal';
 import { localePath } from '@/lib/seo';
-import { COMMERCIAL_REGISTRATION, TAX_CARD_NUMBER } from '@/lib/constants';
+import { COMMERCIAL_REGISTRATION, TAX_CARD_NUMBER, type ShippingZone } from '@/lib/constants';
 import { withIdentifiers } from '@/components/ui/Identifiers';
 
 /** Group consecutive "• " paragraphs into one list. */
@@ -35,8 +35,17 @@ function renderBody(body: string[]) {
   return out;
 }
 
-export default function LegalDocument({ locale, slug }: { locale: Locale; slug: LegalSlug }) {
-  const doc = getLegalDoc(locale, slug);
+export default function LegalDocument({
+  locale,
+  slug,
+  zones,
+}: {
+  locale: Locale;
+  slug: LegalSlug;
+  /** Live shipping zones; only the shipping policy reads them. */
+  zones?: ShippingZone[];
+}) {
+  const doc = getLegalDoc(locale, slug, zones);
   const t = translations[locale];
 
   const seller = [
