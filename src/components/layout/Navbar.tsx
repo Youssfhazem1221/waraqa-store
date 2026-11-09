@@ -76,24 +76,26 @@ export default function Navbar() {
             <button
               type="button"
               onClick={openDrawer}
-              className="relative inline-flex items-center gap-2 text-sm hover:text-maroon transition-colors min-h-11 cursor-pointer"
+              className="relative inline-flex items-center gap-2 sm:gap-3 text-sm hover:text-maroon transition-colors min-h-11 cursor-pointer"
               aria-label={isHydrated ? `${t.nav.bag}, ${formatNumber(itemCount, locale)}` : t.nav.bag}
             >
-              <Icon name="bag" size={20} />
-              <span className="hidden sm:inline">{t.nav.bag}</span>
-              {/* Filled once there is something in it, so a full bag is never
-                  mistaken for an empty one; an empty bag is a bare ring (in
-                  Readex Pro the Arabic «٠» is a dot, and a dot in a ring did
-                  not read as zero). Blank until the bag is read from this
-                  browser: the server can't know it, and every page flashed
-                  «0» before the real count. */}
-              <span
-                className={`min-w-5 h-5 px-1.5 inline-flex items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
-                  itemCount > 0 ? 'bg-maroon text-cream' : 'border border-char/30 text-char/70'
-                }`}
-              >
-                {isHydrated && itemCount > 0 && formatNumber(itemCount, locale)}
+              {/* The count sits on the icon's corner and only exists once there
+                  is something in the bag. An empty bag used to show a bare ring
+                  (in Readex Pro the Arabic «٠» is a dot, and a dot in a ring
+                  did not read as zero), but the ring alone read as an unticked
+                  option beside the bag. Nothing until the bag is read from
+                  this browser: the server can't know it, and every page
+                  flashed «0» before the real count. Being out of the flow, it
+                  moves nothing when it appears. */}
+              <span className="relative inline-flex">
+                <Icon name="bag" size={20} />
+                {isHydrated && itemCount > 0 && (
+                  <span className="absolute -top-2 -end-2 min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full bg-maroon text-cream text-[11px] leading-none font-semibold tabular-nums ring-2 ring-cream">
+                    {formatNumber(itemCount, locale)}
+                  </span>
+                )}
               </span>
+              <span className="hidden sm:inline">{t.nav.bag}</span>
             </button>
           </div>
         </div>
