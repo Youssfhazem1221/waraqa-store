@@ -124,8 +124,8 @@ signal, and a two-line change.
 ### 🟢 Low
 
 - Root `/` uses **307** → `/en`. Prefer **308** so signals consolidate cleanly.
-- `x-default` points at `/en`. Defensible, but for an Egypt-first store consider
-  Arabic as default once traffic data justifies it.
+- ~~`x-default` points at `/en`.~~ Arabic is the default since 2026-11-09
+  (owner's decision, not a traffic-data one; see changelog).
 - No `WebSite.potentialAction` / SearchAction — only worth adding with on-site search.
 
 ---
@@ -153,6 +153,18 @@ signal, and a two-line change.
 
 ## 4. Changelog
 
+- **2026-11-09** — Arabic is the default locale (branch
+  `shipping-seo-live-zones`; not deployed). `DEFAULT_LOCALE` in `lib/seo.ts`
+  is `ar`, so `x-default` points at `/ar/…` in both `<head>` and the sitemap
+  (still one source, still symmetric). The middleware sends an un-prefixed
+  path to `/ar` unless the `NEXT_LOCALE` cookie says `en`; Accept-Language is
+  no longer read. The locale redirect is still a 308 but now carries
+  `Cache-Control: no-store`, because browsers were keeping `/` → `/en` and
+  ignoring a later language switch. The legacy bare
+  `/product/square-sketchbook-25x25-250gsm` redirect lands on `/ar`. No page
+  copy changed, so `CONTENT_REVISION` was not bumped. Not re-scored: the
+  effect on which language Google shows for un-localised queries is
+  unmeasured until Search Console has data after the deploy.
 - **2026-11-09** — Delivery fees follow the live shipping zones (branch
   `shipping-seo-live-zones`, on top of `data-worker-sync`; not deployed).
   Fees are now edited in the CRM (the Sheet's Shipping tab), so no copy or
