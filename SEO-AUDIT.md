@@ -154,7 +154,7 @@ signal, and a two-line change.
 ## 4. Changelog
 
 - **2026-11-09** — Arabic is the default locale (branch
-  `shipping-seo-live-zones`; not deployed). `DEFAULT_LOCALE` in `lib/seo.ts`
+  `arabic-default-hero`, cut from `main` so it ships without the data-Worker switch). `DEFAULT_LOCALE` in `lib/seo.ts`
   is `ar`, so `x-default` points at `/ar/…` in both `<head>` and the sitemap
   (still one source, still symmetric). The middleware sends an un-prefixed
   path to `/ar` unless the `NEXT_LOCALE` cookie says `en`; Accept-Language is
@@ -166,7 +166,9 @@ signal, and a two-line change.
   effect on which language Google shows for un-localised queries is
   unmeasured until Search Console has data after the deploy.
 - **2026-11-09** — Delivery fees follow the live shipping zones (branch
-  `shipping-seo-live-zones`, on top of `data-worker-sync`; not deployed).
+  `shipping-seo-live-zones`, on top of `data-worker-sync`; deployed
+  2026-11-10 as store version `6b366746`, together with the switch to the
+  data Worker).
   Fees are now edited in the CRM (the Sheet's Shipping tab), so no copy or
   markup may carry a typed-in amount. *Markup:* each Product offer's
   `shippingDetails` has one `OfferShippingDetails` per zone, keeping the
