@@ -5,9 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { buttonClasses } from '@/components/ui/Button';
 import { useLanguage } from '@/context/LanguageContext';
+import { useRateText } from '@/context/ShippingContext';
 
 export default function AboutClient() {
   const { t, lp } = useLanguage();
+  const rateText = useRateText();
 
   const principles = [
     [t.about.pNatural, t.about.pNaturalDesc],
@@ -72,6 +74,22 @@ export default function AboutClient() {
         <Link href={lp('/shop')} className={buttonClasses({ size: 'lg', className: 'mt-12' })}>
           {t.about.exploreBtn}
         </Link>
+      </section>
+
+      {/* The page's FAQPage markup (page.tsx) describes these questions, so they
+          have to be on the page, not only in the JSON-LD. */}
+      <section className="mt-16 pt-10 border-t border-line" aria-labelledby="faq-title">
+        <h2 id="faq-title" className="font-serif text-2xl sm:text-3xl font-semibold text-char">
+          {t.faq.title}
+        </h2>
+        <dl className="mt-8 grid md:grid-cols-2 gap-x-16 gap-y-8 max-w-5xl">
+          {t.faq.items.map(({ q, a }) => (
+            <div key={q} className="border-t border-char/20 pt-4">
+              <dt className="font-semibold text-char">{rateText(q)}</dt>
+              <dd className="mt-2 text-char/85 leading-relaxed">{rateText(a)}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
     </div>
   );

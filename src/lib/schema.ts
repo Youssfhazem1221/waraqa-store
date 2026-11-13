@@ -12,18 +12,57 @@ import {
   BRAND,
   WHATSAPP_NUMBER,
   INSTAGRAM_URL,
-  SHIPPING_CAIRO,
-  SHIPPING_OUTSIDE,
-  FREE_SHIP_OVER,
+  DEFAULT_ZONES,
   DELIVERY_DAYS_MIN,
   DELIVERY_DAYS_MAX,
+  type ShippingZone,
 } from '@/lib/constants';
+import { zoneGovernorates } from '@/lib/shipping-copy';
 import { SITE_URL, absoluteUrl } from '@/lib/seo';
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const RETURN_POLICY_ID = `${SITE_URL}/#return-policy`;
 const SHIPPING_CAIRO_ID = `${SITE_URL}/#shipping-cairo`;
 const SHIPPING_OUTSIDE_ID = `${SITE_URL}/#shipping-outside`;
+
+const DELIVERY_TIME = {
+  '@type': 'ShippingDeliveryTime',
+  handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'd' },
+  transitTime: { '@type': 'QuantitativeValue', minValue: DELIVERY_DAYS_MIN, maxValue: DELIVERY_DAYS_MAX, unitCode: 'd' },
+};
+
+/**
+ * One OfferShippingDetails per live shipping zone (edited in the CRM), so the
+ * markup quotes what checkout charges. The rate is for this one book: free
+ * when its price alone reaches the zone's threshold. The Cairo zone and the
+ * everywhere-else zone keep the @ids they have always had.
+ */
+function shippingDetails(product: Product, zones: ShippingZone[]) {
+  return zones.map((zone) => {
+    const rest = zone.governorates.includes('*');
+    const regions = rest ? [] : zoneGovernorates(zone);
+    const id = rest
+      ? SHIPPING_OUTSIDE_ID
+      : regions.includes('Cairo')
+        ? SHIPPING_CAIRO_ID
+        : `${SITE_URL}/#shipping-${zone.zone.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+    return {
+      '@type': 'OfferShippingDetails',
+      '@id': id,
+      shippingDestination: {
+        '@type': 'DefinedRegion',
+        addressCountry: 'EG',
+        ...(regions.length ? { addressRegion: regions } : {}),
+      },
+      shippingRate: {
+        '@type': 'MonetaryAmount',
+        value: zone.freeOver > 0 && product.price >= zone.freeOver ? 0 : zone.fee,
+        currency: 'EGP',
+      },
+      deliveryTime: DELIVERY_TIME,
+    };
+  });
+}
 
 export function organizationSchema() {
   return {
@@ -84,7 +123,7 @@ function availability(product: Product) {
     : 'https://schema.org/OutOfStock';
 }
 
-export function productSchema(product: Product, locale: Locale) {
+export function productSchema(product: Product, locale: Locale, zones: ShippingZone[] = DEFAULT_ZONES) {
   const isAr = locale === 'ar';
   return {
     '@context': 'https://schema.org',
@@ -131,45 +170,7 @@ export function productSchema(product: Product, locale: Locale) {
         returnMethod: 'https://schema.org/ReturnByMail',
         merchantReturnLink: absoluteUrl(locale, '/returns'),
       },
-      shippingDetails: [
-        {
-          '@type': 'OfferShippingDetails',
-          '@id': SHIPPING_CAIRO_ID,
-          shippingDestination: {
-            '@type': 'DefinedRegion',
-            addressCountry: 'EG',
-            addressRegion: ['Cairo', 'Giza'],
-          },
-          shippingRate: {
-            '@type': 'MonetaryAmount',
-            value: product.price >= FREE_SHIP_OVER ? 0 : SHIPPING_CAIRO,
-            currency: 'EGP',
-          },
-          deliveryTime: {
-            '@type': 'ShippingDeliveryTime',
-            handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'd' },
-            transitTime: { '@type': 'QuantitativeValue', minValue: DELIVERY_DAYS_MIN, maxValue: DELIVERY_DAYS_MAX, unitCode: 'd' },
-          },
-        },
-        {
-          '@type': 'OfferShippingDetails',
-          '@id': SHIPPING_OUTSIDE_ID,
-          shippingDestination: {
-            '@type': 'DefinedRegion',
-            addressCountry: 'EG',
-          },
-          shippingRate: {
-            '@type': 'MonetaryAmount',
-            value: SHIPPING_OUTSIDE,
-            currency: 'EGP',
-          },
-          deliveryTime: {
-            '@type': 'ShippingDeliveryTime',
-            handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'd' },
-            transitTime: { '@type': 'QuantitativeValue', minValue: DELIVERY_DAYS_MIN, maxValue: DELIVERY_DAYS_MAX, unitCode: 'd' },
-          },
-        },
-      ],
+      shippingDetails: shippingDetails(product, zones),
     },
   };
 }

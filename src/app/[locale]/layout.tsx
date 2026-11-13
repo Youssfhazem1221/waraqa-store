@@ -6,6 +6,8 @@ import { organizationSchema, webSiteSchema } from '@/lib/schema';
 import JsonLd from '@/components/seo/JsonLd';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
+import { ShippingProvider } from '@/context/ShippingContext';
+import { getStorefront } from '@/lib/catalog';
 import { PostHogProvider } from '@/providers/PostHogProvider';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import Navbar from '@/components/layout/Navbar';
@@ -99,6 +101,7 @@ export default async function RootLayout({
   const { locale } = await params;
   const l = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const isRTL = l === 'ar';
+  const { zones } = await getStorefront();
 
   return (
     <html
@@ -113,13 +116,15 @@ export default async function RootLayout({
       >
         <LanguageProvider locale={l}>
           <PostHogProvider>
-            <CartProvider>
-              <AnnouncementBar />
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <CartDrawer />
-            </CartProvider>
+            <ShippingProvider zones={zones}>
+              <CartProvider>
+                <AnnouncementBar />
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <CartDrawer />
+              </CartProvider>
+            </ShippingProvider>
           </PostHogProvider>
         </LanguageProvider>
         <JsonLd data={[organizationSchema(), webSiteSchema(l)]} />

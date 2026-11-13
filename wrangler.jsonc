@@ -12,6 +12,13 @@
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "waraqa-store"
+    },
+    // Catalog, orders and newsletter: the waraqa-data Worker (public methods
+    // only; the CRM uses its admin entrypoint). Deploy waraqa-data first.
+    {
+      "binding": "DATA",
+      "service": "waraqa-data",
+      "entrypoint": "PublicApi"
     }
   ],
   // Incremental (ISR) cache. KV rather than R2: R2 needs a payment method on

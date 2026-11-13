@@ -13,22 +13,42 @@
 
 import type { Locale } from './translations';
 import {
-  SHIPPING_CAIRO,
-  SHIPPING_OUTSIDE,
-  FREE_SHIP_OVER,
+  DEFAULT_ZONES,
   DELIVERY_DAYS_MIN,
   DELIVERY_DAYS_MAX,
   WHATSAPP_NUMBER,
   INSTAGRAM_URL,
   CONTACT_EMAIL,
+  type ShippingZone,
 } from './constants';
-import { formatNumber, formatPrice, formatRange, ltr } from './format';
+import { feeBullets } from './shipping-copy';
+import { formatNumber, formatRange, ltr } from './format';
 
 export type LegalSlug = 'privacy' | 'returns' | 'shipping' | 'terms';
 export const LEGAL_SLUGS: LegalSlug[] = ['shipping', 'returns', 'privacy', 'terms'];
 
 /** Shown on every page; bump when a policy's substance changes. */
 export const LEGAL_UPDATED = { en: '30 October 2026', ar: '٣٠ أكتوبر ٢٠٢٦' };
+/** LEGAL_UPDATED as a date, to compare with the shipping rates' change date. */
+const LEGAL_UPDATED_ISO = '2026-10-30';
+
+const MONTHS: Record<Locale, string[]> = {
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+};
+
+/**
+ * The "last updated" date a policy shows. The shipping policy's fees change
+ * when rates are edited in the CRM, without a deploy, so it shows the date the
+ * rates last changed (`shippingUpdatedAt`, yyyy-mm-dd from the data Worker)
+ * when that is newer than LEGAL_UPDATED.
+ */
+export function legalUpdated(locale: Locale, slug: LegalSlug, shippingUpdatedAt = ''): string {
+  const m = shippingUpdatedAt.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (slug !== 'shipping' || !m || shippingUpdatedAt <= LEGAL_UPDATED_ISO) return LEGAL_UPDATED[locale];
+  const [, y, mo, d] = m;
+  return `${formatNumber(Number(d), locale)} ${MONTHS[locale][Number(mo) - 1]} ${formatNumber(Number(y), locale)}`;
+}
 
 export interface LegalSection {
   heading: string;
@@ -52,6 +72,12 @@ const emailAr = ltr(CONTACT_EMAIL);
 const igAr = ltr(ig);
 const inArabic = (n: number) => formatNumber(n, 'ar');
 
+/**
+ * Stands in for the delivery-fee bullets, which getLegalDoc() writes from the
+ * live shipping zones (edited in the CRM) rather than from constants.
+ */
+const FEE_BULLETS = '[[fee-bullets]]';
+
 const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
   en: {
     shipping: {
@@ -62,9 +88,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'Delivery fees',
           body: [
-            `• Cairo and Giza: ${formatPrice(SHIPPING_CAIRO, 'en')}.`,
-            `• All other governorates: ${formatPrice(SHIPPING_OUTSIDE, 'en')}.`,
-            `• Free delivery in Cairo and Giza on orders of ${formatPrice(FREE_SHIP_OVER, 'en')} or more. Other governorates always pay the delivery fee.`,
+            FEE_BULLETS,
             'The exact fee is shown at checkout once you choose your governorate, before you place the order.',
           ],
         },
@@ -284,9 +308,7 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
         {
           heading: 'مصاريف التوصيل',
           body: [
-            `• القاهرة والجيزة: ${inArabic(SHIPPING_CAIRO)} جنيه.`,
-            `• باقي المحافظات: ${inArabic(SHIPPING_OUTSIDE)} جنيه.`,
-            `• التوصيل مجاني في القاهرة والجيزة للطلبات التي تبلغ قيمتها ${inArabic(FREE_SHIP_OVER)} جنيه أو أكثر. تُحتسب مصاريف التوصيل دائمًا في باقي المحافظات.`,
+            FEE_BULLETS,
             'تظهر مصاريف التوصيل بدقة في صفحة إتمام الطلب بعد اختيار المحافظة، وقبل تأكيد الطلب.',
           ],
         },
@@ -498,6 +520,19 @@ const docs: Record<Locale, Record<LegalSlug, LegalDoc>> = {
   },
 };
 
-export function getLegalDoc(locale: Locale, slug: LegalSlug): LegalDoc {
-  return docs[locale][slug];
+/**
+ * A policy page in one language. `zones` are the live shipping zones
+ * (lib/catalog.ts getStorefront); only the shipping policy uses them, and
+ * callers that only need a title or description can leave them out.
+ */
+export function getLegalDoc(locale: Locale, slug: LegalSlug, zones: ShippingZone[] = DEFAULT_ZONES): LegalDoc {
+  const doc = docs[locale][slug];
+  if (slug !== 'shipping') return doc;
+  return {
+    ...doc,
+    sections: doc.sections.map((section) => ({
+      ...section,
+      body: section.body.flatMap((p) => (p === FEE_BULLETS ? feeBullets(zones, locale) : [p])),
+    })),
+  };
 }

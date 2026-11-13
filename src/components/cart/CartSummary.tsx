@@ -8,7 +8,8 @@ import { buttonClasses } from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Price from '@/components/ui/Price';
 import FreeShipMeter from '@/components/cart/FreeShipMeter';
-import { FREE_SHIP_OVER } from '@/lib/constants';
+import { freeShipOver } from '@/lib/constants';
+import { useRateText, useShippingZones } from '@/context/ShippingContext';
 import { plural, RANGE_DASH } from '@/lib/format';
 
 interface CartSummaryProps {
@@ -19,6 +20,8 @@ interface CartSummaryProps {
 export default function CartSummary({ ctaRef }: CartSummaryProps) {
   const { subtotal, shippingQuote, total, itemCount } = useCart();
   const { t, lp, locale } = useLanguage();
+  const threshold = freeShipOver(useShippingZones());
+  const rateText = useRateText();
 
   return (
     <div className="bg-white border border-line rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs sticky top-24">
@@ -29,8 +32,8 @@ export default function CartSummary({ ctaRef }: CartSummaryProps) {
       {/* Free delivery: the same sentence and bar as the slide-in bag */}
       <div className="bg-cream/80 border border-line rounded-2xl p-4 space-y-2">
         <FreeShipMeter />
-        {subtotal >= FREE_SHIP_OVER && (
-          <p className="text-xs text-muted leading-relaxed text-pretty">{t.cart.freeShipZoneNote}</p>
+        {threshold > 0 && subtotal >= threshold && (
+          <p className="text-xs text-muted leading-relaxed text-pretty">{rateText(t.cart.freeShipZoneNote)}</p>
         )}
       </div>
 
@@ -68,8 +71,8 @@ export default function CartSummary({ ctaRef }: CartSummaryProps) {
           </div>
           <p className="text-xs text-muted leading-relaxed text-pretty">
             {shippingQuote.low === 0
-              ? t.cart.shippingEstimateNoteFree
-              : t.cart.shippingEstimateNote}
+              ? rateText(t.cart.shippingEstimateNoteFree)
+              : rateText(t.cart.shippingEstimateNote)}
           </p>
         </div>
 

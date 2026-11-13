@@ -4,6 +4,7 @@ import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef } from 'react';
+import { flushPendingEvents } from '@/lib/analytics';
 
 const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
@@ -51,6 +52,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       capture_pageleave: true,
       // Nothing is worth breaking the storefront over.
       autocapture: true,
+      // Funnel events fired before init finished were held back; send them now.
+      loaded: flushPendingEvents,
     });
   }, []);
 

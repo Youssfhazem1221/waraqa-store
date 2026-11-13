@@ -1,18 +1,18 @@
 // ============================================================
-// Waraqa Store — API Helpers for Google Apps Script
+// Waraqa Store — Browser API helpers
 // ============================================================
-// The "backend" is a Google Apps Script Web App.
-// All POSTs use Content-Type: text/plain to avoid CORS preflight.
+// The browser talks only to this site's own /api routes, which forward to the
+// waraqa-data Worker over a service binding. (Until 2026-11 the browser called
+// a Google Apps Script Web App directly.)
 // ============================================================
 
 import type { Product, ApiProduct, OrderPayload, OrderResponse, CartItem } from '@/types';
 import {
-  WEB_APP_URL,
   CATALOG_TTL_MS,
   CATALOG_TIMEOUT_MS,
-  CATALOG_REFRESH_TIMEOUT_MS,
   ORDER_TIMEOUT_MS,
   MAX_LINE_QTY,
+  type ShippingZone,
 } from './constants';
 import fallbackProducts from '@/data/products.json';
 
@@ -105,15 +105,16 @@ export function mapApiProduct(api: ApiProduct): Product {
 
 // Bump when the mapped Product shape or its bundled fields (e.g. images) change,
 // so an open tab does not keep serving the previous mapping from storage.
-const SESSION_CACHE_KEY = 'waraqa-catalog-v2';
+const SESSION_CACHE_KEY = 'waraqa-catalog-v3';
 
 interface CacheEntry {
   products: Product[];
+  zones: ShippingZone[];
   at: number;
 }
 
 let memoryCache: CacheEntry | null = null;
-let inFlight: Promise<Product[] | null> | null = null;
+let inFlight: Promise<CacheEntry | null> | null = null;
 
 function readSessionCache(): CacheEntry | null {
   if (typeof window === 'undefined') return null;
@@ -125,6 +126,7 @@ function readSessionCache(): CacheEntry | null {
       parsed &&
       typeof parsed.at === 'number' &&
       Array.isArray(parsed.products) &&
+      Array.isArray(parsed.zones) &&
       parsed.products.length > 0
     ) {
       return parsed as CacheEntry;
@@ -160,11 +162,11 @@ export function invalidateCatalog() {
   }
 }
 
-async function requestProducts(): Promise<Product[]> {
+async function requestCatalog(): Promise<{ products: Product[]; zones: ShippingZone[] }> {
   // Every browser read corrects data already on screen, so nobody waits on it.
-  const res = await fetch(`${WEB_APP_URL}?what=products`, {
+  const res = await fetch('/api/catalog', {
     cache: 'no-store',
-    signal: AbortSignal.timeout(CATALOG_REFRESH_TIMEOUT_MS),
+    signal: AbortSignal.timeout(CATALOG_TIMEOUT_MS),
   });
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -174,45 +176,43 @@ async function requestProducts(): Promise<Product[]> {
     throw new Error(data.error || 'Invalid response');
   }
 
-  return (data.products as ApiProduct[])
+  const products = (data.products as ApiProduct[])
     .filter((p) => p && p.sku)
     .map((p) => mapApiProduct(p))
     .filter((p) => p.status !== 'Hidden');
+  const zones = Array.isArray(data.zones) ? (data.zones as ShippingZone[]) : [];
+  return { products, zones };
 }
 
 /**
- * The catalog as the Sheet has it right now, or `null` when it could not be
- * read fresh.
+ * The catalog and shipping zones as the Sheet has them right now, or `null`
+ * when they could not be read fresh.
  *
- * There is deliberately no fallback here. Every caller already holds product
- * data (a server-rendered page, a cart line) and only wants to correct it.
- * Falling back to the bundled products.json used to "correct" live prices with
- * build-time ones: Apps Script often takes 10–30 s to answer, the read timed
- * out, and the page swapped e.g. 250 EGP for the snapshot's 210 a few seconds
- * after it loaded, while checkout still charged 250.
+ * There is deliberately no fallback here. Every caller already holds data (a
+ * server-rendered page, a cart line, the zones the layout rendered with) and
+ * only wants to correct it. Falling back to the bundled products.json used to
+ * "correct" live prices with build-time ones.
  */
-export async function fetchLiveProducts(): Promise<Product[] | null> {
-  if (!WEB_APP_URL) return null;
-
-  if (isFresh(memoryCache)) return memoryCache!.products;
+export async function fetchLiveCatalog(): Promise<{ products: Product[]; zones: ShippingZone[] } | null> {
+  if (isFresh(memoryCache)) return memoryCache;
 
   const stored = readSessionCache();
   if (isFresh(stored)) {
     memoryCache = stored;
-    return stored!.products;
+    return stored;
   }
 
-  // Share one request between concurrent callers (e.g. the shop page and a
-  // cart revalidation firing at the same moment).
+  // Share one request between concurrent callers (the shop page, a cart
+  // revalidation and the shipping zones all firing at page load).
   if (inFlight) return inFlight;
 
-  inFlight = requestProducts()
-    .then((products) => {
+  inFlight = requestCatalog()
+    .then(({ products, zones }) => {
       if (products.length === 0) return null;
-      const entry: CacheEntry = { products, at: Date.now() };
+      const entry: CacheEntry = { products, zones, at: Date.now() };
       memoryCache = entry;
       writeSessionCache(entry);
-      return products;
+      return entry;
     })
     .catch((err) => {
       console.warn('[Waraqa] Could not refresh the catalog; keeping what is on screen:', err);
@@ -223,6 +223,11 @@ export async function fetchLiveProducts(): Promise<Product[] | null> {
     });
 
   return inFlight;
+}
+
+/** Just the products from fetchLiveCatalog(). */
+export async function fetchLiveProducts(): Promise<Product[] | null> {
+  return (await fetchLiveCatalog())?.products ?? null;
 }
 
 /**
@@ -286,19 +291,16 @@ export function reconcileCart(items: CartItem[], live: Product[]): CartRevalidat
  * Uses Content-Type: text/plain to avoid CORS preflight issues.
  */
 export async function createOrder(payload: OrderPayload): Promise<OrderResponse> {
-  if (!WEB_APP_URL) {
-    return { ok: false, error: 'Store backend not configured' };
-  }
-
   try {
-    const res = await fetch(WEB_APP_URL, {
+    const res = await fetch('/api/order', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(ORDER_TIMEOUT_MS),
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    // 4xx carry a customer-facing message (sold out, invalid phone...).
+    if (!res.ok && res.status >= 500) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
 
@@ -308,7 +310,7 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     return data as OrderResponse;
   } catch (err) {
     console.error('[Waraqa] Order submission failed:', err);
-    // Running out of patience is not a failure we can report: Apps Script
+    // Running out of patience is not a failure we can report: the server
     // finishes the order after the browser stops waiting. Flag it so checkout
     // says "it may have gone through" instead of inviting a second order.
     if ((err as Error)?.name === 'TimeoutError') {
@@ -323,17 +325,15 @@ export async function subscribeNewsletter(
   email: string,
   locale: string
 ): Promise<{ ok: boolean; error?: string }> {
-  if (!WEB_APP_URL) return { ok: false, error: 'not-configured' };
-
   try {
-    const res = await fetch(WEB_APP_URL, {
+    const res = await fetch('/api/subscribe', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'subscribe', email, locale, source: 'storefront' }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, locale, source: 'storefront' }),
       signal: AbortSignal.timeout(CATALOG_TIMEOUT_MS),
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok && res.status >= 500) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return { ok: data?.ok === true, error: data?.error };
   } catch (err) {

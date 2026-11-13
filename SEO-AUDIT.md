@@ -165,6 +165,34 @@ signal, and a two-line change.
   copy changed, so `CONTENT_REVISION` was not bumped. Not re-scored: the
   effect on which language Google shows for un-localised queries is
   unmeasured until Search Console has data after the deploy.
+- **2026-11-09** — Delivery fees follow the live shipping zones (branch
+  `shipping-seo-live-zones`, on top of `data-worker-sync`; deployed
+  2026-11-10 as store version `6b366746`, together with the switch to the
+  data Worker).
+  Fees are now edited in the CRM (the Sheet's Shipping tab), so no copy or
+  markup may carry a typed-in amount. *Markup:* each Product offer's
+  `shippingDetails` has one `OfferShippingDetails` per zone, keeping the
+  `#shipping-cairo` / `#shipping-outside` @ids; the `FAQPage` on /about fills
+  its delivery answer from the zones. *Copy:* the shipping policy's fee
+  bullets are written from the zones (`lib/shipping-copy.ts`), as are the
+  trust strip, product delivery note, bag notes and the home description's
+  free-delivery threshold. /shipping and /about now render per request
+  (`force-dynamic`), like the home, shop and product pages, so they cannot
+  freeze build-time rates. Checked locally in both locales: at today's rates
+  (60 / 75 / free from 800) every affected render, JSON-LD and meta
+  description is byte-for-byte what it was, so `CONTENT_REVISION` and the
+  policy date stay put; after a rate change all of them showed the new
+  numbers. *Policy date:* the data Worker records the day the customer-facing
+  rates last changed (Settings `shipping_updated_at`; a courier-cost-only edit
+  does not count), and /shipping shows that date when it is newer than
+  `LEGAL_UPDATED`. *Rule 6 fix:* the /about `FAQPage` described questions the
+  page did not show; the FAQ is now a visible section at the end of /about
+  (both locales, same items, live fees), so the markup describes the page.
+  That is new visible copy: `CONTENT_REVISION` → 2026-11-09. A rate change
+  alone still does not move the sitemap date (rule 7: no live data in the
+  sitemap); bump it by hand if a rate change is worth signalling. No
+  re-score.
+
 - **2026-10-30** — Pre-filming fixes (branch `case-study-fixes`, not deployed yet;
   checked on a local production build). *Titles:* the bag, checkout and order
   confirmation have their own titles in both languages ("Your bag · Waraqa

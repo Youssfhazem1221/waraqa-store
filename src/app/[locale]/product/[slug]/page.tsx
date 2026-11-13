@@ -9,7 +9,7 @@ import RelatedProducts from '@/components/product/RelatedProducts';
 import ProductBreadcrumb from '@/components/product/ProductBreadcrumb';
 import JsonLd from '@/components/seo/JsonLd';
 import { productSchema, breadcrumbSchema } from '@/lib/schema';
-import { getCatalog } from '@/lib/catalog';
+import { getCatalog, getStorefront } from '@/lib/catalog';
 import { isLocale, seoAlternates, absoluteUrl, ogDefaults, metaDescription } from '@/lib/seo';
 import { translations } from '@/lib/translations';
 
@@ -82,7 +82,7 @@ export default async function ProductDetailPage({
   const { locale, slug } = await params;
   const l = isLocale(locale) ? locale : 'en';
 
-  const liveProducts = await getCatalog();
+  const { products: liveProducts, zones } = await getStorefront();
   const bundled = products.find((p) => p.slug === slug);
   // A book hidden or deleted in the Sheet is missing from the live catalog,
   // but the bundled snapshot still lists it in stock, so its page kept an
@@ -120,7 +120,7 @@ export default async function ProductDetailPage({
 
       <JsonLd
         data={[
-          productSchema(product, l),
+          productSchema(product, l, zones),
           breadcrumbSchema(l, [
             { name: homeName, path: '/' },
             { name: shopName, path: '/shop' },

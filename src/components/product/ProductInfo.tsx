@@ -6,6 +6,7 @@ import Image from 'next/image';
 import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useRateText } from '@/context/ShippingContext';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 import Price from '@/components/ui/Price';
@@ -27,6 +28,7 @@ interface ProductInfoProps {
 export default function ProductInfo({ product, alternative }: ProductInfoProps) {
   const { addItem } = useCart();
   const { t, isRTL, lp, locale } = useLanguage();
+  const rateText = useRateText();
   const [requestedQty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -267,7 +269,7 @@ export default function ProductInfo({ product, alternative }: ProductInfoProps) 
               </dl>
             ),
           },
-          { title: t.product.deliveryTitle, open: false, body: <p className="leading-relaxed">{t.product.deliveryBody}</p> },
+          { title: t.product.deliveryTitle, open: false, body: <p className="leading-relaxed">{rateText(t.product.deliveryBody)}</p> },
         ].map((section) => (
           <details key={section.title} open={section.open} className="group border-b border-line">
             <summary className="flex items-center justify-between py-4 cursor-pointer list-none font-medium text-char [&::-webkit-details-marker]:hidden">

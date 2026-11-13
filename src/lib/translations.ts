@@ -11,10 +11,11 @@ export type Locale = 'en' | 'ar';
 const DAYS_EN = `3${RANGE_DASH}7`;
 const DAYS_AR = `٣${RANGE_DASH}٧`;
 
-// An amount in Arabic copy reads like the computed prices («٦٠ ج.م»,
-// lib/format.ts), held to its currency by a no-break space. The legal pages
-// keep the formal «جنيه».
-const egp = (amount: string) => `${amount}\u00A0ج.م`;
+// Delivery fees are not typed into the copy: {homeFee}, {restFee} and
+// {freeOver} are filled from the live shipping zones by lib/shipping-copy.ts,
+// since the fees are edited in the CRM. They come out like the computed
+// prices («٦٠ ج.م», lib/format.ts), held to the currency by a no-break space.
+// The legal pages keep the formal «جنيه».
 
 // The mobile prefixes in the phone error, the bracketed list held on one line
 // by no-break spaces (on phones it wrapped inside the brackets: «(010 أو 011
@@ -149,7 +150,7 @@ export const translations = {
     },
     trust: {
       shippingTitle: 'Delivery across Egypt',
-      shippingDesc: `${DAYS_EN} working days. Free in Cairo & Giza on orders from EGP 800.`,
+      shippingDesc: `${DAYS_EN} working days. Free in Cairo & Giza on orders from {freeOver}.`,
       ecoTitle: 'Acid-free paper',
       ecoDesc: 'Your work won’t yellow over time. 150 to 320gsm.',
       secureTitle: 'Pay when it arrives',
@@ -212,7 +213,7 @@ export const translations = {
       specsTitle: 'Specifications',
       deliveryTitle: 'Delivery & payment',
       deliveryBody:
-        `Delivery is EGP 60 in Cairo & Giza and EGP 75 to other governorates. It’s free in Cairo & Giza on orders from EGP 800. It arrives in ${DAYS_EN} working days, and you pay the courier in cash after checking your order.`,
+        `Delivery is {homeFee} in Cairo & Giza and {restFee} to other governorates. It’s free in Cairo & Giza on orders from {freeOver}. It arrives in ${DAYS_EN} working days, and you pay the courier in cash after checking your order.`,
       checkedNote: 'Checked by hand before it ships',
       added: 'Added',
       sizeLabel: 'Size',
@@ -230,10 +231,10 @@ export const translations = {
       exploreBtn: 'Browse sketchbooks',
       orderSummary: 'Order summary',
       qualifyFreeShip: 'Free delivery unlocked for Cairo & Giza.',
-      freeShipZoneNote: 'Free delivery applies to Cairo & Giza. Other governorates pay a flat EGP 75.',
+      freeShipZoneNote: 'Free delivery applies to Cairo & Giza. Other governorates pay a flat {restFee}.',
       shippingFromLabel: 'Delivery fee (by governorate)',
-      shippingEstimateNote: 'Cairo & Giza EGP 60 · other governorates EGP 75. Confirmed at checkout.',
-      shippingEstimateNoteFree: 'Free in Cairo & Giza at this total · other governorates EGP 75. Confirmed at checkout.',
+      shippingEstimateNote: 'Cairo & Giza {homeFee} · other governorates {restFee}. Confirmed at checkout.',
+      shippingEstimateNoteFree: 'Free in Cairo & Giza at this total · other governorates {restFee}. Confirmed at checkout.',
       toFreeShip: '{amount} away from free delivery in Cairo & Giza',
       subtotal: 'Subtotal',
       itemCount: { one: '{n} item', other: '{n} items' },
@@ -367,7 +368,7 @@ export const translations = {
       title: 'Questions, answered',
       items: [
         { q: 'Do you deliver across Egypt?', a: 'Yes, we ship to all 27 Egyptian governorates by express courier.' },
-        { q: 'How much is delivery and when does it arrive?', a: `Delivery is EGP 60 inside Cairo and Giza, or EGP 75 everywhere else. It’s free in Cairo and Giza on orders from EGP 800. Expect ${DAYS_EN} business days depending on your governorate.` },
+        { q: 'How much is delivery and when does it arrive?', a: `Delivery is {homeFee} inside Cairo and Giza, or {restFee} everywhere else. It’s free in Cairo and Giza on orders from {freeOver}. Expect ${DAYS_EN} business days depending on your governorate.` },
         { q: 'How do I pay?', a: 'Cash on delivery only. You pay the courier when your order arrives, after you inspect it.' },
         { q: 'What does gsm mean and which weight should I pick?', a: 'GSM (grams per square metre) measures paper thickness. Our range runs from 150gsm (good for pencil, pen and light ink) through 250gsm (multi-purpose drawing) up to 320gsm (heavy enough for watercolour, gouache and wet media without buckling).' },
         { q: 'Which sketchbook suits watercolour or markers?', a: 'Pick one of the 320gsm Mixed Media sketchbooks (available in A5 and A4). The heavy, acid-free paper handles water-based media, gouache, ink and alcohol markers without bleeding through.' },
@@ -533,7 +534,7 @@ export const translations = {
     },
     trust: {
       shippingTitle: 'توصيل لكل مصر',
-      shippingDesc: `من ٣ لـ ٧ أيام عمل. ومجاني في القاهرة والجيزة للطلبات من ${egp('٨٠٠')}.`,
+      shippingDesc: `من ٣ لـ ٧ أيام عمل. ومجاني في القاهرة والجيزة للطلبات من {freeOver}.`,
       ecoTitle: 'ورق خالي من الأحماض',
       ecoDesc: 'شغلك مش هيصفّر مع الوقت. من ١٥٠ لـ ٣٢٠ جرام.',
       secureTitle: 'ادفع لما يوصلك',
@@ -600,7 +601,7 @@ export const translations = {
       specsTitle: 'المواصفات',
       deliveryTitle: 'التوصيل والدفع',
       deliveryBody:
-        `التوصيل ${egp('٦٠')} في القاهرة والجيزة و${egp('٧٥')} لباقي المحافظات، ومجاني في القاهرة والجيزة للطلبات من ${egp('٨٠٠')}. بيوصل في ${DAYS_AR} أيام عمل، وبتدفع للمندوب كاش بعد ما تعاين طلبك.`,
+        `التوصيل {homeFee} في القاهرة والجيزة و{restFee} لباقي المحافظات، ومجاني في القاهرة والجيزة للطلبات من {freeOver}. بيوصل في ${DAYS_AR} أيام عمل، وبتدفع للمندوب كاش بعد ما تعاين طلبك.`,
       checkedNote: 'بيتراجع بالإيد قبل الشحن',
       added: 'اتضاف',
       sizeLabel: 'المقاس',
@@ -618,11 +619,11 @@ export const translations = {
       exploreBtn: 'تصفح كل السكتشات',
       orderSummary: 'ملخص الطلب',
       qualifyFreeShip: 'التوصيل بقى مجاني للقاهرة والجيزة.',
-      freeShipZoneNote: `الشحن المجاني للقاهرة والجيزة. باقي المحافظات ${egp('٧٥')}.`,
+      freeShipZoneNote: 'الشحن المجاني للقاهرة والجيزة. باقي المحافظات {restFee}.',
       shippingFromLabel: 'مصاريف الشحن (حسب المحافظة)',
       // Joined with «، و», not "·", like the other Arabic facts.
-      shippingEstimateNote: `القاهرة والجيزة ${egp('٦٠')}، وباقي المحافظات ${egp('٧٥')}. بنأكدها في الخطوة الجاية.`,
-      shippingEstimateNoteFree: `ببلاش للقاهرة والجيزة على المبلغ ده، وباقي المحافظات ${egp('٧٥')}. بنأكدها في الخطوة الجاية.`,
+      shippingEstimateNote: 'القاهرة والجيزة {homeFee}، وباقي المحافظات {restFee}. بنأكدها في الخطوة الجاية.',
+      shippingEstimateNoteFree: 'ببلاش للقاهرة والجيزة على المبلغ ده، وباقي المحافظات {restFee}. بنأكدها في الخطوة الجاية.',
       toFreeShip: 'فاضلك {amount} وتاخد شحن مجاني للقاهرة والجيزة',
       subtotal: 'المجموع',
       itemCount: { one: 'منتج واحد', two: 'منتجين', few: '{n} منتجات', other: '{n} منتج' },
@@ -759,7 +760,7 @@ export const translations = {
       title: 'أسئلة شائعة',
       items: [
         { q: 'بتوصّلوا لكل مصر؟', a: 'أيوه، بنشحن لكل الـ ٢٧ محافظة في مصر بشحن سريع.' },
-        { q: 'الشحن بكام وبيوصل في قد إيه؟', a: `الشحن ${egp('٦٠')} للقاهرة والجيزة، و${egp('٧٥')} لباقي المحافظات، ومجاني في القاهرة والجيزة للطلبات من ${egp('٨٠٠')}. التوصيل من ٣ لـ ٧ أيام عمل حسب المحافظة.` },
+        { q: 'الشحن بكام وبيوصل في قد إيه؟', a: `الشحن {homeFee} للقاهرة والجيزة، و{restFee} لباقي المحافظات، ومجاني في القاهرة والجيزة للطلبات من {freeOver}. التوصيل من ٣ لـ ٧ أيام عمل حسب المحافظة.` },
         { q: 'بتدفعوا إزاي؟', a: 'الدفع عند الاستلام بس. بتدفع للمندوب كاش لما الطلب يوصلك وبعد ما تعاينه.' },
         { q: 'يعني إيه جرام الورق، وأختار وزن كام؟', a: 'الجرام (وزن المتر المربع من الورق) بيقيس وزن الورق: كل ما يعلى، الورقة بتبقى أتقل وأتخن. عندنا من ١٥٠ جرام (مناسب للرصاص والقلم والحبر الخفيف) لـ ٢٥٠ جرام (رسم متعدد الخامات) لغاية ٣٢٠ جرام (بيستحمل ألوان ميّه وجواش ووسائط رطبة من غير ما يتعوّج).' },
         { q: 'أنهي سكتش بوك يناسب ألوان الميّه أو الماركرز؟', a: 'اختار سكتش بوك الميكسد ميديا وزن ٣٢٠ جرام (متوفر A5 و A4). الورق السميك الخالي من الأحماض بيستحمل ألوان الميّه والجواش والحبر وماركرز الكحول من غير ما ينفذ للوش التاني.' },

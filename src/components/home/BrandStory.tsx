@@ -4,9 +4,11 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import { useRateText } from '@/context/ShippingContext';
 
 export default function BrandStory() {
   const { t, lp } = useLanguage();
+  const rateText = useRateText();
 
   return (
     <section aria-labelledby="story-title" className="border-b border-line">
@@ -41,7 +43,7 @@ export default function BrandStory() {
               separate row of icon cards. */}
           <dl className="mt-10 grid sm:grid-cols-3 gap-6 pt-6 border-t border-line text-sm">
             {[
-              [t.trust.shippingTitle, t.trust.shippingDesc],
+              [t.trust.shippingTitle, rateText(t.trust.shippingDesc)],
               [t.trust.ecoTitle, t.trust.ecoDesc],
               [t.trust.secureTitle, t.trust.secureDesc],
             ].map(([title, desc]) => (
